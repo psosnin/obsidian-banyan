@@ -6,3 +6,29 @@ available in the app when your plugin is enabled.
 If your plugin does not need CSS, delete this file.
 
 */
+
+.folder-suggest-dropdown {
+  position: absolute;
+  background: var(--background-primary, #fff);
+  color: var(--text-normal, #222);
+  border: 1px solid var(--background-modifier-border, #ccc);
+  z-index: 1000;
+  max-height: 132px;
+  overflow-y: auto;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  border-radius: 6px;
+  left: 0;
+  top: 100%;
+  width: 100%;
+}
+
+.folder-suggest-item {
+  padding: 6px 8px;
+  cursor: pointer;
+  white-space: nowrap;
+  text-align: left; /* Added for left alignment */
+}
+
+.folder-suggest-item:hover {
+  background: var(--background-secondary, #f0f0f0);
+}

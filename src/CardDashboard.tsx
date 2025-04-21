@@ -1,10 +1,9 @@
-import { ItemView, WorkspaceLeaf, TFile, normalizePath, Notice, MarkdownRenderer } from "obsidian";
+import { App, ItemView, WorkspaceLeaf, TFile, normalizePath, Notice, MarkdownRenderer } from "obsidian";
 import MyPlugin from "./main";
 import { StrictMode, useEffect, useState } from 'react';
 import { Root, createRoot } from 'react-dom/client';
 import * as React from "react";
 import { FilterView } from "./FilterView";
-import CardAddForm from "./CardAddForm";
 import CardNote from "./CardNote";
 
 export const CARD_DASHBOARD_VIEW_TYPE = "card-dashboard-view";
@@ -42,15 +41,18 @@ export class CardDashboardView extends ItemView {
 
   _CardDashboardView = () => {
     const dir = this.plugin.settings.cardsDirectory;
+    
     const [sortType, setSortType] = useState<'created' | 'modified'>('created');
     const [allTags, setAllTags] = useState<string[]>([]);
     const [tagFilterValue, setTagFilterValue] = useState<{ and: string[][]; not: string[] }>({ and: [[]], not: [] });
+    
     const [dateRange, setDateRange] = useState<{ from: string; to: string }>({ from: '', to: '' });
+    
     const [keyword, setKeyword] = useState<string>('');
-    const [inputValue, setInputValue] = useState<string>('');
-    const [tags, setTags] = useState<string[]>([]);
+    
     const [notes, setNotes] = useState<TFile[]>([]);
     const [contents, setContents] = useState<{file: TFile, content: string}[]>([]);
+    
     const [refreshFlag, setRefreshFlag] = useState(0);
 
     useEffect(() => {
@@ -83,23 +85,6 @@ export class CardDashboardView extends ItemView {
         return { file, content };
       })).then(setContents);
     }, [notes]);
-
-    // 添加笔记
-    const handleAdd = async () => {
-      if (!inputValue.trim()) return;
-      const now = new Date();
-      const fileName = `卡片_${now.getFullYear()}${(now.getMonth()+1).toString().padStart(2,'0')}${now.getDate().toString().padStart(2,'0')}_${now.getTime()}.md`;
-      const filePath = normalizePath(`${dir}/${fileName}`);
-      let content = inputValue;
-      if (tags.length > 0) {
-        content = `---\ntags: [${tags.map(t => `\"${t}\"`).join(", ")}]\n---\n` + content;
-      }
-      await this.app.vault.create(filePath, content);
-      setInputValue('');
-      setTags([]);
-      setRefreshFlag(f => f+1);
-      new Notice('卡片已添加');
-    };
 
     // 卡片删除
     const handleDelete = async (file: TFile) => {
@@ -174,15 +159,10 @@ export class CardDashboardView extends ItemView {
           keyword={keyword}
           setKeyword={setKeyword}
         />
-        {/* 添加区域 */}
-        <CardAddForm
-          inputValue={inputValue}
-          setInputValue={setInputValue}
-          onAdd={handleAdd}
-          tags={tags}
-          setTags={setTags}
-          tagSuggestions={allTags}
-        />
+        {/* 添加卡片按钮区域 */}
+        <div style={{marginBottom:24}}>
+          <button onClick={()=>this.plugin.addCardNote()} style={{padding:'8px 16px'}}>添加卡片</button>
+        </div>
         {/* 瀑布流卡片区域 */}
         <div style={{display:'flex',gap:16}}>
           {columns.map((col, idx) => (

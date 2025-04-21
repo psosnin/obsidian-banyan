@@ -36,12 +36,21 @@ const MarkdownContent = ({app, markdown, sourcePath, component}:{
 };
 
 const CardNote: React.FC<CardNoteProps> = ({ file, tags, content, app, component, onDelete, onOpen }) => {
+  const contentRef = React.useRef<HTMLDivElement>(null);
+  const [overflow, setOverflow] = React.useState(false);
+  React.useEffect(() => {
+    const el = contentRef.current;
+    if (el) {
+      setOverflow(el.scrollHeight > 500);
+    }
+  }, [content]);
   return (
-    <div
-      className="card-note"
-      onDoubleClick={()=>onOpen(file)}
-    >
-      <div className="card-note-content">
+    <div className="card-note-container">
+      <div
+        className={"card-note-content" + (overflow ? " card-note-content--overflow" : "")}
+        ref={contentRef}
+        onDoubleClick={()=>onOpen(file)}
+      >
         <MarkdownContent
           app={app}
           markdown={extractBody(content)}
@@ -49,6 +58,7 @@ const CardNote: React.FC<CardNoteProps> = ({ file, tags, content, app, component
           component={component}
         />
       </div>
+    <div className="card-note-footer">
       { tags.length > 0 && <div className="card-note-tags"> {tags.map((tag) => 
         <div className="card-note-tag" key={tag}>
           <div className="card-note-tag-content">{tag}</div>
@@ -73,6 +83,7 @@ const CardNote: React.FC<CardNoteProps> = ({ file, tags, content, app, component
           setTimeout(()=>document.addEventListener('click',removeMenu),100);
         }}>···</span>
       </div>
+    </div>
     </div>
   );
 };

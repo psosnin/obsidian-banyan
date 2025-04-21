@@ -20,11 +20,11 @@ export default class MyPlugin extends Plugin {
 		)
 
 		// This creates an icon in the left ribbon.
-		const NoteIconEl = this.addRibbonIcon('notepad-text', 'New Context Note', async (evt: MouseEvent) => {
+		const NoteIconEl = this.addRibbonIcon('notepad-text', 'Open Context Notes Dashboard', async (evt: MouseEvent) => {
 			this.activateView(CONTEXT_DASHBOARD_VIEW_TYPE);
 		});
 		NoteIconEl.addClass('my-plugin-ribbon-class');
-		const CardIconEl = this.addRibbonIcon('wallet-cards', 'New Card Note', async (evt: MouseEvent) => {
+		const CardIconEl = this.addRibbonIcon('wallet-cards', 'Open Card Notes Dashboard', async (evt: MouseEvent) => {
 			this.activateView(CARD_DASHBOARD_VIEW_TYPE);
 		});
 		CardIconEl.addClass('my-plugin-ribbon-class');

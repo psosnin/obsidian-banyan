@@ -74,8 +74,14 @@ export class CardDashboardView extends ItemView {
 
     useEffect(() => {
       if (!dir) return;
-      const files = this.app.vault.getFiles();
-      const filtered = files.filter((file: TFile) => file.path.startsWith(dir) && file.extension === "md");
+      const files = this.app.vault.getMarkdownFiles();
+      const filtered = files.filter((file: TFile) => file.path.startsWith(dir));
+      // 排序
+      if (sortType === 'created') {
+        filtered.sort((a, b) => b.stat.ctime - a.stat.ctime);
+      } else if (sortType === 'modified') {
+        filtered.sort((a, b) => b.stat.mtime - a.stat.mtime);
+      } 
       setNotes(filtered);
       // 标签收集
       const tagSet = new Set<string>();
@@ -90,7 +96,7 @@ export class CardDashboardView extends ItemView {
         }
       });
       setAllTags(Array.from(tagSet));
-    }, [dir, refreshFlag, this.app.vault.getFiles().length]);
+    }, [dir, refreshFlag, sortType, this.app.vault.getFiles().length]);
 
     useEffect(() => {
       if (notes.length === 0) {

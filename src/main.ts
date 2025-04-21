@@ -29,7 +29,7 @@ export default class MyPlugin extends Plugin {
 		});
 
 		// 添加 ribbonIcon，点击执行添加卡片笔记
-		const AddCardIconEl = this.addRibbonIcon('book-plus', '添加卡片笔记', async (evt: MouseEvent) => {
+		const AddCardIconEl = this.addRibbonIcon('lightbulb', '添加卡片笔记', async (evt: MouseEvent) => {
 			await this.addCardNote();
 		});
 		AddCardIconEl.addClass('my-plugin-ribbon-class');

@@ -56,6 +56,23 @@ export class CardDashboardView extends ItemView {
     const [refreshFlag, setRefreshFlag] = useState(0);
 
     useEffect(() => {
+      // 事件监听函数
+      const onVaultChange = (file: TFile) => {
+        if (file.path.startsWith(dir) && file.extension === "md") {
+          setRefreshFlag(f => f + 1);
+        }
+      };
+      this.app.vault.on('create', onVaultChange);
+      this.app.vault.on('delete', onVaultChange);
+      this.app.vault.on('modify', onVaultChange);
+      return () => {
+        this.app.vault.off('create', onVaultChange);
+        this.app.vault.off('delete', onVaultChange);
+        this.app.vault.off('modify', onVaultChange);
+      };
+    }, [dir]);
+
+    useEffect(() => {
       if (!dir) return;
       const files = this.app.vault.getFiles();
       const filtered = files.filter((file: TFile) => file.path.startsWith(dir) && file.extension === "md");

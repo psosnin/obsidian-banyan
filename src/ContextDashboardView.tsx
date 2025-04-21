@@ -47,6 +47,26 @@ export class ContextDashboardView extends ItemView {
     const [tagFilterValue, setTagFilterValue] = React.useState<{ and: string[][]; not: string[] }>({ and: [[]], not: [] });
     const [dateRange, setDateRange] = React.useState<{ from: string; to: string }>({ from: '', to: '' });
     const [keyword, setKeyword] = React.useState<string>('');
+    
+    const [refreshFlag, setRefreshFlag] = React.useState(0);
+    
+    React.useEffect(() => {
+      // 事件监听函数
+      const onVaultChange = (file: TFile) => {
+        if (file.path.startsWith(dir) && file.extension === "md") {
+          setRefreshFlag(f => f + 1);
+        }
+      };
+      this.app.vault.on('create', onVaultChange);
+      this.app.vault.on('delete', onVaultChange);
+      this.app.vault.on('modify', onVaultChange);
+      return () => {
+        this.app.vault.off('create', onVaultChange);
+        this.app.vault.off('delete', onVaultChange);
+        this.app.vault.off('modify', onVaultChange);
+      };
+    }, [dir]);
+    
     React.useEffect(() => {
       if (!dir) return;
       const files = this.app.vault.getFiles();
@@ -63,7 +83,8 @@ export class ContextDashboardView extends ItemView {
         }
       });
       setAllTags(Array.from(tagSet));
-    }, [dir, sortType, this.app.vault.getFiles().length]);
+    }, [dir, sortType, refreshFlag, this.app.vault.getFiles().length]);
+
     return <div>
       <FilterView
         sortType={sortType}
@@ -256,15 +277,15 @@ export class ContextDashboardView extends ItemView {
     ];
     const renderMonth = (monthObj: Record<number, TFile[]>, month: number) => [
       <h3 key={"month-" + month} style={{fontSize: '1.1em', fontWeight: 600, marginTop: '0.3em'}}>{month}月</h3>,
-      ...Object.keys(monthObj).sort((a, b) => Number(a) - Number(b)).flatMap(day => renderDay(monthObj[Number(day)], Number(day)))
+      ...Object.keys(monthObj).sort((a, b) => Number(b) - Number(a)).flatMap(day => renderDay(monthObj[Number(day)], Number(day)))
     ];
     const renderQuarter = (quarterObj: Record<number, Record<number, TFile[]>>, quarter: number) => [
       <h2 key={"quarter-" + quarter} style={{fontSize: '1.2em', fontWeight: 'bold', marginTop: '0.5em'}}>{`第${quarter}季度`}</h2>,
-      ...Object.keys(quarterObj).sort((a, b) => Number(a) - Number(b)).flatMap(month => renderMonth(quarterObj[Number(month)], Number(month)))
+      ...Object.keys(quarterObj).sort((a, b) => Number(b) - Number(a)).flatMap(month => renderMonth(quarterObj[Number(month)], Number(month)))
     ];
     const renderYear = (yearObj: Record<number, Record<number, Record<number, TFile[]>>>, year: number) => [
       <h1 key={"year-" + year} style={{fontSize: '1.5em', fontWeight: 'bold', marginTop: '1em'}}>{year}年</h1>,
-      ...Object.keys(yearObj).sort((a, b) => Number(a) - Number(b)).flatMap(quarter => renderQuarter(yearObj[Number(quarter)], Number(quarter)))
+      ...Object.keys(yearObj).sort((a, b) => Number(b) - Number(a)).flatMap(quarter => renderQuarter(yearObj[Number(quarter)], Number(quarter)))
     ];
     const grouped = groupNotes(notes);
     const elements = Object

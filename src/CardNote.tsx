@@ -4,6 +4,7 @@ import * as React from "react";
 
 interface CardNoteProps {
   file: TFile;
+  tags: string[];
   content: string;
   app: App;
   component: Component;
@@ -34,15 +35,13 @@ const MarkdownContent = ({app, markdown, sourcePath, component}:{
   return <div ref={ref} />;
 };
 
-const CardNote: React.FC<CardNoteProps> = ({ file, content, app, component, onDelete, onOpen }) => {
+const CardNote: React.FC<CardNoteProps> = ({ file, tags, content, app, component, onDelete, onOpen }) => {
   return (
     <div
       className="card-note"
-      style={{background:'#222',color:'#fff',borderRadius:8,padding:16,marginBottom:16,position:'relative',boxShadow:'0 2px 8px #0002',cursor:'pointer'}}
       onDoubleClick={()=>onOpen(file)}
     >
-      <div style={{fontSize:12,opacity:0.7,marginBottom:8}}>{new Date(file.stat.mtime).toLocaleString()}</div>
-      <div>
+      <div className="card-note-content">
         <MarkdownContent
           app={app}
           markdown={extractBody(content)}
@@ -50,16 +49,17 @@ const CardNote: React.FC<CardNoteProps> = ({ file, content, app, component, onDe
           component={component}
         />
       </div>
-      <div style={{position:'absolute',top:8,right:8}}>
-        <span style={{cursor:'pointer',padding:'2px 8px'}} onClick={e=>{
+      { tags.length > 0 && <div className="card-note-tags"> {tags.map((tag) => 
+        <div className="card-note-tag" key={tag}>
+          <div className="card-note-tag-content">{tag}</div>
+        </div>
+      )}</div>}
+      <div className="card-note-time">{new Date(file.stat.mtime).toLocaleString()}</div>
+      <div className="card-note-more">
+        <span className="card-note-more-btn" onClick={e=>{
           e.stopPropagation();
           const menu = document.createElement('div');
-          menu.style.position = 'absolute';
-          menu.style.background = '#333';
-          menu.style.color = '#fff';
-          menu.style.padding = '8px 12px';
-          menu.style.borderRadius = '6px';
-          menu.style.boxShadow = '0 2px 8px #0005';
+          menu.className = 'card-note-more-menu';
           menu.innerHTML = '<button id="del-btn">删除</button>';
           document.body.appendChild(menu);
           const rect = (e.target as HTMLElement).getBoundingClientRect();

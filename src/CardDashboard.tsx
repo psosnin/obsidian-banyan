@@ -149,6 +149,7 @@ export class CardDashboardView extends ItemView {
       <CardNote
         key={file.path}
         file={file}
+        tags={this.app.metadataCache.getFileCache(file)?.frontmatter?.tags ?? []}
         content={content}
         app={this.app}
         component={this}

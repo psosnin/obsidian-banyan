@@ -65,6 +65,20 @@ const CardNote: React.FC<CardNoteProps> = ({ file, tags, sortType, content, app,
       onOpen(file);
       e.preventDefault();
     }}>
+      <div className="card-note-header">
+        <div className="card-note-time">{isPinned ? "置顶 · " : ""}{isCreated ? "创建于" : "更新于"} {new Date(isCreated ? file.stat.ctime : file.stat.mtime).toLocaleString()}</div>
+        {tags.length > 0 && <div className="card-note-tags"> {tags.map((tag) =>
+          <div className="card-note-tag" key={tag}>
+            <div className="card-note-tag-content">{tag}</div>
+          </div>
+        )}</div>}
+        <div className="card-note-more">
+          <button className="clickable-icon"
+            ref={btnRef}
+            onClick={(e) => openCardNoteMoreMenu({ event: e.nativeEvent, file, content, onOpen, onDelete, setPin, isPinned })}
+          />
+        </div>
+      </div>
       <div
         className={"card-note-content" + (overflow ? " card-note-content--overflow" : "")}
         ref={contentRef}>
@@ -74,20 +88,6 @@ const CardNote: React.FC<CardNoteProps> = ({ file, tags, sortType, content, app,
           sourcePath={file.path}
           component={component}
         />
-      </div>
-      <div className="card-note-footer">
-        {tags.length > 0 && <div className="card-note-tags"> {tags.map((tag) =>
-          <div className="card-note-tag" key={tag}>
-            <div className="card-note-tag-content">{tag}</div>
-          </div>
-        )}</div>}
-        <div className="card-note-time">{isPinned ? "置顶 · " : ""}{isCreated ? "创建于" : "更新于"} {new Date(isCreated ? file.stat.ctime : file.stat.mtime).toLocaleString()}</div>
-        <div className="card-note-more">
-          <button className="clickable-icon"
-            ref={btnRef}
-            onClick={(e) => openCardNoteMoreMenu({ event: e.nativeEvent, file, content, onOpen, onDelete, setPin, isPinned })}
-          />
-        </div>
       </div>
     </div>
   );

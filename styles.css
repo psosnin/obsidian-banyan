@@ -67,19 +67,18 @@ If your plugin does not need CSS, delete this file.
   background-image: linear-gradient(rgba(41, 41, 41, 0), var(--background-secondary));
 }
 
-.card-note-footer {
-  margin-top: 8px;
-}
-
 .card-note-time {
   font-size: var(--font-ui-small);
   color: var(--text-faint);
-  margin-top: 4px;
+  margin-right: 6px;
+  margin-bottom: 4px;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .card-note-more {
   position: absolute;
-  bottom: 8px;
+  top: 12px;
   right: 16px;
 }
 

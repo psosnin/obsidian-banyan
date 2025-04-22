@@ -1,4 +1,4 @@
-import { App, ItemView, WorkspaceLeaf, TFile, normalizePath, Notice, MarkdownRenderer } from "obsidian";
+import { App, ItemView, WorkspaceLeaf, TFile, normalizePath, Notice, MarkdownRenderer, Menu, setIcon } from "obsidian";
 import MyPlugin from "./main";
 import { StrictMode, useEffect, useState } from 'react';
 import { Root, createRoot } from 'react-dom/client';
@@ -40,9 +40,13 @@ export class CardDashboardView extends ItemView {
   }
 
   _CardDashboardView = () => {
-    const dir = this.plugin.settings.cardsDirectory;
+
+    const [noteType, setNoteType] = useState<'card' | 'context'>('card');
+
+    const dir = () => noteType === 'card' ? this.plugin.settings.cardsDirectory : this.plugin.settings.notesDirectory;
 
     const [sortType, setSortType] = useState<'created' | 'modified'>('created');
+
     const [allTags, setAllTags] = useState<string[]>([]);
     const [tagFilterValue, setTagFilterValue] = useState<{ and: string[][]; not: string[] }>({ and: [[]], not: [] });
 
@@ -58,7 +62,7 @@ export class CardDashboardView extends ItemView {
     useEffect(() => {
       // 事件监听函数
       const onVaultChange = (file: TFile) => {
-        if (file.path.startsWith(dir) && file.extension === "md") {
+        if (file.path.startsWith(dir()) && file.extension === "md") {
           setRefreshFlag(f => f + 1);
         }
       };
@@ -70,12 +74,25 @@ export class CardDashboardView extends ItemView {
         this.app.vault.off('delete', onVaultChange);
         this.app.vault.off('modify', onVaultChange);
       };
-    }, [dir]);
+    }, [noteType]);
+
+    const withinDateRange = (time: number, dateRange: { from: string; to: string }) => {
+      const from = new Date(dateRange.from).getTime();
+      const to = new Date(dateRange.to).getTime();
+      console.log(dateRange, from, to, time);
+      if (!from && !to) return true;
+      if (from && !to) return time >= from;
+      if (!from && to) return time <= to;
+      return time >= from && time <= to;
+    }
 
     useEffect(() => {
-      if (!dir) return;
+      if (!dir()) return;
       const files = this.app.vault.getMarkdownFiles();
-      const filtered = files.filter((file: TFile) => file.path.startsWith(dir));
+      const filtered = files.filter((file: TFile) =>
+        file.path.startsWith(dir())
+        && withinDateRange(sortType == 'created' ? file.stat.ctime : file.stat.mtime, dateRange)
+      );
       // 排序
       if (sortType === 'created') {
         filtered.sort((a, b) => b.stat.ctime - a.stat.ctime);
@@ -96,7 +113,7 @@ export class CardDashboardView extends ItemView {
         }
       });
       setAllTags(Array.from(tagSet));
-    }, [dir, refreshFlag, sortType, this.app.vault.getFiles().length]);
+    }, [refreshFlag, noteType, sortType, dateRange, this.app.vault.getFiles().length]);
 
     useEffect(() => {
       if (notes.length === 0) {
@@ -156,6 +173,7 @@ export class CardDashboardView extends ItemView {
     const cardNodes = filtered.map(({ file, content }) => (
       <CardNote
         key={file.path}
+        sortType={sortType}
         file={file}
         tags={this.app.metadataCache.getFileCache(file)?.frontmatter?.tags ?? []}
         content={content}
@@ -167,16 +185,109 @@ export class CardDashboardView extends ItemView {
     ));
     const columns = getColumns(cardNodes, colCount);
 
+    const sortSwitchButton = (
+      sortType: 'created' | 'modified',
+      setSortType: (t: 'created' | 'modified') => void) => {
+      const ref = React.useRef<HTMLButtonElement>(null);
+      useEffect(() => {
+        if (ref.current) {
+          setIcon(ref.current, "arrow-down-wide-narrow");
+        }
+      }, []);
+      const sortMenu = (
+        event: MouseEvent,
+        sortType: 'created' | 'modified',
+        setSortType: (t: 'created' | 'modified') => void) => {
+        const sortMenu = new Menu();
+        sortMenu.addItem((item) => {
+          item.setTitle("Last created");
+          item.setChecked(sortType === 'created');
+          item.onClick(() => setSortType('created'));
+        });
+        sortMenu.addItem((item) => {
+          item.setTitle("Last modified");
+          item.setChecked(sortType === 'modified');
+          item.onClick(() => setSortType('modified'));
+        });
+        sortMenu.showAtMouseEvent(event);
+      };
+      return <button className="clickable-icon"
+        ref={ref}
+        style={{ marginLeft: '12px' }}
+        onClick={(e) => sortMenu(e.nativeEvent, sortType, setSortType)}
+      />;
+    };
+
+    const header = (
+      sortType: 'created' | 'modified',
+      setSortType: (t: 'created' | 'modified') => void,
+      noteType: 'card' | 'context',
+      setNoteType: (t: 'card' | 'context') => void) => {
+
+      const noteSwitchButton = (
+        noteType: 'card' | 'context',
+        setNoteType: (t: 'card' | 'context') => void) => {
+        const ref = React.useRef<HTMLButtonElement>(null);
+        useEffect(() => {
+          if (ref.current) {
+            setIcon(ref.current, "chevron-down");
+          }
+        }, []);
+        const noteMenu = (
+          event: MouseEvent,
+          noteType: 'card' | 'context',
+          setNoteType: (t: 'card' | 'context') => void) => {
+          const menu = new Menu();
+          menu.addItem((item) => {
+            item.setTitle("卡片笔记");
+            item.setChecked(noteType === 'card');
+            item.onClick(() => setNoteType('card'));
+          });
+          menu.addItem((item) => {
+            item.setTitle("上下文笔记");
+            item.setChecked(noteType === 'context');
+            item.onClick(() => setNoteType('context'));
+          });
+          menu.showAtMouseEvent(event);
+        };
+        return <button className="clickable-icon" style={{ marginRight: '2px' }}
+          ref={ref}
+          onClick={(e) => noteMenu(e.nativeEvent, noteType, setNoteType)} />;
+      }
+
+      const titleSection = () => {
+        return <div style={{ display: "flex", alignItems: "center" }}>
+          {noteSwitchButton(noteType, setNoteType)}
+          <h4 style={{ margin: '0' }}>{noteType == 'card' ? '卡片笔记' : '上下文笔记'}</h4>
+          {sortSwitchButton(sortType, setSortType)}
+        </div>;
+      }
+
+      return <div className="card-dashboard-header-container">
+        {titleSection()}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <div className="card-dashboard-header-searchbar">
+            <input
+              type="text"
+              placeholder="关键字"
+              value={keyword}
+              onChange={e => setKeyword(e.target.value)}
+              style={{ background: 'transparent', border: 'none', outline: 'none', flex: 1 }}
+            />
+          </div>
+        </div>
+      </div>;
+    };
+
     return (
       <div style={{ padding: 16 }}>
-        {/* 筛选区域 */}
+        {/* 标题区域 */}
+        {header(sortType, setSortType, noteType, setNoteType)}
         <FilterView
-          sortType={sortType}
-          setSortType={setSortType}
           allTags={allTags}
           tagFilterValue={tagFilterValue}
           setTagFilterValue={setTagFilterValue}
-          dir={dir}
+          dir={dir()}
           dateRange={dateRange}
           setDateRange={setDateRange}
           keyword={keyword}

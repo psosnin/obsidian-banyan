@@ -4,6 +4,7 @@ import * as React from "react";
 
 interface CardNoteProps {
   file: TFile;
+  sortType: 'created' | 'modified';
   tags: string[];
   content: string;
   app: App;
@@ -35,9 +36,12 @@ const MarkdownContent = ({ app, markdown, sourcePath, component }: {
   return <div ref={ref} />;
 };
 
-const CardNote: React.FC<CardNoteProps> = ({ file, tags, content, app, component, onDelete, onOpen }) => {
+const CardNote: React.FC<CardNoteProps> = ({ file, tags, sortType, content, app, component, onDelete, onOpen }) => {
   const contentRef = React.useRef<HTMLDivElement>(null);
   const [overflow, setOverflow] = React.useState(false);
+
+  const isCreated = sortType === 'created';
+
   React.useEffect(() => {
     const el = contentRef.current;
     if (el) {
@@ -64,7 +68,7 @@ const CardNote: React.FC<CardNoteProps> = ({ file, tags, content, app, component
             <div className="card-note-tag-content">{tag}</div>
           </div>
         )}</div>}
-        <div className="card-note-time">{new Date(file.stat.mtime).toLocaleString()}</div>
+        <div className="card-note-time">{isCreated ? "创建于" : "编辑于"} {new Date(isCreated ? file.stat.ctime : file.stat.mtime).toLocaleString()}</div>
         <div className="card-note-more">
           <span className="card-note-more-btn" onClick={e => {
             e.stopPropagation();

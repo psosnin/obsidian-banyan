@@ -15,7 +15,7 @@ If your plugin does not need CSS, delete this file.
   z-index: 1000;
   max-height: 132px;
   overflow-y: auto;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   border-radius: 6px;
   left: 0;
   top: 100%;
@@ -26,7 +26,8 @@ If your plugin does not need CSS, delete this file.
   padding: 6px 8px;
   cursor: pointer;
   white-space: nowrap;
-  text-align: left; /* Added for left alignment */
+  text-align: left;
+  /* Added for left alignment */
 }
 
 .folder-suggest-item:hover {
@@ -36,9 +37,9 @@ If your plugin does not need CSS, delete this file.
 .card-note-container {
   background: var(--background-secondary);
   color: var(--text-normal);
-  border-radius:8px;
+  border-radius: 8px;
   padding: 16px;
-  margin-bottom:16px;
+  margin-bottom: 16px;
   position: relative;
   box-shadow: 0 2px 8px #0002;
   cursor: pointer;
@@ -77,13 +78,13 @@ If your plugin does not need CSS, delete this file.
 }
 
 .card-note-more {
-  position:absolute;
+  position: absolute;
   bottom: 16px;
   right: 16px;
 }
 
 .card-note-more-btn {
-  cursor:pointer;
+  cursor: pointer;
   padding: 2px 8px;
 }
 
@@ -97,15 +98,15 @@ If your plugin does not need CSS, delete this file.
 }
 
 .card-note-tags {
-    cursor: text;
-    display: inline-flex;
-    vertical-align: top;
-    flex-wrap: wrap;
-    width: 100%;
-    color: var(--text-normal);
-    font-size: var(--font-ui-small);
-    outline: none;
-    gap: var(--size-2-3);
+  cursor: text;
+  display: inline-flex;
+  vertical-align: top;
+  flex-wrap: wrap;
+  width: 100%;
+  color: var(--text-normal);
+  font-size: var(--font-ui-small);
+  outline: none;
+  gap: var(--size-2-3);
 }
 
 .card-note-tag {
@@ -115,13 +116,33 @@ If your plugin does not need CSS, delete this file.
   border: var(--tag-border-width) solid var(--tag-border-color);
   border-radius: var(--tag-radius);
   color: var(--tag-color);
-  cursor: var(--cursor); 
+  cursor: var(--cursor);
   font-weight: var(--tag-weight);
-  font-size: var(--font-ui-smaller);
+  font-size: var(--font-ui-small);
   padding: var(--tag-padding-y) var(--tag-padding-x);
   line-height: 1;
   max-width: calc(100% - var(--size-2-3) - 1ch);
   gap: var(--size-2-1);
   position: relative;
   cursor: var(--cursor-link);
+  white-space: nowrap;
+}
+
+.card-dashboard-header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.card-dashboard-header-searchbar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background-color: var(--background-secondary);
+  /* border: 1px solid var(--background-modifier-border); */
+  border-radius: 8px;
+  padding: 0 8px;
+  height: 32px;
+  min-width: 220px;
 }

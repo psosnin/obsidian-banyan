@@ -1,39 +1,51 @@
-import { useRef, useState } from "react";
+import { useState, useRef, useLayoutEffect } from "react";
+import { Notice } from "obsidian";
 
 interface TagInputProps {
-  value: string[];
+  tags: string[];
   onChange: (tags: string[]) => void;
-  suggestions?: string[];
+  allTags: string[];
   placeholder?: string;
+  allowCreate?: boolean;
 }
 
-const TagInput: React.FC<TagInputProps> = ({ value, onChange, suggestions = [], placeholder }) => {
+const TagInput: React.FC<TagInputProps> = ({ tags, onChange, allTags, placeholder, allowCreate = false }) => {
+
   const [input, setInput] = useState("");
+
   const [showSuggest, setShowSuggest] = useState(false);
   const [highlight, setHighlight] = useState(-1);
   const inputRef = useRef<HTMLInputElement>(null);
+  const suggestRef = useRef<HTMLDivElement>(null);
+  const [suggestTop, setSuggestTop] = useState<number>(0);
 
-  const filtered = suggestions.filter(
-    tag => tag.toLowerCase().includes(input.toLowerCase()) && !value.includes(tag)
+  useLayoutEffect(() => {
+    if (inputRef.current) {
+      setSuggestTop(inputRef.current.offsetTop + inputRef.current.offsetHeight + 12);
+    }
+  }, [tags.length, input, showSuggest]);
+
+  const filtered = allTags.filter(
+    tag => tag.toLowerCase().includes(input.toLowerCase()) && !tags.includes(tag)
   );
 
   const addTag = (tag: string) => {
-    if (tag && !value.includes(tag)) {
-      onChange([...value, tag]);
+    if (tag && tag.length > 0) {
+      if (tags.includes(tag)) {
+        new Notice("该标签已添加");
+      } else if (!allowCreate && !allTags.includes(tag)) {
+        new Notice("只能选择已有标签");
+      } else {
+        onChange([...tags, tag]);
+      }
     }
     setInput("");
     setShowSuggest(false);
     setHighlight(-1);
   };
 
-  const removeTag = (idx: number) => {
-    onChange(value.filter((_, i) => i !== idx));
-  };
-
-  const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInput(e.target.value);
-    setShowSuggest(true);
-    setHighlight(-1);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -44,8 +56,8 @@ const TagInput: React.FC<TagInputProps> = ({ value, onChange, suggestions = [], 
         addTag(input.trim());
       }
       e.preventDefault();
-    } else if (e.key === "Backspace" && !input && value.length > 0) {
-      removeTag(value.length - 1);
+    } else if (e.key === "Backspace" && !input && tags.length > 0) {
+      handleRemoveTag(tags.length - 1);
     } else if (e.key === "ArrowDown") {
       setHighlight(h => Math.min(filtered.length - 1, h + 1));
       setShowSuggest(true);
@@ -62,31 +74,55 @@ const TagInput: React.FC<TagInputProps> = ({ value, onChange, suggestions = [], 
     setTimeout(() => setShowSuggest(false), 100);
   };
 
+  const handleRemoveTag = (idx: number) => {
+    onChange(tags.filter((_, i) => i !== idx));
+  };
+
   return (
-    <div style={{ display: 'flex', alignItems: 'center', flex: 1, minHeight: 40, padding: '4px 8px', border: '2px solid #5a4fff', borderRadius: 10, background: '#fff', flexWrap: 'wrap', gap: 4, position: 'relative', boxSizing: 'border-box' }}>
-      <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', flex: 1, gap: 4 }}>
-        {value.map((tag, idx) => (
-          <span key={tag} style={{ background: '#f6f6f6', color: '#222', borderRadius: 6, padding: '2px 8px', marginRight: 2, display: 'flex', alignItems: 'center', fontSize: 16, fontWeight: 400, boxShadow: '0 1px 2px #eee', height: 28 }}>
+    <div style={{ backgroundColor: 'var(--background-secondary)', padding: '6px 12px', borderRadius: 8, position: "relative" }}>
+      <div style={{ display: "flex", flexWrap: "wrap", overflowX: "hidden", alignItems: "center", gap: 4, rowGap: 6, width: 240 }}>
+        {tags.map((tag, idx) => (
+          <span key={tag} className="card-note-tag">
             {tag}
-            <span style={{ marginLeft: 4, cursor: 'pointer', fontSize: 16, opacity: 0.5 }} onClick={() => removeTag(idx)}>&times;</span>
+            <span style={{ marginLeft: 4, cursor: "pointer" }} onClick={() => handleRemoveTag(idx)}>&times;</span>
           </span>
         ))}
         <input
-          ref={inputRef}
+          type="text"
           value={input}
-          onChange={handleInput}
+          ref={inputRef}
+          onChange={e => { handleInputChange(e); setShowSuggest(true); setHighlight(-1); }}
           onKeyDown={handleKeyDown}
           onBlur={handleBlur}
-          placeholder={placeholder || "输入标签..."}
-          style={{ flex: 1, minWidth: 40, background: 'transparent', border: 'none', outline: 'none', color: '#222', fontSize: 16, fontWeight: 400, height: 28, padding: 0, margin: 0 }}
+          onFocus={() => { setShowSuggest(true); setHighlight(-1); }}
+          placeholder={tags.length == 0 ? placeholder : ""}
+          style={{ border: "none", outline: "none", background: 'transparent' }}
         />
       </div>
       {showSuggest && filtered.length > 0 && (
-        <div style={{ position: 'absolute', top: 36, left: 8, background: '#fff', color: '#222', border: '1px solid #5a4fff', borderRadius: 6, boxShadow: '0 2px 8px #eee', zIndex: 10, minWidth: 120 }}>
+        <div
+          ref={suggestRef}
+          style={{
+            position: 'absolute',
+            left: 12,
+            top: suggestTop,
+            background: 'var(--background-primary)',
+            border: '1px solid var(--background-modifier-border)',
+            color: 'var(--text-color)', borderRadius: 6,
+            padding: '6px',
+            zIndex: 10, minWidth: 240,
+            maxHeight: 200, overflowY: 'auto',
+          }}
+        >
           {filtered.map((tag, idx) => (
             <div
               key={tag}
-              style={{ padding: '8px 16px', background: highlight === idx ? '#e6eaff' : 'transparent', cursor: 'pointer', fontSize: 16 }}
+              style={{
+                padding: '6px',
+                background: highlight === idx ? 'var(--background-primary-alt)' : 'transparent',
+                cursor: 'pointer', borderRadius: 6,
+                fontSize: 'var(--font-small)',
+              }}
               onMouseDown={() => addTag(tag)}
               onMouseEnter={() => setHighlight(idx)}
             >

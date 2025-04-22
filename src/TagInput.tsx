@@ -63,12 +63,12 @@ const TagInput: React.FC<TagInputProps> = ({ value, onChange, suggestions = [], 
   };
 
   return (
-    <div style={{display:'flex',alignItems:'center',flex:1,minHeight:40,padding:'4px 8px',border:'2px solid #5a4fff',borderRadius:10,background:'#fff',flexWrap:'wrap',gap:4,position:'relative',boxSizing:'border-box'}}>
-      <div style={{display:'flex',alignItems:'center',flexWrap:'wrap',flex:1,gap:4}}>
+    <div style={{ display: 'flex', alignItems: 'center', flex: 1, minHeight: 40, padding: '4px 8px', border: '2px solid #5a4fff', borderRadius: 10, background: '#fff', flexWrap: 'wrap', gap: 4, position: 'relative', boxSizing: 'border-box' }}>
+      <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', flex: 1, gap: 4 }}>
         {value.map((tag, idx) => (
-          <span key={tag} style={{background:'#f6f6f6',color:'#222',borderRadius:6,padding:'2px 8px',marginRight:2,display:'flex',alignItems:'center',fontSize:16,fontWeight:400,boxShadow:'0 1px 2px #eee',height:28}}>
+          <span key={tag} style={{ background: '#f6f6f6', color: '#222', borderRadius: 6, padding: '2px 8px', marginRight: 2, display: 'flex', alignItems: 'center', fontSize: 16, fontWeight: 400, boxShadow: '0 1px 2px #eee', height: 28 }}>
             {tag}
-            <span style={{marginLeft:4,cursor:'pointer',fontSize:16,opacity:0.5}} onClick={()=>removeTag(idx)}>&times;</span>
+            <span style={{ marginLeft: 4, cursor: 'pointer', fontSize: 16, opacity: 0.5 }} onClick={() => removeTag(idx)}>&times;</span>
           </span>
         ))}
         <input
@@ -78,17 +78,17 @@ const TagInput: React.FC<TagInputProps> = ({ value, onChange, suggestions = [], 
           onKeyDown={handleKeyDown}
           onBlur={handleBlur}
           placeholder={placeholder || "输入标签..."}
-          style={{flex:1,minWidth:40,background:'transparent',border:'none',outline:'none',color:'#222',fontSize:16,fontWeight:400,height:28,padding:0,margin:0}}
+          style={{ flex: 1, minWidth: 40, background: 'transparent', border: 'none', outline: 'none', color: '#222', fontSize: 16, fontWeight: 400, height: 28, padding: 0, margin: 0 }}
         />
       </div>
       {showSuggest && filtered.length > 0 && (
-        <div style={{position:'absolute',top:36,left:8,background:'#fff',color:'#222',border:'1px solid #5a4fff',borderRadius:6,boxShadow:'0 2px 8px #eee',zIndex:10,minWidth:120}}>
+        <div style={{ position: 'absolute', top: 36, left: 8, background: '#fff', color: '#222', border: '1px solid #5a4fff', borderRadius: 6, boxShadow: '0 2px 8px #eee', zIndex: 10, minWidth: 120 }}>
           {filtered.map((tag, idx) => (
             <div
               key={tag}
-              style={{padding:'8px 16px',background:highlight===idx?'#e6eaff':'transparent',cursor:'pointer',fontSize:16}}
-              onMouseDown={()=>addTag(tag)}
-              onMouseEnter={()=>setHighlight(idx)}
+              style={{ padding: '8px 16px', background: highlight === idx ? '#e6eaff' : 'transparent', cursor: 'pointer', fontSize: 16 }}
+              onMouseDown={() => addTag(tag)}
+              onMouseEnter={() => setHighlight(idx)}
             >
               {tag}
             </div>

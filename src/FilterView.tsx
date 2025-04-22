@@ -19,16 +19,16 @@ export const FilterView: React.FC<FilterViewProps> = (props) => {
     return <div>请先在设置中配置要展示的笔记目录。</div>;
   }
   return (
-    <div style={{marginBottom: '0.5em', display: 'flex', gap: '1em', flexWrap: 'wrap', flexDirection: 'column'}}>
+    <div style={{ marginBottom: '0.5em', display: 'flex', gap: '1em', flexWrap: 'wrap', flexDirection: 'column' }}>
       <div>
-        <label style={{marginRight: 8}}>排序方式：</label>
+        <label style={{ marginRight: 8 }}>排序方式：</label>
         <select value={props.sortType} onChange={e => props.setSortType(e.target.value as 'created' | 'modified')}>
           <option value="created">按创建时间</option>
           <option value="modified">按编辑时间</option>
         </select>
       </div>
       <div>
-        <label style={{marginRight: 8}}>标签筛选：</label>
+        <label style={{ marginRight: 8 }}>标签筛选：</label>
         <TagFilterGroup
           allTags={props.allTags}
           value={props.tagFilterValue}
@@ -36,23 +36,23 @@ export const FilterView: React.FC<FilterViewProps> = (props) => {
         />
       </div>
       <div>
-        <label style={{marginRight: 8}}>日期筛选：</label>
+        <label style={{ marginRight: 8 }}>日期筛选：</label>
         <input
           type="date"
           value={props.dateRange.from}
           onChange={e => props.setDateRange({ ...props.dateRange, from: e.target.value })}
-          style={{marginRight: 4}}
+          style={{ marginRight: 4 }}
         />
         <span> 至 </span>
         <input
           type="date"
           value={props.dateRange.to}
           onChange={e => props.setDateRange({ ...props.dateRange, to: e.target.value })}
-          style={{marginLeft: 4}}
+          style={{ marginLeft: 4 }}
         />
       </div>
       <div>
-        <label style={{marginRight: 8}}>关键字：</label>
+        <label style={{ marginRight: 8 }}>关键字：</label>
         <input
           type="text"
           value={props.keyword}

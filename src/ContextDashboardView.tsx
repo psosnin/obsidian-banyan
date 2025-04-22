@@ -28,11 +28,11 @@ export class ContextDashboardView extends ItemView {
   async onOpen() {
     this.root = createRoot(this.containerEl.children[1]);
     this.root.render(
-			<StrictMode>
-				<this._ContextDashboardView />
-			</StrictMode>,
-		);
-    return ;
+      <StrictMode>
+        <this._ContextDashboardView />
+      </StrictMode>,
+    );
+    return;
   }
 
   async onClose() {
@@ -47,9 +47,9 @@ export class ContextDashboardView extends ItemView {
     const [tagFilterValue, setTagFilterValue] = React.useState<{ and: string[][]; not: string[] }>({ and: [[]], not: [] });
     const [dateRange, setDateRange] = React.useState<{ from: string; to: string }>({ from: '', to: '' });
     const [keyword, setKeyword] = React.useState<string>('');
-    
+
     const [refreshFlag, setRefreshFlag] = React.useState(0);
-    
+
     React.useEffect(() => {
       // 事件监听函数
       const onVaultChange = (file: TFile) => {
@@ -66,7 +66,7 @@ export class ContextDashboardView extends ItemView {
         this.app.vault.off('modify', onVaultChange);
       };
     }, [dir]);
-    
+
     React.useEffect(() => {
       if (!dir) return;
       const files = this.app.vault.getFiles();
@@ -120,16 +120,16 @@ export class ContextDashboardView extends ItemView {
     if (!props.dir) {
       return <div>请先在设置中配置要展示的笔记目录。</div>;
     }
-    return <div style={{marginBottom: '0.5em', display: 'flex', gap: '1em'}}>
+    return <div style={{ marginBottom: '0.5em', display: 'flex', gap: '1em' }}>
       <div>
-        <label style={{marginRight: 8}}>排序方式：</label>
+        <label style={{ marginRight: 8 }}>排序方式：</label>
         <select value={props.sortType} onChange={e => props.setSortType(e.target.value as 'created' | 'modified')}>
           <option value="created">按创建时间</option>
           <option value="modified">按编辑时间</option>
         </select>
       </div>
       <div>
-        <label style={{marginRight: 8}}>标签筛选：</label>
+        <label style={{ marginRight: 8 }}>标签筛选：</label>
         <TagFilterGroup
           allTags={props.allTags}
           value={props.tagFilterValue}
@@ -251,17 +251,17 @@ export class ContextDashboardView extends ItemView {
     const renderNoteItem = (file: TFile) => {
       const properties = this.app.metadataCache.getFileCache(file)?.frontmatter;
       return (
-        <li key={file.path} style={{marginBottom: '0.5em'}}>
-          <a href="#" 
-            style={{marginRight: '12px'}}
+        <li key={file.path} style={{ marginBottom: '0.5em' }}>
+          <a href="#"
+            style={{ marginRight: '12px' }}
             onClick={(e) => {
               e.preventDefault();
               this.app.workspace.openLinkText(file.path, "", false);
-          }}>
+            }}>
             {properties?.title || file.basename}
           </a>
           {properties?.tags && properties.tags.map((tag: string) =>
-            <span key={tag} style={{marginLeft: '6px'}}>
+            <span key={tag} style={{ marginLeft: '6px' }}>
               <span className="cm-formatting cm-formatting-hashtag cm-hashtag cm-hashtag-begin cm-meta cm-tag-">#</span>
               <span className="cm-hashtag cm-hashtag-end cm-meta cm-tag-">{tag}</span>
             </span>
@@ -270,21 +270,21 @@ export class ContextDashboardView extends ItemView {
       );
     };
     const renderDay = (files: TFile[], day: number) => [
-      <h4 key={"day-" + day} style={{fontWeight: 500, marginTop: '0.2em'}}>{day}日</h4>,
+      <h4 key={"day-" + day} style={{ fontWeight: 500, marginTop: '0.2em' }}>{day}日</h4>,
       <ul>
-      {...files.map(renderNoteItem)}
+        {...files.map(renderNoteItem)}
       </ul>
     ];
     const renderMonth = (monthObj: Record<number, TFile[]>, month: number) => [
-      <h3 key={"month-" + month} style={{fontSize: '1.1em', fontWeight: 600, marginTop: '0.3em'}}>{month}月</h3>,
+      <h3 key={"month-" + month} style={{ fontSize: '1.1em', fontWeight: 600, marginTop: '0.3em' }}>{month}月</h3>,
       ...Object.keys(monthObj).sort((a, b) => Number(b) - Number(a)).flatMap(day => renderDay(monthObj[Number(day)], Number(day)))
     ];
     const renderQuarter = (quarterObj: Record<number, Record<number, TFile[]>>, quarter: number) => [
-      <h2 key={"quarter-" + quarter} style={{fontSize: '1.2em', fontWeight: 'bold', marginTop: '0.5em'}}>{`第${quarter}季度`}</h2>,
+      <h2 key={"quarter-" + quarter} style={{ fontSize: '1.2em', fontWeight: 'bold', marginTop: '0.5em' }}>{`第${quarter}季度`}</h2>,
       ...Object.keys(quarterObj).sort((a, b) => Number(b) - Number(a)).flatMap(month => renderMonth(quarterObj[Number(month)], Number(month)))
     ];
     const renderYear = (yearObj: Record<number, Record<number, Record<number, TFile[]>>>, year: number) => [
-      <h1 key={"year-" + year} style={{fontSize: '1.5em', fontWeight: 'bold', marginTop: '1em'}}>{year}年</h1>,
+      <h1 key={"year-" + year} style={{ fontSize: '1.5em', fontWeight: 'bold', marginTop: '1em' }}>{year}年</h1>,
       ...Object.keys(yearObj).sort((a, b) => Number(b) - Number(a)).flatMap(quarter => renderQuarter(yearObj[Number(quarter)], Number(quarter)))
     ];
     const grouped = groupNotes(notes);

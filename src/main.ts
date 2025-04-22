@@ -75,7 +75,7 @@ export default class MyPlugin extends Plugin {
 		const content = `---\ntags: \n---\n`;
 		const file = await this.app.vault.create(filePath, content);
 		const leaf = this.app.workspace.getLeaf(true);
-		await leaf.openFile(file, { active: true, state: { mode: 'source' },});
+		await leaf.openFile(file, { active: true, state: { mode: 'source' }, });
 		this.app.workspace.setActiveLeaf(leaf, { focus: true });
 	}
 
@@ -85,7 +85,7 @@ export default class MyPlugin extends Plugin {
 		const content = `---\ntitle:\ntags: \n---\n`;
 		const file = await this.app.vault.create(filePath, content);
 		const leaf = this.app.workspace.getLeaf(true);
-		await leaf.openFile(file, { active: true, state: { mode: 'source' },});
+		await leaf.openFile(file, { active: true, state: { mode: 'source' }, });
 		this.app.workspace.setActiveLeaf(leaf, { focus: true });
 	}
 
@@ -127,10 +127,10 @@ export default class MyPlugin extends Plugin {
 	// 使得打开的视图唯一
 	async activateView(viewType: string) {
 		const { workspace } = this.app;
-	
+
 		var leaf: WorkspaceLeaf | null = null;
 		const leaves = workspace.getLeavesOfType(viewType);
-	
+
 		if (leaves.length > 0) {
 			// A leaf with our view already exists, use that
 			leaf = leaves[0];

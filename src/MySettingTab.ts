@@ -53,7 +53,7 @@ export class MySettingTab extends PluginSettingTab {
 						await this.plugin.saveSettings();
 					});
 			});
-		
+
 		new Setting(containerEl)
 			.setName('卡片笔记目录')
 			// .setDesc('选择要展示的笔记目录')

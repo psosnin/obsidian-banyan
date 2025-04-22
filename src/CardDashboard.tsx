@@ -41,18 +41,18 @@ export class CardDashboardView extends ItemView {
 
   _CardDashboardView = () => {
     const dir = this.plugin.settings.cardsDirectory;
-    
+
     const [sortType, setSortType] = useState<'created' | 'modified'>('created');
     const [allTags, setAllTags] = useState<string[]>([]);
     const [tagFilterValue, setTagFilterValue] = useState<{ and: string[][]; not: string[] }>({ and: [[]], not: [] });
-    
+
     const [dateRange, setDateRange] = useState<{ from: string; to: string }>({ from: '', to: '' });
-    
+
     const [keyword, setKeyword] = useState<string>('');
-    
+
     const [notes, setNotes] = useState<TFile[]>([]);
-    const [contents, setContents] = useState<{file: TFile, content: string}[]>([]);
-    
+    const [contents, setContents] = useState<{ file: TFile, content: string }[]>([]);
+
     const [refreshFlag, setRefreshFlag] = useState(0);
 
     useEffect(() => {
@@ -81,7 +81,7 @@ export class CardDashboardView extends ItemView {
         filtered.sort((a, b) => b.stat.ctime - a.stat.ctime);
       } else if (sortType === 'modified') {
         filtered.sort((a, b) => b.stat.mtime - a.stat.mtime);
-      } 
+      }
       setNotes(filtered);
       // 标签收集
       const tagSet = new Set<string>();
@@ -112,7 +112,7 @@ export class CardDashboardView extends ItemView {
     // 卡片删除
     const handleDelete = async (file: TFile) => {
       await this.app.vault.delete(file);
-      setRefreshFlag(f => f+1);
+      setRefreshFlag(f => f + 1);
       new Notice('卡片已删除');
     };
 
@@ -123,7 +123,7 @@ export class CardDashboardView extends ItemView {
 
     // 瀑布流布局
     const getColumns = (cards: React.JSX.Element[], colCount: number) => {
-      const cols: React.JSX.Element[][] = Array.from({length: colCount}, () => []);
+      const cols: React.JSX.Element[][] = Array.from({ length: colCount }, () => []);
       cards.forEach((card, idx) => {
         cols[idx % colCount].push(card);
       });
@@ -137,8 +137,8 @@ export class CardDashboardView extends ItemView {
         const w = window.innerWidth;
         const cardWidth = 500;
         let cols = 1;
-        if (w >= cardWidth*3) cols = 3;
-        else if (w >= cardWidth*2) cols = 2;
+        if (w >= cardWidth * 3) cols = 3;
+        else if (w >= cardWidth * 2) cols = 2;
         setColCount(cols);
       };
       updateCol();
@@ -149,11 +149,11 @@ export class CardDashboardView extends ItemView {
     // 卡片筛选
     let filtered = contents;
     if (keyword.trim()) {
-      filtered = filtered.filter(({content}) => content.toLowerCase().includes(keyword.trim().toLowerCase()));
+      filtered = filtered.filter(({ content }) => content.toLowerCase().includes(keyword.trim().toLowerCase()));
     }
     // TODO: 标签、日期筛选可复用 ContextDashboardView 逻辑
 
-    const cardNodes = filtered.map(({file, content}) => (
+    const cardNodes = filtered.map(({ file, content }) => (
       <CardNote
         key={file.path}
         file={file}
@@ -168,7 +168,7 @@ export class CardDashboardView extends ItemView {
     const columns = getColumns(cardNodes, colCount);
 
     return (
-      <div style={{padding:16}}>
+      <div style={{ padding: 16 }}>
         {/* 筛选区域 */}
         <FilterView
           sortType={sortType}
@@ -183,13 +183,13 @@ export class CardDashboardView extends ItemView {
           setKeyword={setKeyword}
         />
         {/* 添加卡片按钮区域 */}
-        <div style={{marginBottom:24}}>
-          <button onClick={()=>this.plugin.addCardNote()} style={{padding:'8px 16px'}}>添加卡片</button>
+        <div style={{ marginBottom: 24 }}>
+          <button onClick={() => this.plugin.addCardNote()} style={{ padding: '8px 16px' }}>添加卡片</button>
         </div>
         {/* 瀑布流卡片区域 */}
-        <div style={{display:'flex',gap:16}}>
+        <div style={{ display: 'flex', gap: 16 }}>
           {columns.map((col, idx) => (
-            <div key={idx} style={{flex:1,minWidth:0}}>{col}</div>
+            <div key={idx} style={{ flex: 1, minWidth: 0 }}>{col}</div>
           ))}
         </div>
       </div>

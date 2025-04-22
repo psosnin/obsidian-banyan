@@ -22,8 +22,8 @@ function extractBody(md: string): string {
   return md;
 }
 
-const MarkdownContent = ({app, markdown, sourcePath, component}:{
-    app:any, markdown:string, sourcePath:string, component: Component
+const MarkdownContent = ({ app, markdown, sourcePath, component }: {
+  app: any, markdown: string, sourcePath: string, component: Component
 }) => {
   const ref = React.useRef<HTMLDivElement>(null);
   React.useEffect(() => {
@@ -49,7 +49,7 @@ const CardNote: React.FC<CardNoteProps> = ({ file, tags, content, app, component
       <div
         className={"card-note-content" + (overflow ? " card-note-content--overflow" : "")}
         ref={contentRef}
-        onDoubleClick={()=>onOpen(file)}
+        onDoubleClick={() => onOpen(file)}
       >
         <MarkdownContent
           app={app}
@@ -58,32 +58,32 @@ const CardNote: React.FC<CardNoteProps> = ({ file, tags, content, app, component
           component={component}
         />
       </div>
-    <div className="card-note-footer">
-      { tags.length > 0 && <div className="card-note-tags"> {tags.map((tag) => 
-        <div className="card-note-tag" key={tag}>
-          <div className="card-note-tag-content">{tag}</div>
+      <div className="card-note-footer">
+        {tags.length > 0 && <div className="card-note-tags"> {tags.map((tag) =>
+          <div className="card-note-tag" key={tag}>
+            <div className="card-note-tag-content">{tag}</div>
+          </div>
+        )}</div>}
+        <div className="card-note-time">{new Date(file.stat.mtime).toLocaleString()}</div>
+        <div className="card-note-more">
+          <span className="card-note-more-btn" onClick={e => {
+            e.stopPropagation();
+            const menu = document.createElement('div');
+            menu.className = 'card-note-more-menu';
+            menu.innerHTML = '<button id="del-btn">删除</button>';
+            document.body.appendChild(menu);
+            const rect = (e.target as HTMLElement).getBoundingClientRect();
+            menu.style.left = rect.right + 'px';
+            menu.style.top = rect.top + 'px';
+            menu.querySelector('#del-btn')?.addEventListener('click', () => {
+              onDelete(file);
+              menu.remove();
+            });
+            const removeMenu = () => { menu.remove(); document.removeEventListener('click', removeMenu) };
+            setTimeout(() => document.addEventListener('click', removeMenu), 100);
+          }}>···</span>
         </div>
-      )}</div>}
-      <div className="card-note-time">{new Date(file.stat.mtime).toLocaleString()}</div>
-      <div className="card-note-more">
-        <span className="card-note-more-btn" onClick={e=>{
-          e.stopPropagation();
-          const menu = document.createElement('div');
-          menu.className = 'card-note-more-menu';
-          menu.innerHTML = '<button id="del-btn">删除</button>';
-          document.body.appendChild(menu);
-          const rect = (e.target as HTMLElement).getBoundingClientRect();
-          menu.style.left = rect.right + 'px';
-          menu.style.top = rect.top + 'px';
-          menu.querySelector('#del-btn')?.addEventListener('click',()=>{
-            onDelete(file);
-            menu.remove();
-          });
-          const removeMenu = ()=>{menu.remove();document.removeEventListener('click',removeMenu)};
-          setTimeout(()=>document.addEventListener('click',removeMenu),100);
-        }}>···</span>
       </div>
-    </div>
     </div>
   );
 };

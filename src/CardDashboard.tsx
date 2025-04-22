@@ -41,11 +41,11 @@ export class CardDashboardView extends ItemView {
 
   _CardDashboardView = () => {
 
-    const [noteType, setNoteType] = useState<'card' | 'context'>('card');
+    const [noteType, setNoteType] = useState<'card' | 'context'>(this.plugin.settings.noteType || 'card');
 
     const dir = () => noteType === 'card' ? this.plugin.settings.cardsDirectory : this.plugin.settings.notesDirectory;
 
-    const [sortType, setSortType] = useState<'created' | 'modified'>('created');
+    const [sortType, setSortType] = useState<'created' | 'modified'>(this.plugin.settings.sortType || 'created');
 
     const [allTags, setAllTags] = useState<string[]>([]);
     const [tagFilterValue, setTagFilterValue] = useState<{ and: string[][]; not: string[] }>({ and: [[]], not: [] });
@@ -202,12 +202,20 @@ export class CardDashboardView extends ItemView {
         sortMenu.addItem((item) => {
           item.setTitle("Last created");
           item.setChecked(sortType === 'created');
-          item.onClick(() => setSortType('created'));
+          item.onClick(() => {
+            setSortType('created');
+            this.plugin.settings.sortType = 'created';
+            this.plugin.saveSettings();
+          });
         });
         sortMenu.addItem((item) => {
           item.setTitle("Last modified");
           item.setChecked(sortType === 'modified');
-          item.onClick(() => setSortType('modified'));
+          item.onClick(() => {
+            setSortType('modified');
+            this.plugin.settings.sortType = 'modified';
+            this.plugin.saveSettings();
+          });
         });
         sortMenu.showAtMouseEvent(event);
       };
@@ -241,12 +249,20 @@ export class CardDashboardView extends ItemView {
           menu.addItem((item) => {
             item.setTitle("卡片笔记");
             item.setChecked(noteType === 'card');
-            item.onClick(() => setNoteType('card'));
+            item.onClick(() => {
+              setNoteType('card');
+              this.plugin.settings.noteType = 'card';
+              this.plugin.saveSettings();
+            });
           });
           menu.addItem((item) => {
             item.setTitle("上下文笔记");
             item.setChecked(noteType === 'context');
-            item.onClick(() => setNoteType('context'));
+            item.onClick(() => {
+              setNoteType('context');
+              this.plugin.settings.noteType = 'context';
+              this.plugin.saveSettings();
+            });
           });
           menu.showAtMouseEvent(event);
         };

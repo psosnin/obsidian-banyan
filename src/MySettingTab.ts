@@ -5,11 +5,15 @@ import { getAllFolders, createFolderSuggest } from './utils/folderSuggest';
 export interface MyPluginSettings {
 	notesDirectory: string;
 	cardsDirectory: string;
+	noteType: 'card' | 'context';
+	sortType: 'created' | 'modified';
 }
 
 export const DEFAULT_SETTINGS: MyPluginSettings = {
 	notesDirectory: 'contexts',
-	cardsDirectory: 'cards'
+	cardsDirectory: 'cards',
+	noteType: 'card',
+	sortType: 'created'
 }
 
 export class MySettingTab extends PluginSettingTab {
@@ -19,26 +23,11 @@ export class MySettingTab extends PluginSettingTab {
 		super(app, plugin);
 		this.plugin = plugin;
 	}
-	async getAllFolders(): Promise<string[]> {
-		const folders: string[] = [];
-		const walk = (folder: TFolder, path: string) => {
-			folders.push(path);
-			for (const child of folder.children) {
-				if (child instanceof TFolder) {
-					walk(child, child.path);
-				}
-			}
-		};
-		const root = this.app.vault.getRoot();
-		walk(root, "");
-		return folders.filter(f => f !== "");
-	}
 	display(): void {
 		const { containerEl } = this;
 		containerEl.empty();
 		new Setting(containerEl)
 			.setName('上下文笔记目录')
-			// .setDesc('选择要展示的笔记目录')
 			.addText(async text => {
 				const folders = await getAllFolders(this.app);
 				createFolderSuggest(text.inputEl, folders, async (folder) => {

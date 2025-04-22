@@ -22,7 +22,7 @@ export class CardDashboardView extends ItemView {
   }
 
   getDisplayText(): string {
-    return "卡片笔记";
+    return "Ted Note Way";
   }
 
   async onOpen() {

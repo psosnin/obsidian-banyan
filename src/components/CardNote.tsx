@@ -49,12 +49,13 @@ const CardNote: React.FC<CardNoteProps> = ({ file, tags, sortType, content, app,
     }
   }, [content]);
   return (
-    <div className="card-note-container">
+    <div className="card-note-container"  onDoubleClick={(e) => {
+      onOpen(file); 
+      e.preventDefault();
+    }}>
       <div
         className={"card-note-content" + (overflow ? " card-note-content--overflow" : "")}
-        ref={contentRef}
-        onDoubleClick={() => onOpen(file)}
-      >
+        ref={contentRef}>
         <MarkdownContent
           app={app}
           markdown={extractBody(content)}

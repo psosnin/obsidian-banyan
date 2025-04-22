@@ -22,7 +22,7 @@ export class CardDashboardView extends ItemView {
   }
 
   getDisplayText(): string {
-    return "卡片笔记 面板";
+    return "卡片笔记";
   }
 
   async onOpen() {
@@ -130,7 +130,7 @@ export class CardDashboardView extends ItemView {
     const handleDelete = async (file: TFile) => {
       await this.app.vault.delete(file);
       setRefreshFlag(f => f + 1);
-      new Notice('卡片已删除');
+      new Notice('笔记已删除');
     };
 
     // 卡片双击打开

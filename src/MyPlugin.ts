@@ -1,5 +1,4 @@
 import { App, Editor, MarkdownView, Modal, normalizePath, Notice, Plugin, PluginSettingTab, Setting, SuggestModal, TFolder, WorkspaceLeaf } from 'obsidian';
-import { ContextDashboardView, CONTEXT_DASHBOARD_VIEW_TYPE } from "./ContextDashboard";
 import { MyPluginSettings, MySettingTab, DEFAULT_SETTINGS } from './MySettingTab';
 import { CARD_DASHBOARD_VIEW_TYPE, CardDashboardView } from './CardDashboard';
 
@@ -11,15 +10,11 @@ export default class MyPlugin extends Plugin {
 
 		// 注册自定义 view
 		this.registerView(
-			CONTEXT_DASHBOARD_VIEW_TYPE,
-			(leaf) => new ContextDashboardView(leaf, this)
-		);
-		this.registerView(
 			CARD_DASHBOARD_VIEW_TYPE,
 			(leaf) => new CardDashboardView(leaf, this)
 		)
 
-		// 添加卡片笔记 命令
+		// 添加卡片笔记 命令和按钮
 		this.addCommand({
 			id: 'add-card-note',
 			name: '添加卡片笔记',
@@ -27,14 +22,12 @@ export default class MyPlugin extends Plugin {
 				await this.addCardNote();
 			}
 		});
-
-		// 添加 ribbonIcon，点击执行添加卡片笔记
 		const AddCardIconEl = this.addRibbonIcon('lightbulb', '添加卡片笔记', async (evt: MouseEvent) => {
 			await this.addCardNote();
 		});
 		AddCardIconEl.addClass('my-plugin-ribbon-class');
 
-		// 添加上下文笔记 命令
+		// 添加上下文笔记 命令和按钮
 		this.addCommand({
 			id: 'add-context-note',
 			name: '添加上下文笔记',
@@ -42,48 +35,39 @@ export default class MyPlugin extends Plugin {
 				await this.addContextNote();
 			}
 		});
-
-		// 添加 ribbonIcon，点击执行添加上下文笔记
 		const AddContextIconEl = this.addRibbonIcon('file-plus-2', '添加上下文笔记', async (evt: MouseEvent) => {
 			await this.addContextNote();
 		});
 		AddContextIconEl.addClass('my-plugin-ribbon-class');
 
-		// This creates an icon in the left ribbon.
-		const NoteIconEl = this.addRibbonIcon('notepad-text', '打开上下文笔记面板', async (evt: MouseEvent) => {
-			this.activateView(CONTEXT_DASHBOARD_VIEW_TYPE);
+		// 打开笔记面板 命令和按钮
+		this.addCommand({
+			id: 'open-dashboard',
+			name: '打开笔记面板',
+			callback: () => this.activateView(CARD_DASHBOARD_VIEW_TYPE),
 		});
-		NoteIconEl.addClass('my-plugin-ribbon-class');
-		const CardIconEl = this.addRibbonIcon('wallet-cards', '打开卡片笔记面板', async (evt: MouseEvent) => {
+		const CardIconEl = this.addRibbonIcon('wallet-cards', '打开笔记面板', async (evt: MouseEvent) => {
 			this.activateView(CARD_DASHBOARD_VIEW_TYPE);
 		});
 		CardIconEl.addClass('my-plugin-ribbon-class');
-
-		// This adds a status bar item to the bottom of the app. Does not work on mobile apps.
-		const statusBarItemEl = this.addStatusBarItem();
-		statusBarItemEl.setText('Status Bar Tex');
 
 		// This adds a settings tab so the user can configure various aspects of the plugin
 		this.addSettingTab(new MySettingTab(this.app, this));
 
 	}
 
-	// 添加卡片笔记命令的实现
 	async addCardNote() {
-		const dir = this.settings.cardsDirectory;
-		const filePath = await this.getCardFilePath(dir);
-		const content = `---\ntags: \n---\n`;
-		const file = await this.app.vault.create(filePath, content);
-		const leaf = this.app.workspace.getLeaf(true);
-		await leaf.openFile(file, { active: true, state: { mode: 'source' }, });
-		this.app.workspace.setActiveLeaf(leaf, { focus: true });
+		await this.addNote(this.settings.cardsDirectory);
 	}
 
 	async addContextNote() {
-		const dir = this.settings.notesDirectory;
+		await this.addNote(this.settings.notesDirectory);
+	}
+
+	async addNote(dir: string, content?: string) {
 		const filePath = await this.getCardFilePath(dir);
-		const content = `---\ntitle:\ntags: \n---\n`;
-		const file = await this.app.vault.create(filePath, content);
+		const _content = content ?? `---\ntags: \n---\n`;
+		const file = await this.app.vault.create(filePath, _content);
 		const leaf = this.app.workspace.getLeaf(true);
 		await leaf.openFile(file, { active: true, state: { mode: 'source' }, });
 		this.app.workspace.setActiveLeaf(leaf, { focus: true });
@@ -113,7 +97,7 @@ export default class MyPlugin extends Plugin {
 	}
 
 	onunload() {
-		this.app.workspace.getLeavesOfType(CONTEXT_DASHBOARD_VIEW_TYPE).forEach(leaf => leaf.detach());
+		this.app.workspace.getLeavesOfType(CARD_DASHBOARD_VIEW_TYPE).forEach(leaf => leaf.detach());
 	}
 
 	async loadSettings() {

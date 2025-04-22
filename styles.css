@@ -79,7 +79,7 @@ If your plugin does not need CSS, delete this file.
 
 .card-note-more {
   position: absolute;
-  bottom: 16px;
+  bottom: 8px;
   right: 16px;
 }
 

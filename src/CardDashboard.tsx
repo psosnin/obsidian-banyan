@@ -170,7 +170,34 @@ export class CardDashboardView extends ItemView {
     }
     // TODO: 标签、日期筛选可复用 ContextDashboardView 逻辑
 
-    const cardNodes = filtered.map(({ file, content }) => (
+    // 卡片置顶
+    const [pinnedFiles, setPinnedFiles] = useState<string[]>(() => this.plugin.settings.pinnedFiles || []);
+    const handlePin = (file: TFile, isPinned: boolean) => {
+      if (!isPinned) {
+        setPinnedFiles(pinnedFiles.filter(p => p !== file.path));
+        new Notice('已取消置顶');
+      } else {
+        setPinnedFiles([file.path, ...pinnedFiles]);
+        new Notice('已置顶');
+      }
+    };
+
+    useEffect(() => {
+      // 保证 pinned 状态和设置同步
+      if (JSON.stringify(pinnedFiles) !== JSON.stringify(this.plugin.settings.pinnedFiles)) {
+        this.plugin.settings.pinnedFiles = pinnedFiles;
+        this.plugin.saveSettings().then(() => {
+          console.log('Saved pinned files', pinnedFiles);
+        });
+      }
+    }, [pinnedFiles]);
+
+    // 渲染卡片时优先显示置顶
+    const sorted = filtered
+      .filter(({file})=> pinnedFiles.indexOf(file.path) != -1)
+      .concat(filtered.filter(({file})=> pinnedFiles.indexOf(file.path) == -1)); //[...filtered];
+
+    const cardNodes = sorted.map(({ file, content }) => (
       <CardNote
         key={file.path}
         sortType={sortType}
@@ -181,6 +208,8 @@ export class CardDashboardView extends ItemView {
         component={this}
         onDelete={handleDelete}
         onOpen={handleOpen}
+        setPin={handlePin}
+        isPinned={pinnedFiles.contains(file.path)}
       />
     ));
     const columns = getColumns(cardNodes, colCount);

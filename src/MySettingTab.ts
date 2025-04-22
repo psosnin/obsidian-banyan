@@ -7,13 +7,15 @@ export interface MyPluginSettings {
 	cardsDirectory: string;
 	noteType: 'card' | 'context';
 	sortType: 'created' | 'modified';
+	pinnedFiles: string[];
 }
 
 export const DEFAULT_SETTINGS: MyPluginSettings = {
 	notesDirectory: 'contexts',
 	cardsDirectory: 'cards',
 	noteType: 'card',
-	sortType: 'created'
+	sortType: 'created',
+	pinnedFiles: [],
 }
 
 export class MySettingTab extends PluginSettingTab {
@@ -45,18 +47,17 @@ export class MySettingTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName('卡片笔记目录')
-			// .setDesc('选择要展示的笔记目录')
 			.addText(async text => {
 				const folders = await getAllFolders(this.app);
 				createFolderSuggest(text.inputEl, folders, async (folder) => {
 					text.setValue(folder);
-					this.plugin.settings.notesDirectory = folder;
+					this.plugin.settings.cardsDirectory = folder;
 					await this.plugin.saveSettings();
 				});
 				text.setPlaceholder('请输入目录路径')
-					.setValue(this.plugin.settings.notesDirectory || "")
+					.setValue(this.plugin.settings.cardsDirectory || "")
 					.onChange(async (value) => {
-						this.plugin.settings.notesDirectory = value;
+						this.plugin.settings.cardsDirectory = value;
 						await this.plugin.saveSettings();
 					});
 			});

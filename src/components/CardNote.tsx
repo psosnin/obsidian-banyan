@@ -1,6 +1,7 @@
 // import React from "react";
-import { TFile, MarkdownRenderer, Notice, Component, App } from "obsidian";
+import { TFile, MarkdownRenderer, Notice, Component, App, setIcon } from "obsidian";
 import * as React from "react";
+import { openCardNoteMoreMenu } from "./CardNoteMenu";
 
 interface CardNoteProps {
   file: TFile;
@@ -11,6 +12,8 @@ interface CardNoteProps {
   component: Component;
   onDelete: (file: TFile) => void;
   onOpen: (file: TFile) => void;
+  setPin: (file: TFile, isPinned: boolean) => void;
+  isPinned: boolean;
 }
 
 function extractBody(md: string): string {
@@ -36,8 +39,10 @@ const MarkdownContent = ({ app, markdown, sourcePath, component }: {
   return <div ref={ref} />;
 };
 
-const CardNote: React.FC<CardNoteProps> = ({ file, tags, sortType, content, app, component, onDelete, onOpen }) => {
+const CardNote: React.FC<CardNoteProps> = ({ file, tags, sortType, content, app, component,
+  onDelete, onOpen, setPin, isPinned }) => {
   const contentRef = React.useRef<HTMLDivElement>(null);
+  const btnRef = React.useRef<HTMLButtonElement>(null);
   const [overflow, setOverflow] = React.useState(false);
 
   const isCreated = sortType === 'created';
@@ -48,9 +53,16 @@ const CardNote: React.FC<CardNoteProps> = ({ file, tags, sortType, content, app,
       setOverflow(el.scrollHeight > 500);
     }
   }, [content]);
+
+  React.useEffect(() => {
+    if (btnRef.current) {
+      setIcon(btnRef.current, "ellipsis");
+    }
+  }, []);
+
   return (
-    <div className="card-note-container"  onDoubleClick={(e) => {
-      onOpen(file); 
+    <div className="card-note-container" onDoubleClick={(e) => {
+      onOpen(file);
       e.preventDefault();
     }}>
       <div
@@ -69,24 +81,12 @@ const CardNote: React.FC<CardNoteProps> = ({ file, tags, sortType, content, app,
             <div className="card-note-tag-content">{tag}</div>
           </div>
         )}</div>}
-        <div className="card-note-time">{isCreated ? "创建于" : "编辑于"} {new Date(isCreated ? file.stat.ctime : file.stat.mtime).toLocaleString()}</div>
+        <div className="card-note-time">{isPinned ? "置顶 · " : ""}{isCreated ? "创建于" : "编辑于"} {new Date(isCreated ? file.stat.ctime : file.stat.mtime).toLocaleString()}</div>
         <div className="card-note-more">
-          <span className="card-note-more-btn" onClick={e => {
-            e.stopPropagation();
-            const menu = document.createElement('div');
-            menu.className = 'card-note-more-menu';
-            menu.innerHTML = '<button id="del-btn">删除</button>';
-            document.body.appendChild(menu);
-            const rect = (e.target as HTMLElement).getBoundingClientRect();
-            menu.style.left = rect.right + 'px';
-            menu.style.top = rect.top + 'px';
-            menu.querySelector('#del-btn')?.addEventListener('click', () => {
-              onDelete(file);
-              menu.remove();
-            });
-            const removeMenu = () => { menu.remove(); document.removeEventListener('click', removeMenu) };
-            setTimeout(() => document.addEventListener('click', removeMenu), 100);
-          }}>···</span>
+          <button className="clickable-icon"
+            ref={btnRef}
+            onClick={(e) => openCardNoteMoreMenu({ event: e.nativeEvent, file, content, onOpen, onDelete, setPin, isPinned })}
+          />
         </div>
       </div>
     </div>

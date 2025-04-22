@@ -8,6 +8,7 @@ export interface MyPluginSettings {
 	noteType: 'card' | 'context';
 	sortType: 'created' | 'modified';
 	pinnedFiles: string[];
+	openWhenStartObsidian: boolean;
 }
 
 export const DEFAULT_SETTINGS: MyPluginSettings = {
@@ -16,6 +17,7 @@ export const DEFAULT_SETTINGS: MyPluginSettings = {
 	noteType: 'card',
 	sortType: 'created',
 	pinnedFiles: [],
+	openWhenStartObsidian: true,
 }
 
 export class MySettingTab extends PluginSettingTab {
@@ -28,6 +30,18 @@ export class MySettingTab extends PluginSettingTab {
 	display(): void {
 		const { containerEl } = this;
 		containerEl.empty();
+
+		new Setting(containerEl)
+			.setName('启动时自动打开面板')
+			.setDesc('启用后，Obsidian 启动时会自动打开卡片面板')
+			.addToggle(toggle => {
+				toggle.setValue(this.plugin.settings.openWhenStartObsidian)
+					.onChange(async (value) => {
+						this.plugin.settings.openWhenStartObsidian = value;
+						await this.plugin.saveSettings();
+					});
+			});
+
 		new Setting(containerEl)
 			.setName('上下文笔记目录')
 			.addText(async text => {
@@ -61,5 +75,6 @@ export class MySettingTab extends PluginSettingTab {
 						await this.plugin.saveSettings();
 					});
 			});
+
 	}
 }

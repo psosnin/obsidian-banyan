@@ -81,7 +81,7 @@ const CardNote: React.FC<CardNoteProps> = ({ file, tags, sortType, content, app,
             <div className="card-note-tag-content">{tag}</div>
           </div>
         )}</div>}
-        <div className="card-note-time">{isPinned ? "置顶 · " : ""}{isCreated ? "创建于" : "编辑于"} {new Date(isCreated ? file.stat.ctime : file.stat.mtime).toLocaleString()}</div>
+        <div className="card-note-time">{isPinned ? "置顶 · " : ""}{isCreated ? "创建于" : "更新于"} {new Date(isCreated ? file.stat.ctime : file.stat.mtime).toLocaleString()}</div>
         <div className="card-note-more">
           <button className="clickable-icon"
             ref={btnRef}

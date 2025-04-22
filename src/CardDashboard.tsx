@@ -229,7 +229,7 @@ export class CardDashboardView extends ItemView {
         setSortType: (t: 'created' | 'modified') => void) => {
         const sortMenu = new Menu();
         sortMenu.addItem((item) => {
-          item.setTitle("Last created");
+          item.setTitle("最近创建");
           item.setChecked(sortType === 'created');
           item.onClick(() => {
             setSortType('created');
@@ -238,7 +238,7 @@ export class CardDashboardView extends ItemView {
           });
         });
         sortMenu.addItem((item) => {
-          item.setTitle("Last modified");
+          item.setTitle("最近更新");
           item.setChecked(sortType === 'modified');
           item.onClick(() => {
             setSortType('modified');

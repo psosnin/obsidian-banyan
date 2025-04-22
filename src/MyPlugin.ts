@@ -1,6 +1,6 @@
 import { App, Editor, MarkdownView, Modal, normalizePath, Notice, Plugin, PluginSettingTab, Setting, SuggestModal, TFolder, WorkspaceLeaf } from 'obsidian';
 import { MyPluginSettings, MySettingTab, DEFAULT_SETTINGS } from './MySettingTab';
-import { CARD_DASHBOARD_VIEW_TYPE, CardDashboardView } from './CardDashboard';
+import { CARD_DASHBOARD_VIEW_TYPE, CardDashboard } from './CardDashboard';
 
 export default class MyPlugin extends Plugin {
 	settings: MyPluginSettings;
@@ -11,7 +11,7 @@ export default class MyPlugin extends Plugin {
 		// 注册自定义 view
 		this.registerView(
 			CARD_DASHBOARD_VIEW_TYPE,
-			(leaf) => new CardDashboardView(leaf, this)
+			(leaf) => new CardDashboard(leaf, this)
 		)
 
 		// 添加卡片笔记 命令和按钮

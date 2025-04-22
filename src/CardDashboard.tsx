@@ -8,7 +8,7 @@ import CardNote from "./components/CardNote";
 
 export const CARD_DASHBOARD_VIEW_TYPE = "card-dashboard-view";
 
-export class CardDashboardView extends ItemView {
+export class CardDashboard extends ItemView {
   root: Root | null = null;
   plugin: MyPlugin;
 

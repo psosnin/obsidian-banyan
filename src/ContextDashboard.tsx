@@ -3,8 +3,8 @@ import MyPlugin from "./main";
 import { JSX, StrictMode } from 'react';
 import { Root, createRoot } from 'react-dom/client';
 import * as React from "react";
-import { TagFilterGroup } from "./TagFilterGroup";
-import { FilterView } from "./FilterView";
+import { TagFilterGroup } from "./components/TagFilterGroup";
+import { FilterView } from "./components/FilterView";
 
 export const CONTEXT_DASHBOARD_VIEW_TYPE = "context-dashboard-view";
 

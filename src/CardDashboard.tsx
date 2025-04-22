@@ -3,8 +3,8 @@ import MyPlugin from "./main";
 import { StrictMode, useEffect, useState } from 'react';
 import { Root, createRoot } from 'react-dom/client';
 import * as React from "react";
-import { FilterView } from "./FilterView";
-import CardNote from "./CardNote";
+import { FilterView } from "./components/FilterView";
+import CardNote from "./components/CardNote";
 
 export const CARD_DASHBOARD_VIEW_TYPE = "card-dashboard-view";
 

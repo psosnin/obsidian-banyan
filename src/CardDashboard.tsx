@@ -79,7 +79,6 @@ export class CardDashboardView extends ItemView {
     const withinDateRange = (time: number, dateRange: { from: string; to: string }) => {
       const from = new Date(dateRange.from).getTime();
       const to = new Date(dateRange.to).getTime();
-      console.log(dateRange, from, to, time);
       if (!from && !to) return true;
       if (from && !to) return time >= from;
       if (!from && to) return time <= to;
@@ -194,8 +193,8 @@ export class CardDashboardView extends ItemView {
 
     // 渲染卡片时优先显示置顶
     const sorted = filtered
-      .filter(({file})=> pinnedFiles.indexOf(file.path) != -1)
-      .concat(filtered.filter(({file})=> pinnedFiles.indexOf(file.path) == -1)); //[...filtered];
+      .filter(({ file }) => pinnedFiles.indexOf(file.path) != -1)
+      .concat(filtered.filter(({ file }) => pinnedFiles.indexOf(file.path) == -1)); //[...filtered];
 
     const cardNodes = sorted.map(({ file, content }) => (
       <CardNote
@@ -340,7 +339,7 @@ export class CardDashboardView extends ItemView {
         />
         {/* 添加卡片按钮区域 */}
         <div style={{ marginBottom: 24 }}>
-          <button onClick={() => this.plugin.addCardNote()} style={{ padding: '8px 16px' }}>添加卡片</button>
+          <button onClick={() => this.plugin.addCardNote()} style={{ padding: '8px 16px' }}>添加笔记</button>
         </div>
         {/* 瀑布流卡片区域 */}
         <div style={{ display: 'flex', gap: 16 }}>

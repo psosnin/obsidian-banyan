@@ -68,10 +68,9 @@ If your plugin does not need CSS, delete this file.
 }
 
 .card-note-time {
-  font-size: var(--font-ui-small);
+  font-size: var(--font-ui-smaller);
   color: var(--text-faint);
   margin-right: 6px;
-  margin-bottom: 4px;
   white-space: nowrap;
   flex-shrink: 0;
 }
@@ -106,6 +105,7 @@ If your plugin does not need CSS, delete this file.
   font-size: var(--font-ui-small);
   outline: none;
   gap: var(--size-2-3);
+  margin-top: 12px;
 }
 
 .card-note-tag {

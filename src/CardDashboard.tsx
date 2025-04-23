@@ -5,6 +5,7 @@ import { Root, createRoot } from 'react-dom/client';
 import * as React from "react";
 import { FilterView } from "./components/FilterView";
 import CardNote from "./components/CardNote";
+import { Icon } from "./components/Icon";
 
 export const CARD_DASHBOARD_VIEW_TYPE = "card-dashboard-view";
 
@@ -217,12 +218,6 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
   const sortSwitchButton = (
     sortType: 'created' | 'modified',
     setSortType: (t: 'created' | 'modified') => void) => {
-    const ref = React.useRef<HTMLButtonElement>(null);
-    useEffect(() => {
-      if (ref.current) {
-        setIcon(ref.current, "arrow-down-wide-narrow");
-      }
-    }, []);
     const sortMenu = (
       event: MouseEvent,
       sortType: 'created' | 'modified',
@@ -249,8 +244,8 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
       sortMenu.showAtMouseEvent(event);
     };
     return <button className="clickable-icon"
-      ref={ref}
-      style={{ marginLeft: '12px' }}
+    children={<Icon name="arrow-down-wide-narrow"/>}  
+    style={{ marginLeft: '12px' }}
       onClick={(e) => sortMenu(e.nativeEvent, sortType, setSortType)}
     />;
   };
@@ -264,12 +259,6 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
     const noteSwitchButton = (
       noteType: 'card' | 'context',
       setNoteType: (t: 'card' | 'context') => void) => {
-      const ref = React.useRef<HTMLButtonElement>(null);
-      useEffect(() => {
-        if (ref.current) {
-          setIcon(ref.current, "chevron-down");
-        }
-      }, []);
       const noteMenu = (
         event: MouseEvent,
         noteType: 'card' | 'context',
@@ -296,7 +285,7 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
         menu.showAtMouseEvent(event);
       };
       return <button className="clickable-icon" style={{ marginRight: '2px' }}
-        ref={ref}
+        children={<Icon name="chevron-down"/>}
         onClick={(e) => noteMenu(e.nativeEvent, noteType, setNoteType)} />;
     }
 
@@ -310,16 +299,15 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
 
     return <div className="card-dashboard-header-container">
       {titleSection()}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-        <div className="card-dashboard-header-searchbar">
-          <input
-            type="text"
-            placeholder="关键字"
-            value={keyword}
-            onChange={e => setKeyword(e.target.value)}
-            style={{ background: 'transparent', border: 'none', outline: 'none', flex: 1 }}
-          />
-        </div>
+      <div className="card-dashboard-header-searchbar">
+        <Icon name="search"/>
+        <input
+          type="text"
+          placeholder="关键字"
+          value={keyword}
+          onChange={e => setKeyword(e.target.value)}
+          style={{ background: 'transparent', border: 'none', outline: 'none', flex: 1 }}
+        />
       </div>
     </div>;
   };

@@ -2,6 +2,7 @@
 import { TFile, MarkdownRenderer, Notice, Component, App, setIcon } from "obsidian";
 import * as React from "react";
 import { openCardNoteMoreMenu } from "./CardNoteMenu";
+import { Icon } from "./Icon";
 
 interface CardNoteProps {
   file: TFile;
@@ -42,7 +43,6 @@ const MarkdownContent = ({ app, markdown, sourcePath, component }: {
 const CardNote: React.FC<CardNoteProps> = ({ file, tags, sortType, content, app, component,
   onDelete, onOpen, setPin, isPinned }) => {
   const contentRef = React.useRef<HTMLDivElement>(null);
-  const btnRef = React.useRef<HTMLButtonElement>(null);
   const [overflow, setOverflow] = React.useState(false);
 
   const isCreated = sortType === 'created';
@@ -53,12 +53,6 @@ const CardNote: React.FC<CardNoteProps> = ({ file, tags, sortType, content, app,
       setOverflow(el.scrollHeight > 500);
     }
   }, [content]);
-
-  React.useEffect(() => {
-    if (btnRef.current) {
-      setIcon(btnRef.current, "ellipsis");
-    }
-  }, []);
 
   return (
     <div className="card-note-container" onDoubleClick={(e) => {
@@ -74,7 +68,7 @@ const CardNote: React.FC<CardNoteProps> = ({ file, tags, sortType, content, app,
         )}</div>}
         <div className="card-note-more">
           <button className="clickable-icon"
-            ref={btnRef}
+            children={<Icon name='ellipsis'/>}
             onClick={(e) => openCardNoteMoreMenu({ event: e.nativeEvent, file, content, onOpen, onDelete, setPin, isPinned })}
           />
         </div>

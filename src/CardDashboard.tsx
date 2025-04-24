@@ -6,6 +6,8 @@ import * as React from "react";
 import { FilterView } from "./components/FilterView";
 import CardNote from "./components/CardNote";
 import { Icon } from "./components/Icon";
+import Sidebar from "./components/Sidebar";
+import { SidebarContent } from "./components/SideBarContent";
 
 export const CARD_DASHBOARD_VIEW_TYPE = "card-dashboard-view";
 
@@ -43,6 +45,7 @@ export class CardDashboard extends ItemView {
 
 const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: App, component: Component }) => {
 
+  const [showSidebar, setShowSidebar] = useState<'normal' | 'hide' | 'show'>('normal');
 
   const dir = plugin.settings.cardsDirectory;
 
@@ -69,6 +72,14 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
     if (!from && to) return time <= to;
     return time >= from && time <= to;
   }
+
+  useEffect(() => {
+    const handleResize = () => {
+      setShowSidebar(window.innerWidth >= 700? 'normal' : 'hide');
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     if (!dir) return;
@@ -137,10 +148,7 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
     const updateCol = () => {
       const w = window.innerWidth;
       const cardWidth = 500;
-      let cols = 1;
-      if (w >= cardWidth * 3) cols = 3;
-      else if (w >= cardWidth * 2) cols = 2;
-      setColCount(cols);
+      setColCount(w >= cardWidth * 2 ? 2 : 1);
     };
     updateCol();
     window.addEventListener('resize', updateCol);
@@ -233,17 +241,27 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
     />;
   };
 
+  const SidebarToggleButton = () => (
+    <button
+      style={{ marginLeft: 12, background: 'none', border: 'none', color: 'inherit', cursor: 'pointer', 
+        display: showSidebar == 'normal' ? 'none' : 'inline-flex', alignItems: 'center' }}
+      onClick={() => setShowSidebar('show')}
+      title="展开侧边栏"
+    >
+      <Icon name="menu" />
+    </button>
+  );
+
   const header = (
     sortType: 'created' | 'modified',
     setSortType: (t: 'created' | 'modified') => void) => {
-
     const titleSection = () => {
       return <div style={{ display: "flex", alignItems: "center" }}>
-        <h4 style={{ margin: '0' }}>所有笔记</h4>
+        <SidebarToggleButton />
+        <h4>所有笔记</h4>
         {sortSwitchButton(sortType, setSortType)}
       </div>;
     }
-
     return <div className="card-dashboard-header-container">
       {titleSection()}
       <div className="card-dashboard-header-searchbar">
@@ -260,28 +278,34 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
   };
 
   return (
-    <div style={{ padding: 16 }}>
-      {/* 标题区域 */}
-      {header(sortType, setSortType)}
-      <FilterView
-        allTags={allTags}
-        tagFilterValue={tagFilterValue}
-        setTagFilterValue={setTagFilterValue}
-        dir={dir}
-        dateRange={dateRange}
-        setDateRange={setDateRange}
-        keyword={keyword}
-        setKeyword={setKeyword}
-      />
-      {/* 添加卡片按钮区域 */}
-      <div style={{ marginBottom: 24 }}>
-        <button onClick={() => plugin.addCardNote()} style={{ padding: '8px 16px' }}>添加笔记</button>
-      </div>
-      {/* 瀑布流卡片区域 */}
-      <div style={{ display: 'flex', gap: 16 }}>
-        {columns.map((col, idx) => (
-          <div key={idx} style={{ flex: 1, minWidth: 0 }}>{col}</div>
-        ))}
+    <div style={{ display: 'flex', height: '100vh', background: 'var(--background-primary)' }}>
+      { showSidebar != 'normal' && <Sidebar visible={showSidebar == 'show'} onClose={() => setShowSidebar('hide')}>
+        <SidebarContent notesNum={0} tagsNum={0} />
+      </Sidebar>}
+      { showSidebar == 'normal' && <SidebarContent notesNum={0} tagsNum={0}/>}
+      <div style={{ flex: 1, minWidth: 500, margin: '0 16px'}}>
+        {/* 标题区域 */}
+        {header(sortType, setSortType)}
+        <FilterView
+          allTags={allTags}
+          tagFilterValue={tagFilterValue}
+          setTagFilterValue={setTagFilterValue}
+          dir={dir}
+          dateRange={dateRange}
+          setDateRange={setDateRange}
+          keyword={keyword}
+          setKeyword={setKeyword}
+        />
+        {/* 添加卡片按钮区域 */}
+        <div style={{ marginBottom: 24 }}>
+          <button onClick={() => plugin.addCardNote()} style={{ padding: '8px 16px' }}>添加笔记</button>
+        </div>
+        {/* 瀑布流卡片区域 */}
+        <div style={{ display: 'flex', gap: 16 }}>
+          {columns.map((col, idx) => (
+            <div key={idx} style={{ flex: 1, minWidth: 0 }}>{col}</div>
+          ))}
+        </div>
       </div>
     </div>
   );

@@ -7,7 +7,7 @@ import { FilterView } from "./components/FilterView";
 import CardNote from "./components/CardNote";
 import { Icon } from "./components/Icon";
 import Sidebar from "./components/Sidebar";
-import { SidebarContent } from "./components/SideBarContent";
+import { SidebarContent } from "./components/SidebarContent";
 
 export const CARD_DASHBOARD_VIEW_TYPE = "card-dashboard-view";
 
@@ -67,6 +67,8 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
 
   const [refreshFlag, setRefreshFlag] = useState(0);
 
+  const [totalNotesNum, setTotalNotesNum] = useState(0);
+  const [totalTagsNum, setTotalTagsNum] = useState(0);
 
   const withinDateRange = (time: number, dateRange: { from: string; to: string }) => {
     const from = new Date(dateRange.from).getTime();
@@ -75,6 +77,21 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
     if (from && !to) return time >= from;
     if (!from && to) return time <= to;
     return time >= from && time <= to;
+  }
+
+  const getAllTags = (files: TFile[]) => {
+    const tagSet = new Set<string>();
+    files.forEach((file: TFile) => {
+      const properties = app.metadataCache.getFileCache(file)?.frontmatter;
+      if (properties?.tags) {
+        if (Array.isArray(properties.tags)) {
+          properties.tags.forEach((tag: string) => tagSet.add(tag));
+        } else if (typeof properties.tags === 'string') {
+          tagSet.add(properties.tags);
+        }
+      }
+    });
+    return Array.from(tagSet);
   }
 
   useEffect(() => {
@@ -87,31 +104,15 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
 
   useEffect(() => {
     if (!dir) return;
-    const files = app.vault.getMarkdownFiles();
+    const files = app.vault.getMarkdownFiles().filter((file: TFile) => file.path.startsWith(dir));
+    setTotalNotesNum(files.length);
+    setTotalTagsNum(getAllTags(files).length);
     const filtered = files.filter((file: TFile) =>
-      file.path.startsWith(dir)
-      && withinDateRange(sortType == 'created' ? file.stat.ctime : file.stat.mtime, dateRange)
+      withinDateRange(sortType == 'created' ? file.stat.ctime : file.stat.mtime, dateRange)
     );
-    // 排序
-    if (sortType === 'created') {
-      filtered.sort((a, b) => b.stat.ctime - a.stat.ctime);
-    } else if (sortType === 'modified') {
-      filtered.sort((a, b) => b.stat.mtime - a.stat.mtime);
-    }
+    filtered.sort((a, b) => sortType === 'created' ? b.stat.ctime - a.stat.ctime : b.stat.mtime - a.stat.mtime);
     setNotes(filtered);
-    // 标签收集
-    const tagSet = new Set<string>();
-    filtered.forEach((file: TFile) => {
-      const properties = app.metadataCache.getFileCache(file)?.frontmatter;
-      if (properties?.tags) {
-        if (Array.isArray(properties.tags)) {
-          properties.tags.forEach((tag: string) => tagSet.add(tag));
-        } else if (typeof properties.tags === 'string') {
-          tagSet.add(properties.tags);
-        }
-      }
-    });
-    setAllTags(Array.from(tagSet));
+    setAllTags(getAllTags(filtered));
   }, [refreshFlag, sortType, dateRange, app.vault.getFiles().length]);
 
   useEffect(() => {
@@ -284,9 +285,9 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
   return (
     <div style={{ display: 'flex'}}>
       { showSidebar != 'normal' && <Sidebar visible={showSidebar == 'show'} onClose={() => setShowSidebar('hide')}>
-        <SidebarContent notesNum={0} tagsNum={0} />
+        <SidebarContent notesNum={totalNotesNum} tagsNum={totalTagsNum} />
       </Sidebar>}
-      { showSidebar == 'normal' && <SidebarContent notesNum={0} tagsNum={0}/>}
+      { showSidebar == 'normal' && <SidebarContent notesNum={totalNotesNum} tagsNum={totalTagsNum}/>}
       <div style={{ flex: 1, minWidth: 500}}>
         {/* 标题区域 */}
         {header(sortType, setSortType)}

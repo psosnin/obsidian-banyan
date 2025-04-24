@@ -43,9 +43,8 @@ export class CardDashboard extends ItemView {
 
 const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: App, component: Component }) => {
 
-  const [noteType, setNoteType] = useState<'card' | 'context'>(plugin.settings.noteType || 'card');
 
-  const dir = () => noteType === 'card' ? plugin.settings.cardsDirectory : plugin.settings.notesDirectory;
+  const dir = plugin.settings.cardsDirectory;
 
   const [sortType, setSortType] = useState<'created' | 'modified'>(plugin.settings.sortType || 'created');
 
@@ -61,22 +60,6 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
 
   const [refreshFlag, setRefreshFlag] = useState(0);
 
-  useEffect(() => {
-    // 事件监听函数
-    const onVaultChange = (file: TFile) => {
-      if (file.path.startsWith(dir()) && file.extension === "md") {
-        setRefreshFlag(f => f + 1);
-      }
-    };
-    app.vault.on('create', onVaultChange);
-    app.vault.on('delete', onVaultChange);
-    app.vault.on('modify', onVaultChange);
-    return () => {
-      app.vault.off('create', onVaultChange);
-      app.vault.off('delete', onVaultChange);
-      app.vault.off('modify', onVaultChange);
-    };
-  }, [noteType]);
 
   const withinDateRange = (time: number, dateRange: { from: string; to: string }) => {
     const from = new Date(dateRange.from).getTime();
@@ -88,10 +71,10 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
   }
 
   useEffect(() => {
-    if (!dir()) return;
+    if (!dir) return;
     const files = app.vault.getMarkdownFiles();
     const filtered = files.filter((file: TFile) =>
-      file.path.startsWith(dir())
+      file.path.startsWith(dir)
       && withinDateRange(sortType == 'created' ? file.stat.ctime : file.stat.mtime, dateRange)
     );
     // 排序
@@ -114,7 +97,7 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
       }
     });
     setAllTags(Array.from(tagSet));
-  }, [refreshFlag, noteType, sortType, dateRange, app.vault.getFiles().length]);
+  }, [refreshFlag, sortType, dateRange, app.vault.getFiles().length]);
 
   useEffect(() => {
     if (notes.length === 0) {
@@ -252,47 +235,11 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
 
   const header = (
     sortType: 'created' | 'modified',
-    setSortType: (t: 'created' | 'modified') => void,
-    noteType: 'card' | 'context',
-    setNoteType: (t: 'card' | 'context') => void) => {
-
-    const noteSwitchButton = (
-      noteType: 'card' | 'context',
-      setNoteType: (t: 'card' | 'context') => void) => {
-      const noteMenu = (
-        event: MouseEvent,
-        noteType: 'card' | 'context',
-        setNoteType: (t: 'card' | 'context') => void) => {
-        const menu = new Menu();
-        menu.addItem((item) => {
-          item.setTitle("卡片笔记");
-          item.setChecked(noteType === 'card');
-          item.onClick(() => {
-            setNoteType('card');
-            plugin.settings.noteType = 'card';
-            plugin.saveSettings();
-          });
-        });
-        menu.addItem((item) => {
-          item.setTitle("上下文笔记");
-          item.setChecked(noteType === 'context');
-          item.onClick(() => {
-            setNoteType('context');
-            plugin.settings.noteType = 'context';
-            plugin.saveSettings();
-          });
-        });
-        menu.showAtMouseEvent(event);
-      };
-      return <button className="clickable-icon" style={{ marginRight: '2px' }}
-        children={<Icon name="chevron-down"/>}
-        onClick={(e) => noteMenu(e.nativeEvent, noteType, setNoteType)} />;
-    }
+    setSortType: (t: 'created' | 'modified') => void) => {
 
     const titleSection = () => {
       return <div style={{ display: "flex", alignItems: "center" }}>
-        {noteSwitchButton(noteType, setNoteType)}
-        <h4 style={{ margin: '0' }}>{noteType == 'card' ? '卡片笔记' : '上下文笔记'}</h4>
+        <h4 style={{ margin: '0' }}>所有笔记</h4>
         {sortSwitchButton(sortType, setSortType)}
       </div>;
     }
@@ -315,12 +262,12 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
   return (
     <div style={{ padding: 16 }}>
       {/* 标题区域 */}
-      {header(sortType, setSortType, noteType, setNoteType)}
+      {header(sortType, setSortType)}
       <FilterView
         allTags={allTags}
         tagFilterValue={tagFilterValue}
         setTagFilterValue={setTagFilterValue}
-        dir={dir()}
+        dir={dir}
         dateRange={dateRange}
         setDateRange={setDateRange}
         keyword={keyword}

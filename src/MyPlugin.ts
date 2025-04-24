@@ -27,19 +27,6 @@ export default class MyPlugin extends Plugin {
 		});
 		AddCardIconEl.addClass('my-plugin-ribbon-class');
 
-		// 添加上下文笔记 命令和按钮
-		this.addCommand({
-			id: 'add-context-note',
-			name: '添加上下文笔记',
-			callback: async () => {
-				await this.addContextNote();
-			}
-		});
-		const AddContextIconEl = this.addRibbonIcon('file-plus-2', '添加上下文笔记', async (evt: MouseEvent) => {
-			await this.addContextNote();
-		});
-		AddContextIconEl.addClass('my-plugin-ribbon-class');
-
 		// 打开笔记面板 命令和按钮
 		this.addCommand({
 			id: 'open-dashboard',
@@ -68,10 +55,6 @@ export default class MyPlugin extends Plugin {
 
 	async addCardNote() {
 		await this.addNote(this.settings.cardsDirectory);
-	}
-
-	async addContextNote() {
-		await this.addNote(this.settings.notesDirectory);
 	}
 
 	async addNote(dir: string, content?: string) {

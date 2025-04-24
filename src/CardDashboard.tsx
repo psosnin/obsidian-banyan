@@ -28,6 +28,10 @@ export class CardDashboard extends ItemView {
     return "Ted Note Way";
   }
 
+  getIcon(): string {
+    return 'wallet-cards';
+  }
+
   async onOpen() {
     this.root = createRoot(this.containerEl.children[1]);
     this.root.render(
@@ -278,12 +282,12 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
   };
 
   return (
-    <div style={{ display: 'flex', height: '100vh', background: 'var(--background-primary)' }}>
+    <div style={{ display: 'flex'}}>
       { showSidebar != 'normal' && <Sidebar visible={showSidebar == 'show'} onClose={() => setShowSidebar('hide')}>
         <SidebarContent notesNum={0} tagsNum={0} />
       </Sidebar>}
       { showSidebar == 'normal' && <SidebarContent notesNum={0} tagsNum={0}/>}
-      <div style={{ flex: 1, minWidth: 500, margin: '0 16px'}}>
+      <div style={{ flex: 1, minWidth: 500}}>
         {/* 标题区域 */}
         {header(sortType, setSortType)}
         <FilterView

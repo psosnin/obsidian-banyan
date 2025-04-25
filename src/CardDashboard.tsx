@@ -7,7 +7,8 @@ import { FilterView } from "./components/FilterView";
 import CardNote from "./components/CardNote";
 import { Icon } from "./components/Icon";
 import Sidebar from "./components/Sidebar";
-import { SidebarContent } from "./components/SidebarContent";
+import { SidebarContent } from "./components/SideBarContent";
+import { HeatmapData } from "./components/Heatmap";
 
 export const CARD_DASHBOARD_VIEW_TYPE = "card-dashboard-view";
 
@@ -69,6 +70,7 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
 
   const [totalNotesNum, setTotalNotesNum] = useState(0);
   const [totalTagsNum, setTotalTagsNum] = useState(0);
+  const [heatmapValues, setHeatmapValues] = useState<HeatmapData[]>([]);
 
   const withinDateRange = (time: number, dateRange: { from: string; to: string }) => {
     const from = new Date(dateRange.from).getTime();
@@ -94,6 +96,19 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
     return Array.from(tagSet);
   }
 
+  const getHeatmapValues = (files: TFile[]) => {
+    const valueMap = files
+      .map(file => new Date(file.stat.ctime).toISOString().slice(0, 10))
+      .reduce<Map<string, number>>(
+        (pre, cur) => pre.set(cur, pre.has(cur)? pre.get(cur)! + 1 : 1), 
+        new Map<string, number>());
+    return Array
+      .from(valueMap.entries())
+      .map(([key, value]) => {
+        return { date: key, count: value };
+      }); // 第一层转换
+  }
+
   useEffect(() => {
     const handleResize = () => {
       setShowSidebar(window.innerWidth >= 700? 'normal' : 'hide');
@@ -107,6 +122,7 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
     const files = app.vault.getMarkdownFiles().filter((file: TFile) => file.path.startsWith(dir));
     setTotalNotesNum(files.length);
     setTotalTagsNum(getAllTags(files).length);
+    setHeatmapValues(getHeatmapValues(files));
     const filtered = files.filter((file: TFile) =>
       withinDateRange(sortType == 'created' ? file.stat.ctime : file.stat.mtime, dateRange)
     );
@@ -285,9 +301,12 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
   return (
     <div style={{ display: 'flex'}}>
       { showSidebar != 'normal' && <Sidebar visible={showSidebar == 'show'} onClose={() => setShowSidebar('hide')}>
-        <SidebarContent notesNum={totalNotesNum} tagsNum={totalTagsNum} />
+        <SidebarContent notesNum={totalNotesNum} tagsNum={totalTagsNum} heatmapValues={heatmapValues} />
       </Sidebar>}
-      { showSidebar == 'normal' && <SidebarContent notesNum={totalNotesNum} tagsNum={totalTagsNum}/>}
+      { showSidebar == 'normal' && <SidebarContent 
+        notesNum={totalNotesNum} 
+        tagsNum={totalTagsNum} 
+        heatmapValues={heatmapValues} />}
       <div style={{ flex: 1, minWidth: 500}}>
         {/* 标题区域 */}
         {header(sortType, setSortType)}

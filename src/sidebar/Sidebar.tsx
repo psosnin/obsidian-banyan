@@ -1,5 +1,4 @@
-import { useEffect, useState } from "react";
-import { Icon } from "./Icon";
+import { useEffect } from "react";
 
 interface SidebarProps {
   visible: boolean;

@@ -127,13 +127,7 @@ If your plugin does not need CSS, delete this file.
   white-space: nowrap;
 }
 
-.card-dashboard-header-container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.card-dashboard-header-searchbar {
+.main-header-searchbar {
   position: relative;
   display: flex;
   align-items: center;

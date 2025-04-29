@@ -1,5 +1,5 @@
-import { Heatmap, HeatmapData } from './Heatmap';
-import { Icon } from './Icon';
+import { Heatmap, HeatmapData } from '../components/Heatmap';
+import { Icon } from '../components/Icon';
 import { SidebarButton } from './SidebarButton';
 import { FilterEditModal } from './FilterEditModal';
 import { App, Menu } from 'obsidian';

@@ -1,5 +1,5 @@
 import * as React from "react";
-import TagInput from "./TagInput";
+import TagInput from "src/components/TagInput";
 
 export type TagFilterGroupValue = {
   or: string[][]; // 多行，每行多个标签，行内为且

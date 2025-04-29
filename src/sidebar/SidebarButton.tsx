@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Icon } from "./Icon";
+import { Icon } from "src/components/Icon";
 
 interface SidebarButtonProps {
     iconName?: string;

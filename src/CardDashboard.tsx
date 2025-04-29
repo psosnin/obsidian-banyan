@@ -3,13 +3,13 @@ import MyPlugin from "./main";
 import { StrictMode, useEffect, useState } from 'react';
 import { Root, createRoot } from 'react-dom/client';
 import * as React from "react";
-import CardNote from "./components/CardNote";
+import CardNote from "./cards/CardNote";
 import { Icon } from "./components/Icon";
-import Sidebar from "./components/Sidebar";
-import { DefaultFilterScheme, FilterScheme, SidebarBtnIndex, SidebarContent } from "./components/SideBarContent";
+import Sidebar from "./sidebar/Sidebar";
+import { DefaultFilterScheme, FilterScheme, SidebarBtnIndex, SidebarContent } from "./sidebar/SideBarContent";
 import { HeatmapData } from "./components/Heatmap";
 
-export const CARD_DASHBOARD_VIEW_TYPE = "card-dashboard-view";
+export const CARD_DASHBOARD_VIEW_TYPE = "dashboard-view";
 
 export class CardDashboard extends ItemView {
   root: Root | null = null;
@@ -347,12 +347,12 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
   })();
 
   return (
-    <div className="app-container" style={{ display: 'flex', flexDirection: 'row', marginLeft: 'auto', marginRight: 'auto', maxWidth: '980' }}>
+    <div className="dashboard-container" style={{ display: 'flex', flexDirection: 'row', marginLeft: 'auto', marginRight: 'auto', maxWidth: '980' }}>
       {showSidebar != 'normal' && <Sidebar visible={showSidebar == 'show'} onClose={() => setShowSidebar('hide')}>{sidebarContent}</Sidebar>}
       {showSidebar == 'normal' && sidebarContent}
-      <div className="card-dashboard-container" style={{ flex: 1 }} ref={mainBoardRef}>
-        <div className="card-dashboard-header-container">
-          <div className="card-dashboard-header-title" style={{ display: "flex", alignItems: "center" }}>
+      <div className="main-container" style={{ flex: 1 }} ref={mainBoardRef}>
+        <div className="main-header-container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div className="main-header-title" style={{ display: "flex", alignItems: "center" }}>
             <button style={{
               marginLeft: 12, background: 'none', border: 'none', color: 'inherit', cursor: 'pointer',
               display: showSidebar == 'normal' ? 'none' : 'inline-flex', alignItems: 'center'
@@ -362,7 +362,7 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
             ><Icon name="menu" /></button>
             <h4>{curFilterScheme.name}</h4>
           </div>
-          <div className="card-dashboard-header-searchbar">
+          <div className="main-header-searchbar">
             <Icon name="search" />
             <input
               type="text"
@@ -376,7 +376,7 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
             />
           </div>
         </div>
-        <div style={{ marginBottom: 6, marginTop: 0, display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
+        <div className="main-subheader-container" style={{ marginBottom: 6, marginTop: 0, display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
           <div style={{ display: "flex", alignItems: 'center' }}>
             <span style={{ padding: '12px 6px', color: 'var(--text-muted)', fontSize: 'var(--font-smaller)' }}>共 {cardNodes.length} 条笔记</span>
             {cardNodes.length > 0 && <button style={{ marginLeft: '6px', padding: '0 6px', background: 'transparent' }}
@@ -386,7 +386,7 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
           </div>
           <button onClick={() => plugin.addCardNote()} style={{ padding: '4px 12px' }}>添加笔记</button>
         </div>
-        <div className="card-dashboard-cards" style={{ display: 'flex', gap: 16 }}>
+        <div className="main-cards" style={{ display: 'flex', gap: 16 }}>
           {columns.map((col, idx) => (
             <div key={idx} style={{ flex: 1, minWidth: 0 }}>{col}</div>
           ))}

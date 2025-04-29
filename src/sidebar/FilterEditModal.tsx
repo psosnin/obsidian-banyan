@@ -1,5 +1,5 @@
 import { App, Modal } from "obsidian";
-import { FilterScheme } from "./SideBarContent";
+import { FilterScheme } from "../sidebar/SideBarContent";
 import { FilterView } from "./FilterView";
 import * as React from "react";
 import { createRoot, Root } from "react-dom/client";

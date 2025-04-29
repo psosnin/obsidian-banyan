@@ -1,9 +1,10 @@
 import { useLayoutEffect, useRef } from 'react';
 import { setIcon } from 'obsidian';
 
-export function Icon({ name, size = 's', className }: {
+export function Icon({ name, size = 's', color = 'var(--icon-color)', className }: {
   name: string;
   size?: 'xs' | 's' | 'm' | 'l' | 'xl';
+  color?: string;
   className?: string;
 }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -18,6 +19,6 @@ export function Icon({ name, size = 's', className }: {
   return <div ref={ref} className={`${className ?? ""}`} style={{ 
     height: `var(--icon-size)`,
     width: 'var(--icon-size)',
-    color: 'var(--icon-color)',
+    color: color,
   }} />;
 }

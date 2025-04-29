@@ -1,12 +1,14 @@
-import { App, PluginSettingTab, Setting, TFolder } from 'obsidian';
+import { App, PluginSettingTab, Setting } from 'obsidian';
 import MyPlugin from './main';
 import { getAllFolders, createFolderSuggest } from './utils/folderSuggest';
+import { FilterScheme } from './components/SideBarContent';
 
 export interface MyPluginSettings {
 	cardsDirectory: string;
 	sortType: 'created' | 'modified';
 	pinnedFiles: string[];
 	openWhenStartObsidian: boolean;
+	filterSchemes: FilterScheme[];
 }
 
 export const DEFAULT_SETTINGS: MyPluginSettings = {
@@ -14,6 +16,7 @@ export const DEFAULT_SETTINGS: MyPluginSettings = {
 	sortType: 'created',
 	pinnedFiles: [],
 	openWhenStartObsidian: true,
+	filterSchemes: [],
 }
 
 export class MySettingTab extends PluginSettingTab {

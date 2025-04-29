@@ -95,7 +95,7 @@ const TagInput: React.FC<TagInputProps> = ({ tags, onChange, allTags, placeholde
           onKeyDown={handleKeyDown}
           onBlur={handleBlur}
           onFocus={() => { setShowSuggest(true); setHighlight(-1); }}
-          placeholder={tags.length == 0 ? placeholder : ""}
+          placeholder={placeholder}
           style={{ border: "none", outline: "none", background: 'transparent' }}
         />
       </div>

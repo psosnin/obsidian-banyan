@@ -2,7 +2,7 @@ import * as React from "react";
 import TagInput from "./TagInput";
 
 export type TagFilterGroupValue = {
-  and: string[][]; // 多行，每行多个标签，行内为且
+  or: string[][]; // 多行，每行多个标签，行内为且
   not: string[];   // 非关系标签
 };
 
@@ -16,17 +16,17 @@ export const TagFilterGroup: React.FC<TagFilterGroupProps> = ({ allTags, value, 
   // and: 多行，每行是标签数组
   // not: 最后一行，非关系
   const handleAndTagChange = (rowIdx: number, tags: string[]) => {
-    const newAnd = value.and.slice();
+    const newAnd = value.or.slice();
     newAnd[rowIdx] = tags;
-    onChange({ ...value, and: newAnd });
+    onChange({ ...value, or: newAnd });
   };
   const handleAddAndRow = () => {
-    onChange({ ...value, and: [...value.and, []] });
+    onChange({ ...value, or: [...value.or, []] });
   };
   const handleRemoveAndRow = (rowIdx: number) => {
-    const newAnd = value.and.slice();
+    const newAnd = value.or.slice();
     newAnd.splice(rowIdx, 1);
-    onChange({ ...value, and: newAnd });
+    onChange({ ...value, or: newAnd });
   };
   const handleNotTagChange = (tags: string[]) => {
     onChange({ ...value, not: tags });
@@ -34,7 +34,7 @@ export const TagFilterGroup: React.FC<TagFilterGroupProps> = ({ allTags, value, 
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-      {value.and.map((tags, idx) => (
+      {value.or.map((tags, idx) => (
         <div key={idx} style={{ display: "flex", alignItems: "center", gap: 8 }}>
           <label style={{ marginRight: 4 }}>{idx == 0 ? "包含" : "或含"}</label>
           <TagInput
@@ -43,10 +43,10 @@ export const TagFilterGroup: React.FC<TagFilterGroupProps> = ({ allTags, value, 
             allTags={allTags}
             placeholder={"输入标签"}
           />
-          {value.and.length > 1 && idx != 0 && (
+          {value.or.length > 1 && idx != 0 && (
             <button onClick={() => handleRemoveAndRow(idx)} style={{ marginLeft: 2, padding: '0px 12px' }}>-</button>
           )}
-          {idx === value.and.length - 1 && (
+          {idx === value.or.length - 1 && (
             <button onClick={handleAddAndRow} style={{ marginLeft: 2, padding: '0px 12px' }}>+ 或</button>
           )}
         </div>

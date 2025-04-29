@@ -9,7 +9,7 @@ interface SidebarProps {
 }
 
 // 侧边栏组件，支持响应式隐藏与展开
-const Sidebar: React.FC<SidebarProps> = ({ visible, onClose, width = 220, children }) => {
+const Sidebar: React.FC<SidebarProps> = ({ visible, onClose, width = 320, children }) => {
   // 监听点击遮罩关闭
   useEffect(() => {
     if (!visible) return;

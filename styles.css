@@ -43,6 +43,7 @@ If your plugin does not need CSS, delete this file.
   position: relative;
   box-shadow: 0 2px 8px #0002;
   cursor: pointer;
+  width: 600px;
 }
 
 .card-note-content {

@@ -120,7 +120,7 @@ export const SidebarContent = ( { notesNum, tagsNum, heatmapValues,
     };
 
     return  (
-    <div style={{ display: 'flex', flexDirection: 'column', padding: '0 16px', width: 320, marginRight: 16}}>
+    <div id='sidebar' style={{ display: 'flex', flexDirection: 'column', padding: '0 16px', width: 320, marginRight: 16}}>
         <StatisticsInfo notesNum={notesNum} tagsNum={tagsNum}/>
         <Heatmap values={heatmapValues}/>
         <div style={{ display: 'flex', flexDirection: 'column', marginTop: 12}}>

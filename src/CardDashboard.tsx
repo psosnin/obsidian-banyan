@@ -180,41 +180,25 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
   // 根据窗口宽度自适应列数
   const [colCount, setColCount] = useState(1);
   const mainBoardRef = React.useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    // if (mainBoardRef.current) {
-    //   const { width } = mainBoardRef.current.getBoundingClientRect();
-    //   const cardWidth = 500;
-    //   setColCount(width >= cardWidth * 2 ? 2 : 1);
-    // }
-    const element = mainBoardRef.current;
-    if (!element) return;
-
-    const observer = new ResizeObserver((entries) => {
-      const { width } = entries[0].contentRect;
-      const cardWidth = 300;
-      console.log('width', width);
-      setColCount(width >= cardWidth * 2 ? 2 : 1);
-    });
-
-    observer.observe(element);
-    return () => observer.unobserve(element); // 清理
-  }, []); // 空依赖数组表示仅在挂载时运行
-  // React.useEffect(() => {
-  //   const updateCol = () => {
-  //     // 获取主内容区宽度（减去侧边栏宽度）
-  //     let mainWidth = window.innerWidth;
-  //     const sidebarEl = document.querySelector('.sidebar-container');
-  //     if (sidebarEl && showSidebar === 'normal') {
-  //       console.log('sidebarEl', (sidebarEl as HTMLElement).offsetWidth);
-  //       mainWidth -= (sidebarEl as HTMLElement).offsetWidth;
-  //     }
-  //     const cardWidth = 500;
-  //     setColCount(mainWidth >= cardWidth * 2 ? 2 : 1);
-  //   };
-  //   updateCol();
-  //   window.addEventListener('resize', updateCol);
-  //   return () => window.removeEventListener('resize', updateCol);
-  // }, [showSidebar]);
+  
+  React.useEffect(() => {
+    const updateCol = () => {
+      // 获取主内容区宽度（减去侧边栏宽度）
+      let mainWidth = window.innerWidth;
+      const sidebarEl = document.querySelector('#sidebar') as HTMLElement;
+      if (sidebarEl && showSidebar === 'normal') {
+        const padding = 80;
+        mainWidth -= sidebarEl.offsetWidth + padding;
+      }
+      const cardWidth = 600;
+      const cardsPadding = 24
+      const widthFor2Cards = cardWidth * 2 + cardsPadding;
+      setColCount(mainWidth >= widthFor2Cards ? 2 : 1);
+    };
+    updateCol();
+    window.addEventListener('resize', updateCol);
+    return () => window.removeEventListener('resize', updateCol);
+  }, [showSidebar]);
 
   // 卡片筛选
   let filtered = contents;
@@ -347,11 +331,11 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
   })();
 
   return (
-    <div className="dashboard-container" style={{ display: 'flex', flexDirection: 'row', marginLeft: 'auto', marginRight: 'auto', maxWidth: '980' }}>
+    <div className="dashboard-container" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', width: '100%' }}>
       {showSidebar != 'normal' && <Sidebar visible={showSidebar == 'show'} onClose={() => setShowSidebar('hide')}>{sidebarContent}</Sidebar>}
       {showSidebar == 'normal' && sidebarContent}
-      <div className="main-container" style={{ flex: 1 }} ref={mainBoardRef}>
-        <div className="main-header-container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div className="main-container" style={{ display: 'inline-block' }} ref={mainBoardRef}>
+        <div className="main-header-container" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginRight: 16 }}>
           <div className="main-header-title" style={{ display: "flex", alignItems: "center" }}>
             <button style={{
               marginLeft: 12, background: 'none', border: 'none', color: 'inherit', cursor: 'pointer',
@@ -376,7 +360,7 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
             />
           </div>
         </div>
-        <div className="main-subheader-container" style={{ marginBottom: 6, marginTop: 0, display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
+        <div className="main-subheader-container" style={{ marginBottom: 6, marginRight: 16, display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
           <div style={{ display: "flex", alignItems: 'center' }}>
             <span style={{ padding: '12px 6px', color: 'var(--text-muted)', fontSize: 'var(--font-smaller)' }}>共 {cardNodes.length} 条笔记</span>
             {cardNodes.length > 0 && <button style={{ marginLeft: '6px', padding: '0 6px', background: 'transparent' }}
@@ -386,9 +370,9 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
           </div>
           <button onClick={() => plugin.addCardNote()} style={{ padding: '4px 12px' }}>添加笔记</button>
         </div>
-        <div className="main-cards" style={{ display: 'flex', gap: 16 }}>
+        <div className="main-cards" style={{ display: 'flex', gap: 16, }}>
           {columns.map((col, idx) => (
-            <div key={idx} style={{ flex: 1, minWidth: 0 }}>{col}</div>
+            <div className="main-cards-column" key={idx}>{col}</div>
           ))}
         </div>
       </div>

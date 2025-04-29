@@ -26,7 +26,7 @@ export const Heatmap = ({values}: {values: HeatmapData[]}) => {
                     return {
                         // 'data-tooltip': `${value.count} 条笔记于 ${value.date.toISOString().slice(0, 10)}`,
                         'data-tooltip-id': 'my-tooltip',
-                        'data-tooltip-content': `${value.count} 条笔记于 ${value.date}`,
+                        'data-tooltip-content': value.count != undefined && value.date != undefined ? `${value.count} 条笔记于 ${value.date}` : '',
                     };
                 }}
                 showWeekdayLabels={false}
@@ -36,7 +36,7 @@ export const Heatmap = ({values}: {values: HeatmapData[]}) => {
                     '十月', '十一月', '十二月']}
                 showOutOfRangeDays={true}
             />
-            <Tooltip id="my-tooltip" />
+            <Tooltip id="my-tooltip" style={{ zIndex: 2001 }} />
         </div>
     );
 }

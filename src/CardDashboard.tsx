@@ -10,6 +10,7 @@ import { DefaultFilterScheme, FilterScheme } from "./models/FilterScheme";
 import { SidebarBtnIndex, SidebarContent } from "./sidebar/SideBarContent";
 import { HeatmapData } from "./components/Heatmap";
 import { Searchbar } from "./searchbar/Searchbar";
+import EmptyStateCard from "./cards/EmptyStateCard";
 
 export const CARD_DASHBOARD_VIEW_TYPE = "dashboard-view";
 
@@ -182,7 +183,7 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
   // 根据窗口宽度自适应列数
   const [colCount, setColCount] = useState(1);
   const mainBoardRef = React.useRef<HTMLDivElement>(null);
-  
+
   React.useEffect(() => {
     const updateCol = () => {
       // 获取主内容区宽度（减去侧边栏宽度）
@@ -337,7 +338,7 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
       {showSidebar != 'normal' && <Sidebar visible={showSidebar == 'show'} onClose={() => setShowSidebar('hide')}>{sidebarContent}</Sidebar>}
       {showSidebar == 'normal' && sidebarContent}
       <div className="main-container" style={{ display: 'inline-block' }} ref={mainBoardRef}>
-        <div className="main-header-container" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
+        <div className="main-header-container" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
           <div className="main-header-title" style={{ display: "flex", alignItems: "center" }}>
             <button style={{
               marginLeft: 12, background: 'none', border: 'none', color: 'inherit', cursor: 'pointer',
@@ -361,9 +362,13 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
           <button onClick={() => plugin.addCardNote()} style={{ padding: '4px 12px' }}>添加笔记</button>
         </div>
         <div className="main-cards" style={{ display: 'flex', gap: 16, }}>
-          {columns.map((col, idx) => (
-            <div className="main-cards-column" key={idx}>{col}</div>
-          ))}
+          {cardNodes.length === 0 ? (
+            <EmptyStateCard isSearch={curFilterScheme.id != DefaultFilterScheme.id} />
+          ) : (
+            columns.map((col, idx) => (
+              <div className="main-cards-column" key={idx}>{col}</div>
+            ))
+          )}
         </div>
       </div>
     </div>

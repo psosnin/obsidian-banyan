@@ -3,7 +3,7 @@ import { setIcon } from 'obsidian';
 
 export function Icon({ name, size = 's', color = 'var(--icon-color)', className }: {
   name: string;
-  size?: 'xs' | 's' | 'm' | 'l' | 'xl';
+  size?: 'xs' | 's' | 'm' | 'l' | 'xl' | number;
   color?: string;
   className?: string;
 }) {
@@ -12,11 +12,16 @@ export function Icon({ name, size = 's', color = 'var(--icon-color)', className 
   useLayoutEffect(() => {
     if (ref.current) {
       setIcon(ref.current, name);
-      ref.current.style.setProperty('--icon-size', `var(--icon-${size}`);
+      if (typeof size === 'string') {
+        ref.current.style.setProperty('--icon-size', `var(--icon-${size}`);
+      } else {
+        ref.current.style.setProperty('--icon-size', `${size}px`);
+      }
+
     }
   }, [name, size]);
 
-  return <div ref={ref} className={`${className ?? ""}`} style={{ 
+  return <div ref={ref} className={`${className ?? ""}`} style={{
     height: `var(--icon-size)`,
     width: 'var(--icon-size)',
     color: color,

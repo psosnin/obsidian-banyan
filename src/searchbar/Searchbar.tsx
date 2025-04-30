@@ -11,7 +11,7 @@ interface SearchbarProps {
     setSidebarBtnIndex: (index: SidebarBtnIndex) => void;
 }
 
-export const Searchbar: React.FC<SearchbarProps> = ({allTags, setCurFilterScheme, setSidebarBtnIndex}) => {
+export const Searchbar: React.FC<SearchbarProps> = ({ allTags, setCurFilterScheme, setSidebarBtnIndex }) => {
     const [tempFilterScheme, setTempFilterScheme] = useState(SearchFilterScheme);
     const [showFilterBox, setShowFilterBox] = useState(false);
 
@@ -60,8 +60,8 @@ export const Searchbar: React.FC<SearchbarProps> = ({allTags, setCurFilterScheme
                     <div style={{ display: 'flex', justifyContent: 'flex-start', gap: 8, marginTop: 16 }}>
                         <button onClick={handleSearch} style={{ padding: '4px 16px', background: 'var(--interactive-accent)' }}>搜索</button>
                         <button onClick={handleReset} style={{ padding: '4px 16px', backgroundColor: 'transparent' }}>重置</button>
-                        <div style={{flex: 1}}></div>
-                        <button onClick={handleCancel} style={{ padding: '4px 16px'}}>取消</button>
+                        <div style={{ flex: 1 }}></div>
+                        <button onClick={handleCancel} style={{ padding: '4px 16px' }}>取消</button>
                     </div>
                 </div>
             )}

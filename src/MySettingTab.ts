@@ -1,7 +1,7 @@
 import { App, PluginSettingTab, Setting } from 'obsidian';
 import MyPlugin from './main';
-import { getAllFolders, createFolderSuggest } from './utils/folderUtils';
-import { FilterScheme } from './sidebar/SideBarContent';
+import { getAllFolders, createFolderSuggest } from './utils/fileUtils';
+import { FilterScheme } from './models/FilterScheme';
 
 export interface MyPluginSettings {
 	cardsDirectory: string;

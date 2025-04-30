@@ -1,4 +1,4 @@
-import { TFolder, App, Plugin } from "obsidian";
+import { TFolder, App } from "obsidian";
 
 export async function getAllFolders(app: App): Promise<string[]> {
   const folders: string[] = [];

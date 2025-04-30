@@ -1,6 +1,6 @@
 import { App, ItemView, WorkspaceLeaf, TFile, Notice, Menu, Component } from "obsidian";
 import MyPlugin from "./main";
-import { StrictMode, useEffect, useState } from 'react';
+import { StrictMode, useEffect, useState, useRef, useCallback } from 'react';
 import { Root, createRoot } from 'react-dom/client';
 import * as React from "react";
 import CardNote from "./cards/CardNote";
@@ -65,6 +65,10 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
 
   const [notes, setNotes] = useState<TFile[]>([]);
   const [contents, setContents] = useState<{ file: TFile, content: string }[]>([]);
+  const [allFilteredNotes, setAllFilteredNotes] = useState<TFile[]>([]); // Store all filtered notes before pagination
+  const [currentPage, setCurrentPage] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
+  const notesPerPage = 20;
 
   const [refreshFlag, setRefreshFlag] = useState(0);
 
@@ -128,10 +132,73 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
       withinDateRange(sortType == 'created' ? file.stat.ctime : file.stat.mtime, curFilterScheme.dateRange)
     );
     filtered.sort((a, b) => sortType === 'created' ? b.stat.ctime - a.stat.ctime : b.stat.mtime - a.stat.mtime);
-    setNotes(filtered);
+    setAllFilteredNotes(filtered); // Store all filtered notes
+    setNotes(filtered.slice(0, notesPerPage)); // Load initial page
+    setCurrentPage(1); // Reset page number on filter/sort change
     setAllTags(getAllTags(filtered));
 
-  }, [refreshFlag, sortType, curFilterScheme, app.vault.getFiles().length]);
+  }, [refreshFlag, sortType, curFilterScheme, app.vault.getFiles().length, dir]); // Add dir dependency
+
+  const loadMoreNotes = useCallback(async () => {
+    if (isLoading || notes.length >= allFilteredNotes.length) return;
+
+    setIsLoading(true);
+    const nextPage = currentPage + 1;
+    const nextNotes = allFilteredNotes.slice(0, nextPage * notesPerPage);
+
+    // Fetch content for the newly added notes only
+    const notesToFetchContent = nextNotes.slice(notes.length);
+    try {
+      const newContents = await Promise.all(notesToFetchContent.map(async (file: TFile) => {
+        const content = await app.vault.cachedRead(file);
+        return { file, content };
+      }));
+      setNotes(nextNotes);
+      setContents(prevContents => [...prevContents, ...newContents]);
+      setCurrentPage(nextPage);
+    } catch (error) {
+      console.error("Error loading more notes content:", error);
+      new Notice('加载更多笔记时出错');
+    } finally {
+      setIsLoading(false);
+    }
+  }, [isLoading, notes, allFilteredNotes, currentPage, notesPerPage, app.vault]);
+
+  // Initial content load for the first page
+  useEffect(() => {
+    if (notes.length === 0) {
+      setContents([]);
+      return;
+    }
+    // Only load content if contents array is empty (initial load or filter change)
+    if (contents.length === 0 && notes.length > 0) {
+      setIsLoading(true);
+      Promise.all(notes.map(async (file: TFile) => {
+        const content = await app.vault.cachedRead(file);
+        return { file, content };
+      })).then(initialContents => {
+        setContents(initialContents);
+        setIsLoading(false);
+      }).catch(error => {
+        console.error("Error loading initial notes content:", error);
+        new Notice('加载初始笔记时出错');
+        setIsLoading(false);
+      });
+    }
+  }, [notes]); // Dependency only on notes for initial load
+
+  // Infinite scroll effect
+  const observer = useRef<IntersectionObserver>(null);
+  const lastCardElementRef = useCallback((node: HTMLElement | null) => {
+    if (isLoading) return;
+    if (observer.current) observer.current.disconnect();
+    observer.current = new IntersectionObserver(entries => {
+      if (entries[0].isIntersecting && notes.length < allFilteredNotes.length) {
+        loadMoreNotes();
+      }
+    });
+    if (node) observer.current.observe(node);
+  }, [isLoading, loadMoreNotes, notes.length, allFilteredNotes.length]);
 
   useEffect(() => {
     if (notes.length === 0) {
@@ -198,13 +265,14 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
     return () => window.removeEventListener('resize', updateCol);
   }, [showSidebar]);
 
-  // 卡片筛选
-  let filtered = contents;
+  // 卡片筛选 - Apply filtering to all notes before pagination
+  let filteredForDisplay = contents;
   if (curFilterScheme?.keyword?.trim()) {
-    filtered = filtered.filter(({ content }) => content.toLowerCase().includes(curFilterScheme!.keyword!.trim().toLowerCase()));
+    const keyword = curFilterScheme.keyword.trim().toLowerCase();
+    filteredForDisplay = filteredForDisplay.filter(({ content }) => content.toLowerCase().includes(keyword));
   }
   if (curFilterScheme?.tagFilter?.or?.length > 0) {
-    filtered = filtered.filter(({ file }) => {
+    filteredForDisplay = filteredForDisplay.filter(({ file }) => {
       const fileTags: string[] = app.metadataCache.getFileCache(file)?.frontmatter?.tags ?? [];
       return curFilterScheme!.tagFilter!.or!.some((andTags) => andTags.every((andTag) => {
         return fileTags.some((fileTag) => fileTag.startsWith(andTag));
@@ -212,7 +280,7 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
     });
   }
   if (curFilterScheme?.tagFilter?.not?.length > 0) {
-    filtered = filtered.filter(({ file }) => {
+    filteredForDisplay = filteredForDisplay.filter(({ file }) => {
       const tags = app.metadataCache.getFileCache(file)?.frontmatter?.tags ?? [];
       return !curFilterScheme!.tagFilter!.not!.some((tag) => tags.includes(tag));
     });
@@ -241,25 +309,30 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
   }, [pinnedFiles]);
 
   // 渲染卡片时优先显示置顶
-  const pinned = filtered
-    .filter(({ file }) => pinnedFiles.indexOf(file.path) != -1)
-    .concat(filtered.filter(({ file }) => pinnedFiles.indexOf(file.path) == -1)); //[...filtered];
+  const pinnedAndFiltered = filteredForDisplay
+    .filter(({ file }) => pinnedFiles.includes(file.path))
+    .concat(filteredForDisplay.filter(({ file }) => !pinnedFiles.includes(file.path)));
 
-  const cardNodes = pinned.map(({ file, content }) => (
-    <CardNote
-      key={file.path}
-      sortType={sortType}
-      file={file}
-      tags={app.metadataCache.getFileCache(file)?.frontmatter?.tags ?? []}
-      content={content}
-      app={app}
-      component={component}
-      onDelete={handleDelete}
-      onOpen={handleOpen}
-      setPin={handlePin}
-      isPinned={pinnedFiles.contains(file.path)}
-    />
-  ));
+  const cardNodes = pinnedAndFiltered.map(({ file, content }, index) => {
+    // Attach ref to the last card for intersection observer
+    const isLastCard = index === pinnedAndFiltered.length - 1;
+    return (
+      <div ref={isLastCard ? lastCardElementRef : null} key={file.path}>
+        <CardNote
+          sortType={sortType}
+          file={file}
+          tags={app.metadataCache.getFileCache(file)?.frontmatter?.tags ?? []}
+          content={content}
+          app={app}
+          component={component}
+          onDelete={handleDelete}
+          onOpen={handleOpen}
+          setPin={handlePin}
+          isPinned={pinnedFiles.includes(file.path)}
+        />
+      </div>
+    );
+  });
   const columns = getColumns(cardNodes, colCount);
 
   const sortMenu = (
@@ -371,6 +444,11 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
               <div className="main-cards-column" key={idx}>{col}</div>
             ))
           )}
+        </div>
+        {/* Add loading and end-of-list indicators here */}
+        <div style={{ textAlign: 'center', padding: '20px', color: 'var(--text-muted)' }}>
+          {isLoading && <div>加载中...</div>}
+          {!isLoading && notes.length >= allFilteredNotes.length && cardNodes.length > 0 && <div>你已经到底部了</div>}
         </div>
       </div>
     </div>

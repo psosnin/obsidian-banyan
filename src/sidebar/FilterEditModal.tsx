@@ -1,5 +1,5 @@
 import { App, Modal } from "obsidian";
-import { FilterScheme } from "../sidebar/SideBarContent";
+import { FilterScheme } from "src/models/FilterScheme";
 import { FilterView } from "./FilterView";
 import * as React from "react";
 import { createRoot, Root } from "react-dom/client";
@@ -54,7 +54,7 @@ const FilterViewContainer = ({props, close} : {props: FilterEditModalProps, clos
             />
             <div style={{ display: "flex", justifyContent: "flex-end", gap: 8, marginTop: 16 }}>
                 <button onClick={handleCancel}>取消</button>
-                <button onClick={handleSave} style={{ background: "var(--interactive-accent)", color: "#fff", border: "none", borderRadius: 4, padding: "4px 16px" }}>保存</button>
+                <button onClick={handleSave} style={{ background: "var(--interactive-accent)", color: "var(--text-normal)", border: "none", borderRadius: 4, padding: "4px 16px" }}>保存</button>
             </div>
         </div>
     </div>;

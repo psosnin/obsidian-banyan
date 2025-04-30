@@ -6,8 +6,10 @@ import * as React from "react";
 import CardNote from "./cards/CardNote";
 import { Icon } from "./components/Icon";
 import Sidebar from "./sidebar/Sidebar";
-import { DefaultFilterScheme, FilterScheme, SidebarBtnIndex, SidebarContent } from "./sidebar/SideBarContent";
+import { DefaultFilterScheme, FilterScheme } from "./models/FilterScheme";
+import { SidebarBtnIndex, SidebarContent } from "./sidebar/SideBarContent";
 import { HeatmapData } from "./components/Heatmap";
+import { Searchbar } from "./searchbar/Searchbar";
 
 export const CARD_DASHBOARD_VIEW_TYPE = "dashboard-view";
 
@@ -335,7 +337,7 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
       {showSidebar != 'normal' && <Sidebar visible={showSidebar == 'show'} onClose={() => setShowSidebar('hide')}>{sidebarContent}</Sidebar>}
       {showSidebar == 'normal' && sidebarContent}
       <div className="main-container" style={{ display: 'inline-block' }} ref={mainBoardRef}>
-        <div className="main-header-container" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginRight: 16 }}>
+        <div className="main-header-container" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
           <div className="main-header-title" style={{ display: "flex", alignItems: "center" }}>
             <button style={{
               marginLeft: 12, background: 'none', border: 'none', color: 'inherit', cursor: 'pointer',
@@ -346,19 +348,7 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
             ><Icon name="menu" /></button>
             <h4>{curFilterScheme.name}</h4>
           </div>
-          <div className="main-header-searchbar">
-            <Icon name="search" />
-            <input
-              type="text"
-              placeholder="关键字"
-              value={curFilterScheme.keyword}
-              onChange={e => {
-                const newKeyword = e.target.value;
-                setCurFilterScheme(prev => ({ ...prev, keyword: newKeyword }));
-              }}
-              style={{ background: 'transparent', border: 'none', outline: 'none', flex: 1 }}
-            />
-          </div>
+          <Searchbar allTags={allTags} setCurFilterScheme={setCurFilterScheme} setSidebarBtnIndex={setSidebarBtnIndex} />
         </div>
         <div className="main-subheader-container" style={{ marginBottom: 6, marginRight: 16, display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
           <div style={{ display: "flex", alignItems: 'center' }}>

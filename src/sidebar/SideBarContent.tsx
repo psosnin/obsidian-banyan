@@ -3,27 +3,13 @@ import { Icon } from '../components/Icon';
 import { SidebarButton } from './SidebarButton';
 import { FilterEditModal } from './FilterEditModal';
 import { App, Menu } from 'obsidian';
+import { FilterScheme } from 'src/models/FilterScheme';
 
 export type SidebarBtnIndex = 
+| { type: 'none' }
 | { type: 'allNotes' }
 | { type: 'filterScheme'; index: number }
 | { type: 'tag'; tag: string };
-
-export type FilterScheme = {
-    id: number,
-    name: string,
-    tagFilter: { or: string[][]; not: string[] },
-    dateRange: { from: string; to: string },
-    keyword: string,
-};
-
-export const DefaultFilterScheme: FilterScheme = {
-    id: -1,
-    name: '所有笔记',
-    tagFilter: { or: [[]], not: [] },
-    dateRange: { from: "", to: "" },
-    keyword: "",
-}
 
 export interface SidebarContentProps {
     notesNum: number,

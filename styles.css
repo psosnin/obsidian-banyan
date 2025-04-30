@@ -128,18 +128,6 @@ If your plugin does not need CSS, delete this file.
   white-space: nowrap;
 }
 
-.main-header-searchbar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  background-color: var(--background-secondary);
-  /* border: 1px solid var(--background-modifier-border); */
-  border-radius: 8px;
-  padding: 0 8px;
-  height: 32px;
-  min-width: 220px;
-}
-
 /*
  * react-calendar-heatmap styles
  *

@@ -10,9 +10,10 @@ export interface TagFilterGroupProps {
   allTags: string[];
   value: TagFilterGroupValue;
   onChange: (value: TagFilterGroupValue) => void;
+  showLabel?: boolean;
 }
 
-export const TagFilterGroup: React.FC<TagFilterGroupProps> = ({ allTags, value, onChange }) => {
+export const TagFilterGroup: React.FC<TagFilterGroupProps> = ({ allTags, value, onChange, showLabel = true }) => {
   // and: 多行，每行是标签数组
   // not: 最后一行，非关系
   const handleAndTagChange = (rowIdx: number, tags: string[]) => {
@@ -36,12 +37,12 @@ export const TagFilterGroup: React.FC<TagFilterGroupProps> = ({ allTags, value, 
     <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
       {value.or.map((tags, idx) => (
         <div key={idx} style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          <label style={{ marginRight: 4 }}>{idx == 0 ? "包含" : "或含"}</label>
+          {showLabel && <label style={{ marginRight: 4 }}>{idx == 0 ? "包含" : "或含"}</label>}
           <TagInput
             tags={tags}
             onChange={t => handleAndTagChange(idx, t)}
             allTags={allTags}
-            placeholder={"输入标签"}
+            placeholder={idx == 0 ? "包含标签" : "或含标签"}
           />
           {value.or.length > 1 && idx != 0 && (
             <button onClick={() => handleRemoveAndRow(idx)} style={{ marginLeft: 2, padding: '0px 12px' }}>-</button>
@@ -52,12 +53,12 @@ export const TagFilterGroup: React.FC<TagFilterGroupProps> = ({ allTags, value, 
         </div>
       ))}
       <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-        <label style={{ marginRight: 4 }}>不含</label>
+        {showLabel && <label style={{ marginRight: 4 }}>不含</label>}
         <TagInput
           tags={value.not}
           onChange={handleNotTagChange}
           allTags={allTags}
-          placeholder={"输入标签"}
+          placeholder={"排除标签"}
         />
       </div>
     </div>

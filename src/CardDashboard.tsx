@@ -7,7 +7,7 @@ import CardNote from "./cards/CardNote";
 import { Icon } from "./components/Icon";
 import Sidebar from "./sidebar/Sidebar";
 import { DefaultFilterScheme, FilterScheme } from "./models/FilterScheme";
-import { SidebarBtnIndex, SidebarContent } from "./sidebar/SideBarContent";
+import { SidebarContent } from "./sidebar/SideBarContent";
 import { HeatmapData } from "./components/Heatmap";
 import { Searchbar } from "./searchbar/Searchbar";
 import EmptyStateCard from "./cards/EmptyStateCard";
@@ -71,7 +71,6 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
   const [totalNotesNum, setTotalNotesNum] = useState(0);
   const [totalTagsNum, setTotalTagsNum] = useState(0);
   const [heatmapValues, setHeatmapValues] = useState<HeatmapData[]>([]);
-  const [sidebarBtnIndex, setSidebarBtnIndex] = useState<SidebarBtnIndex>({ type: 'allNotes' });
 
   const withinDateRange = (time: number, dateRange: { from: string; to: string }) => {
     const from = dateRange.from.length > 0 ? (new Date(dateRange.from).getTime()) : undefined;
@@ -158,17 +157,13 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
   };
 
   const handleClickAllNotes = () => {
-    if (sidebarBtnIndex.type == 'allNotes') return;
-    setSidebarBtnIndex({ type: 'allNotes' });
+    if (curFilterScheme.id == DefaultFilterScheme.id) return;
     setCurFilterScheme(DefaultFilterScheme);
-    // setRefreshFlag(f => f + 1);
   };
 
   const handleClickFilterScheme = (index: number) => {
-    if (sidebarBtnIndex.type == 'filterScheme' && sidebarBtnIndex.index == index) return;
-    setSidebarBtnIndex({ type: 'filterScheme', index: index });
+    if (curFilterScheme.id == filterSchemes[index].id) return;
     setCurFilterScheme(filterSchemes[index]);
-    setRefreshFlag(f => f + 1);
   };
 
   // 瀑布流布局
@@ -301,7 +296,7 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
       notesNum={totalNotesNum}
       tagsNum={totalTagsNum}
       heatmapValues={heatmapValues}
-      sidebarBtnIndex={sidebarBtnIndex}
+      curFilterSchemeID={curFilterScheme.id}
       onClickAllNotesBtn={handleClickAllNotes}
       onClickFilterScheme={handleClickFilterScheme}
       filterSchemes={filterSchemes}
@@ -347,9 +342,16 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
               onClick={() => setShowSidebar('show')}
               title="展开侧边栏"
             ><Icon name="menu" /></button>
-            <h4>{curFilterScheme.name}</h4>
+            {curFilterScheme.id == DefaultFilterScheme.id && <div className="main-header-title-content">{curFilterScheme.name}</div>}
+            {curFilterScheme.id != DefaultFilterScheme.id && <div style={{display:"flex"}}>
+              <div className="main-header-title-content main-header-title-content-clickable" onClick={() => {
+                setCurFilterScheme(DefaultFilterScheme);
+                }}>{DefaultFilterScheme.name}</div>
+                <div className="main-header-title-separator">{'/'}</div>
+                <div className="main-header-title-content">{curFilterScheme.name}</div>
+              </div>}
           </div>
-          <Searchbar allTags={allTags} setCurFilterScheme={setCurFilterScheme} setSidebarBtnIndex={setSidebarBtnIndex} />
+          <Searchbar allTags={allTags} setCurFilterScheme={setCurFilterScheme} />
         </div>
         <div className="main-subheader-container" style={{ marginBottom: 6, marginRight: 16, display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
           <div style={{ display: "flex", alignItems: 'center' }}>

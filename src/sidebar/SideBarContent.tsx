@@ -3,22 +3,16 @@ import { Icon } from '../components/Icon';
 import { SidebarButton } from './SidebarButton';
 import { FilterEditModal } from './FilterEditModal';
 import { App, Menu } from 'obsidian';
-import { FilterScheme } from 'src/models/FilterScheme';
-
-export type SidebarBtnIndex = 
-| { type: 'none' }
-| { type: 'allNotes' }
-| { type: 'filterScheme'; index: number }
-| { type: 'tag'; tag: string };
+import { DefaultFilterScheme, FilterScheme } from 'src/models/FilterScheme';
 
 export interface SidebarContentProps {
     notesNum: number,
     tagsNum: number,
     heatmapValues: HeatmapData[],
-    sidebarBtnIndex: SidebarBtnIndex,
     onClickAllNotesBtn: () => void,
     onClickFilterScheme: (index: number) => void,
     filterSchemes: FilterScheme[],
+    curFilterSchemeID: number,
     setFilterScheme: (scheme: FilterScheme) => void,
     pinFilterScheme: (schemeID: number) => void,
     deleteFilterScheme: (schemeID: number) => void,
@@ -27,7 +21,7 @@ export interface SidebarContentProps {
 }
 
 export const SidebarContent = ( { notesNum, tagsNum, heatmapValues, 
-    sidebarBtnIndex, onClickAllNotesBtn, onClickFilterScheme, filterSchemes, setFilterScheme, app, allTags,
+    curFilterSchemeID, onClickAllNotesBtn, onClickFilterScheme, filterSchemes, setFilterScheme, app, allTags,
     pinFilterScheme, deleteFilterScheme
 } : SidebarContentProps) => {
 
@@ -110,10 +104,10 @@ export const SidebarContent = ( { notesNum, tagsNum, heatmapValues,
         <StatisticsInfo notesNum={notesNum} tagsNum={tagsNum}/>
         <Heatmap values={heatmapValues}/>
         <div style={{ display: 'flex', flexDirection: 'column', marginTop: 12}}>
-            <AllNotesBtn selected={sidebarBtnIndex.type == 'allNotes'} onClick={onClickAllNotesBtn} />
+            <AllNotesBtn selected={curFilterSchemeID == DefaultFilterScheme.id} onClick={onClickAllNotesBtn} />
             <FilterSchemesInfo 
                 filterSchemes={filterSchemes}
-                selectedIndex={sidebarBtnIndex.type == 'filterScheme' ? sidebarBtnIndex.index : undefined} 
+                curFilterSchemeID={curFilterSchemeID}
                 onClick={onClickFilterScheme}
                 onClickMore={handleClickMore}
                 onClickAdd={handleNewFilterScheme}
@@ -150,8 +144,8 @@ const AllNotesBtn = ({ selected, onClick }: { selected: boolean; onClick: () => 
     );
 }
 
-const FilterSchemesInfo = ({filterSchemes, selectedIndex, onClick, onClickMore, onClickAdd} : { 
-    filterSchemes: FilterScheme[], selectedIndex?: number, 
+const FilterSchemesInfo = ({filterSchemes, curFilterSchemeID, onClick, onClickMore, onClickAdd} : { 
+    filterSchemes: FilterScheme[], curFilterSchemeID: number, 
     onClick: (index: number) => void, 
     onClickMore?: (e: MouseEvent, index: number) => void,
     onClickAdd?: () => void,
@@ -176,7 +170,7 @@ const FilterSchemesInfo = ({filterSchemes, selectedIndex, onClick, onClickMore, 
                     <SidebarButton
                         key={scheme.id}
                         label={scheme.name}
-                        selected={selectedIndex===index}
+                        selected={curFilterSchemeID===scheme.id}
                         onClick={() => onClick(index)} 
                         rightIconName='ellipsis'
                         onClickRightIcon={(e) => onClickMore && onClickMore(e, index)}    

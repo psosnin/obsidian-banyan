@@ -1,24 +1,21 @@
 import { Icon } from "src/components/Icon";
 import { SearchView } from "./SearchView";
 import { useState } from "react";
-import { SidebarBtnIndex } from "src/sidebar/SideBarContent";
-import { FilterScheme, DefaultFilterScheme, SearchFilterScheme } from "src/models/FilterScheme";
+import { FilterScheme, SearchFilterScheme } from "src/models/FilterScheme";
 import React from "react";
 
 interface SearchbarProps {
     allTags: string[];
     setCurFilterScheme: (scheme: FilterScheme) => void;
-    setSidebarBtnIndex: (index: SidebarBtnIndex) => void;
 }
 
-export const Searchbar: React.FC<SearchbarProps> = ({ allTags, setCurFilterScheme, setSidebarBtnIndex }) => {
+export const Searchbar: React.FC<SearchbarProps> = ({ allTags, setCurFilterScheme }) => {
     const [tempFilterScheme, setTempFilterScheme] = useState(SearchFilterScheme);
     const [showFilterBox, setShowFilterBox] = useState(false);
 
     const handleSearch = () => {
         setCurFilterScheme(tempFilterScheme);
         setShowFilterBox(false);
-        setSidebarBtnIndex({ type: 'none' });
     };
 
     const handleReset = () => {

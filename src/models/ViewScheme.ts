@@ -3,4 +3,5 @@ export type ViewScheme = {
     name: string,
     files: string[],
     pinned: string[],
+    type: 'ViewScheme'
 };

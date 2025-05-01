@@ -4,6 +4,7 @@ export type FilterScheme = {
     tagFilter: { or: string[][]; not: string[] },
     dateRange: { from: string; to: string },
     keyword: string,
+    type: 'FilterScheme'
 };
 
 export const DefaultFilterScheme: FilterScheme = {
@@ -12,6 +13,7 @@ export const DefaultFilterScheme: FilterScheme = {
     tagFilter: { or: [[]], not: [] },
     dateRange: { from: "", to: "" },
     keyword: "",
+    type: 'FilterScheme'
 }
 
 export const SearchFilterScheme: FilterScheme = {
@@ -20,4 +22,5 @@ export const SearchFilterScheme: FilterScheme = {
     tagFilter: { or: [[]], not: [] },
     dateRange: { from: "", to: "" },
     keyword: "",
+    type: 'FilterScheme'
 }

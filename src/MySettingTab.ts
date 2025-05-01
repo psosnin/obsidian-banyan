@@ -2,6 +2,7 @@ import { App, PluginSettingTab, Setting } from 'obsidian';
 import MyPlugin from './main';
 import { getAllFolders, createFolderSuggest } from './utils/fileUtils';
 import { FilterScheme } from './models/FilterScheme';
+import { ViewScheme } from './models/ViewScheme';
 
 export interface MyPluginSettings {
 	cardsDirectory: string;
@@ -9,6 +10,7 @@ export interface MyPluginSettings {
 	pinnedFiles: string[];
 	openWhenStartObsidian: boolean;
 	filterSchemes: FilterScheme[];
+	viewSchemes: ViewScheme[];
 }
 
 export const DEFAULT_SETTINGS: MyPluginSettings = {
@@ -17,6 +19,7 @@ export const DEFAULT_SETTINGS: MyPluginSettings = {
 	pinnedFiles: [],
 	openWhenStartObsidian: true,
 	filterSchemes: [],
+	viewSchemes: [],
 }
 
 export class MySettingTab extends PluginSettingTab {

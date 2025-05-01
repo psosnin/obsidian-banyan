@@ -12,6 +12,7 @@ import { HeatmapData } from "./components/Heatmap";
 import { Searchbar } from "./searchbar/Searchbar";
 import EmptyStateCard from "./cards/EmptyStateCard";
 import { getAllTags } from "./utils/tagUtils";
+import { ViewScheme } from "./models/ViewScheme";
 
 export const CARD_DASHBOARD_VIEW_TYPE = "dashboard-view";
 
@@ -62,7 +63,8 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
   const [allTags, setAllTags] = useState<string[]>([]);
 
   const [filterSchemes, setFilterSchemes] = useState<FilterScheme[]>(plugin.settings.filterSchemes);
-  const [curFilterScheme, setCurFilterScheme] = useState<FilterScheme>(DefaultFilterScheme);
+  const [viewSchemes, setViewSchemes] = useState<ViewScheme[]>(plugin.settings.viewSchemes);
+  const [curScheme, setCurScheme] = useState<FilterScheme | ViewScheme>(DefaultFilterScheme);
 
   const [notes, setNotes] = useState<TFile[]>([]);
   const [contents, setContents] = useState<{ file: TFile, content: string }[]>([]);
@@ -112,18 +114,24 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
     if (!dir) return;
     const files = app.vault.getMarkdownFiles().filter((file: TFile) => file.path.startsWith(dir));
     setTotalNotesNum(files.length);
-    setTotalTagsNum(getAllTags(app,files).length);
+    setTotalTagsNum(getAllTags(app, files).length);
     setHeatmapValues(getHeatmapValues(files));
-    const filtered = files.filter((file: TFile) =>
-      withinDateRange(sortType == 'created' ? file.stat.ctime : file.stat.mtime, curFilterScheme.dateRange)
-    );
+    let filtered = files;
+    console.log('filtered1 ', filtered.length, curScheme);
+    if (curScheme.type == 'FilterScheme') {
+      filtered = filtered.filter((file: TFile) => withinDateRange(sortType == 'created' ? file.stat.ctime : file.stat.mtime, curScheme.dateRange));
+    }
+    if (curScheme.type == 'ViewScheme') {
+      filtered = curScheme.files.length === 0 ? filtered : filtered.filter((file: TFile) => curScheme.files.includes(file.path));
+    }
+    console.log('filtered2 ', filtered.length, curScheme);
     filtered.sort((a, b) => sortType === 'created' ? b.stat.ctime - a.stat.ctime : b.stat.mtime - a.stat.mtime);
     setAllFilteredNotes(filtered); // Store all filtered notes
     setNotes(filtered.slice(0, notesPerPage)); // Load initial page
     setCurrentPage(1); // Reset page number on filter/sort change
     setAllTags(getAllTags(app, filtered));
 
-  }, [refreshFlag, sortType, curFilterScheme, app.vault.getFiles().length, dir]); // Add dir dependency
+  }, [refreshFlag, sortType, curScheme, app.vault.getFiles().length, dir]); // Add dir dependency
 
   const loadMoreNotes = useCallback(async () => {
     if (isLoading || notes.length >= allFilteredNotes.length) return;
@@ -209,16 +217,6 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
     app.workspace.openLinkText(file.path, '', false);
   };
 
-  const handleClickAllNotes = () => {
-    if (curFilterScheme.id == DefaultFilterScheme.id) return;
-    setCurFilterScheme(DefaultFilterScheme);
-  };
-
-  const handleClickFilterScheme = (index: number) => {
-    if (curFilterScheme.id == filterSchemes[index].id) return;
-    setCurFilterScheme(filterSchemes[index]);
-  };
-
   // 瀑布流布局
   const getColumns = (cards: React.JSX.Element[], colCount: number) => {
     const cols: React.JSX.Element[][] = Array.from({ length: colCount }, () => []);
@@ -253,24 +251,28 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
 
   // 卡片筛选 - Apply filtering to all notes before pagination
   let filteredForDisplay = contents;
-  if (curFilterScheme?.keyword?.trim()) {
-    const keyword = curFilterScheme.keyword.trim().toLowerCase();
-    filteredForDisplay = filteredForDisplay.filter(({ content }) => content.toLowerCase().includes(keyword));
+  console.log('filteredForDisplay1 ', filteredForDisplay.length, curScheme);
+  if (curScheme.type === 'FilterScheme') {
+    if (curScheme.keyword.trim()) {
+      const keyword = curScheme.keyword.trim().toLowerCase();
+      filteredForDisplay = filteredForDisplay.filter(({ content }) => content.toLowerCase().includes(keyword));
+    }
+    if (curScheme.tagFilter.or.length > 0) {
+      filteredForDisplay = filteredForDisplay.filter(({ file }) => {
+        const fileTags: string[] = app.metadataCache.getFileCache(file)?.frontmatter?.tags ?? [];
+        return curScheme.tagFilter.or.some((andTags) => andTags.every((andTag) => {
+          return fileTags.some((fileTag) => fileTag.startsWith(andTag));
+        }));
+      });
+    }
+    if (curScheme.tagFilter.not.length > 0) {
+      filteredForDisplay = filteredForDisplay.filter(({ file }) => {
+        const fileTags = app.metadataCache.getFileCache(file)?.frontmatter?.tags ?? [];
+        return !curScheme.tagFilter.not.some((tag) => fileTags.some((fileTag: string) => fileTag.startsWith(tag)));
+      });
+    }
   }
-  if (curFilterScheme.tagFilter.or.length > 0) {
-    filteredForDisplay = filteredForDisplay.filter(({ file }) => {
-      const fileTags: string[] = app.metadataCache.getFileCache(file)?.frontmatter?.tags ?? [];
-      return curFilterScheme.tagFilter.or.some((andTags) => andTags.every((andTag) => {
-        return fileTags.some((fileTag) => fileTag.startsWith(andTag));
-      }));
-    });
-  }
-  if (curFilterScheme.tagFilter.not.length > 0) {
-    filteredForDisplay = filteredForDisplay.filter(({ file }) => {
-      const fileTags = app.metadataCache.getFileCache(file)?.frontmatter?.tags ?? [];
-      return !curFilterScheme.tagFilter.not.some((tag) => fileTags.some((fileTag: string) => fileTag.startsWith(tag)));
-    });
-  }
+  console.log('filteredForDisplay2 ', filteredForDisplay.length, curScheme);
 
   // 卡片置顶
   const [pinnedFiles, setPinnedFiles] = useState<string[]>(() => plugin.settings.pinnedFiles || []);
@@ -347,7 +349,6 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
     sortMenu.showAtMouseEvent(event);
   };
 
-
   const sidebarContent = (() => {
     return <SidebarContent
       allTags={allTags}
@@ -355,15 +356,24 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
       notesNum={totalNotesNum}
       tagsNum={totalTagsNum}
       heatmapValues={heatmapValues}
-      curFilterSchemeID={curFilterScheme.id}
-      onClickAllNotesBtn={handleClickAllNotes}
-      onClickFilterScheme={handleClickFilterScheme}
+
+      curFilterSchemeID={curScheme.type == 'FilterScheme' ? curScheme.id : undefined}
+      onClickAllNotesBtn={() => {
+        if (curScheme === DefaultFilterScheme) return;
+        console.log('all notes', DefaultFilterScheme);
+        setCurScheme(DefaultFilterScheme);
+      }}
+      onClickFilterScheme={(index) => {
+        if (curScheme === filterSchemes[index]) return;
+        console.log('filterSchemes', filterSchemes[index]);
+        setCurScheme(filterSchemes[index]);
+      }}
       filterSchemes={filterSchemes}
-      onDragEnd={(newSchemes) => {
+      onFilterDragEnd={(newSchemes) => {
         setFilterSchemes(newSchemes);
         plugin.settings.filterSchemes = newSchemes;
         plugin.saveSettings();
-      }}      
+      }}
       setFilterScheme={(fs) => {
         if (filterSchemes.filter(f => f.id == fs.id).length == 0) {
           setFilterSchemes([...filterSchemes, fs]);
@@ -374,8 +384,8 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
           plugin.settings.filterSchemes = updatedFilterSchemes;
         }
         plugin.saveSettings();
-        if (curFilterScheme.id == fs.id) {
-          setCurFilterScheme(fs);
+        if (curScheme.type === 'FilterScheme' && curScheme.id == fs.id) {
+          setCurScheme(fs);
         }
       }}
       deleteFilterScheme={(id) => {
@@ -384,10 +394,46 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
         plugin.settings.filterSchemes = updatedFilterSchemes;
         plugin.saveSettings();
       }}
-      pinFilterScheme={(id) => {
+      pinFilterScheme={(_id) => {
         // const updated = pinnedFilterSchemes.map((id, i) => i == id? {...s, isPinned: true} : s);
         // setPinnedFilterSchemes(updated);
         // plugin.settings.pinnedFilterSchemes = updated;
+        new Notice('置顶功能暂未实现');
+      }}
+
+      viewSchemes={viewSchemes}
+      curViewSchemeID={curScheme.type === 'ViewScheme' ? curScheme.id : undefined}
+      onClickViewScheme={(index) => {
+        if (curScheme === viewSchemes[index]) return;
+        setCurScheme(viewSchemes[index]);
+      }}
+      setViewScheme={(vs) => {
+        if (viewSchemes.filter(v => v.id == vs.id).length == 0) {
+          setViewSchemes([...viewSchemes, vs]);
+          plugin.settings.viewSchemes = [...viewSchemes, vs];
+        } else {
+          const updated = viewSchemes.map((v) => v.id == vs.id ? vs : v);
+          setViewSchemes(updated);
+          plugin.settings.viewSchemes = updated;
+        }
+        plugin.saveSettings();
+        if (curScheme.type === 'ViewScheme' && curScheme.id == vs.id) {
+          setCurScheme(vs);
+        }
+      }}
+      onViewDragEnd={(newSchemes) => {
+        setViewSchemes(newSchemes);
+        plugin.settings.viewSchemes = newSchemes;
+        plugin.saveSettings();
+      }}
+      deleteViewScheme={(id) => {
+        const updatedViewSchemes = viewSchemes.filter((s) => s.id != id);
+        setViewSchemes(updatedViewSchemes);
+        plugin.settings.viewSchemes = updatedViewSchemes;
+        plugin.saveSettings();
+      }}
+      pinViewScheme={(_id) => {
+        new Notice('置顶功能暂未实现');
       }}
     />;
   })();
@@ -406,20 +452,21 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
               onClick={() => setShowSidebar('show')}
               title="展开侧边栏"
             ><Icon name="menu" /></button>
-            {curFilterScheme.id == DefaultFilterScheme.id && <div className="main-header-title-content">{curFilterScheme.name}</div>}
-            {curFilterScheme.id != DefaultFilterScheme.id && <div style={{ display: "flex" }}>
-              <div className="main-header-title-content main-header-title-content-clickable" onClick={() => {
-                setCurFilterScheme(DefaultFilterScheme);
-              }}>{DefaultFilterScheme.name}</div>
-              <div className="main-header-title-separator">{'/'}</div>
-              <div className="main-header-title-content">{curFilterScheme.name}</div>
-            </div>}
+            {curScheme === DefaultFilterScheme && <div className="main-header-title-content">{curScheme.name}</div>}
+            {curScheme !== DefaultFilterScheme &&
+              <div style={{ display: "flex" }}>
+                <div className="main-header-title-content main-header-title-content-clickable" onClick={() => {
+                  setCurScheme(DefaultFilterScheme);
+                }}>{DefaultFilterScheme.name}</div>
+                <div className="main-header-title-separator">{'/'}</div>
+                <div className="main-header-title-content">{curScheme.name}</div>
+              </div>}
           </div>
-          <Searchbar allTags={allTags} setCurFilterScheme={setCurFilterScheme} />
+          <Searchbar allTags={allTags} setCurFilterScheme={setCurScheme} />
         </div>
         <div className="main-subheader-container" style={{ marginBottom: 6, marginRight: 16, display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
           <div style={{ display: "flex", alignItems: 'center' }}>
-            <span style={{ padding: '12px 6px', color: 'var(--text-muted)', fontSize: 'var(--font-smaller)' }}>共 {cardNodes.length} 条笔记</span>
+            <span style={{ padding: '12px 6px', color: 'var(--text-muted)', fontSize: 'var(--font-smaller)' }}>已加载 {cardNodes.length} 条笔记</span>
             {cardNodes.length > 0 && <button style={{ marginLeft: '6px', padding: '0 6px', background: 'transparent' }}
               children={<Icon name="arrow-down-wide-narrow" />}
               onClick={(e) => sortMenu(e.nativeEvent, sortType, setSortType)}
@@ -429,7 +476,7 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
         </div>
         <div className="main-cards" style={{ display: 'flex', gap: 16, }}>
           {cardNodes.length === 0 ? (
-            <EmptyStateCard isSearch={curFilterScheme.id != DefaultFilterScheme.id} />
+            <EmptyStateCard isSearch={curScheme !== DefaultFilterScheme} />
           ) : (
             columns.map((col, idx) => (
               <div className="main-cards-column" key={idx}>{col}</div>

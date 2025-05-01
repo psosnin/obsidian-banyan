@@ -359,6 +359,11 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
       onClickAllNotesBtn={handleClickAllNotes}
       onClickFilterScheme={handleClickFilterScheme}
       filterSchemes={filterSchemes}
+      onDragEnd={(newSchemes) => {
+        setFilterSchemes(newSchemes);
+        plugin.settings.filterSchemes = newSchemes;
+        plugin.saveSettings();
+      }}      
       setFilterScheme={(fs) => {
         if (filterSchemes.filter(f => f.id == fs.id).length == 0) {
           setFilterSchemes([...filterSchemes, fs]);

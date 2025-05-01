@@ -4,6 +4,7 @@ import { SidebarButton } from './SidebarButton';
 import { FilterEditModal } from './FilterEditModal';
 import { App, Menu } from 'obsidian';
 import { DefaultFilterScheme, FilterScheme } from 'src/models/FilterScheme';
+import React from 'react';
 
 export interface SidebarContentProps {
     notesNum: number,
@@ -14,6 +15,7 @@ export interface SidebarContentProps {
     filterSchemes: FilterScheme[],
     curFilterSchemeID: number,
     setFilterScheme: (scheme: FilterScheme) => void,
+    onDragEnd: (fs: FilterScheme[]) => void,
     pinFilterScheme: (schemeID: number) => void,
     deleteFilterScheme: (schemeID: number) => void,
     app: App,
@@ -22,7 +24,7 @@ export interface SidebarContentProps {
 
 export const SidebarContent = ( { notesNum, tagsNum, heatmapValues, 
     curFilterSchemeID, onClickAllNotesBtn, onClickFilterScheme, filterSchemes, setFilterScheme, app, allTags,
-    pinFilterScheme, deleteFilterScheme
+    pinFilterScheme, deleteFilterScheme, onDragEnd
 } : SidebarContentProps) => {
 
     const handleMenuClick = (action: string, index: number) => {
@@ -51,8 +53,6 @@ export const SidebarContent = ( { notesNum, tagsNum, heatmapValues,
             pinFilterScheme(filterSchemes[index].id);
         } else if (action === 'delete') {
             deleteFilterScheme(filterSchemes[index].id);
-            // const newSchemes = filterSchemes.filter((_, i) => i !== index);
-            // setFilterScheme(newSchemes[0] || EmptyFilterScheme);
         }
     };
 
@@ -111,6 +111,7 @@ export const SidebarContent = ( { notesNum, tagsNum, heatmapValues,
                 onClick={onClickFilterScheme}
                 onClickMore={handleClickMore}
                 onClickAdd={handleNewFilterScheme}
+                onDragEnd={onDragEnd}
             />
         </div>
     </div>);
@@ -144,12 +145,35 @@ const AllNotesBtn = ({ selected, onClick }: { selected: boolean; onClick: () => 
     );
 }
 
-const FilterSchemesInfo = ({filterSchemes, curFilterSchemeID, onClick, onClickMore, onClickAdd} : { 
+const FilterSchemesInfo = ({filterSchemes, curFilterSchemeID, onClick, onClickMore, onClickAdd, onDragEnd} : { 
     filterSchemes: FilterScheme[], curFilterSchemeID: number, 
     onClick: (index: number) => void, 
-    onClickMore?: (e: MouseEvent, index: number) => void,
-    onClickAdd?: () => void,
+    onClickMore: (e: MouseEvent, index: number) => void,
+    onClickAdd: () => void,
+    onDragEnd: (newOrder: FilterScheme[]) => void,
 }) => {
+    const [draggedIndex, setDraggedIndex] = React.useState<number|null>(null);
+    const [dragOverIndex, setDragOverIndex] = React.useState<number|null>(null);
+    const handleDragStart = (index: number) => {
+        setDraggedIndex(index);
+    };
+    const handleDragOver = (index: number, e: React.DragEvent) => {
+        e.preventDefault();
+        setDragOverIndex(index);
+    };
+    const handleDrop = (index: number) => {
+        if (draggedIndex === null || draggedIndex === index) {
+            setDraggedIndex(null);
+            setDragOverIndex(null);
+            return;
+        }
+        const newSchemes = [...filterSchemes];
+        const [removed] = newSchemes.splice(draggedIndex, 1);
+        newSchemes.splice(index, 0, removed);
+        onDragEnd(newSchemes);
+        setDraggedIndex(null);
+        setDragOverIndex(null);
+    };
     return (
         <div className='filter-scheme-container' style={{marginTop: 16}}>
             <div className='filter-scheme-header' style={{marginLeft: 12, display: 'flex', 
@@ -167,14 +191,26 @@ const FilterSchemesInfo = ({filterSchemes, curFilterSchemeID, onClick, onClickMo
             </div>
             <div className='filter-scheme-list' style={{marginTop: 6, display: 'flex', gap: 4, flexDirection: 'column'}}>
                 {filterSchemes.map((scheme, index) => (
-                    <SidebarButton
+                    <div
                         key={scheme.id}
-                        label={scheme.name}
-                        selected={curFilterSchemeID===scheme.id}
-                        onClick={() => onClick(index)} 
-                        rightIconName='ellipsis'
-                        onClickRightIcon={(e) => onClickMore && onClickMore(e, index)}    
-                    />
+                        draggable
+                        onDragStart={() => handleDragStart(index)}
+                        onDragOver={(e) => handleDragOver(index, e)}
+                        onDrop={() => handleDrop(index)}
+                        style={{
+                            opacity: draggedIndex === index ? 0.5 : 1,
+                            border: dragOverIndex === index && draggedIndex !== null ? '1px dashed var(--interactive-accent)' : undefined,
+                            borderRadius: 4
+                        }}
+                    >
+                        <SidebarButton
+                            label={scheme.name}
+                            selected={curFilterSchemeID===scheme.id}
+                            onClick={() => onClick(index)} 
+                            rightIconName='ellipsis'
+                            onClickRightIcon={(e) => onClickMore && onClickMore(e, index)}    
+                        />
+                    </div>
                 ))}
             </div>
         </div>

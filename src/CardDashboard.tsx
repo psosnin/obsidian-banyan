@@ -11,6 +11,7 @@ import { SidebarContent } from "./sidebar/SideBarContent";
 import { HeatmapData } from "./components/Heatmap";
 import { Searchbar } from "./searchbar/Searchbar";
 import EmptyStateCard from "./cards/EmptyStateCard";
+import { getAllTags } from "./utils/tagUtils";
 
 export const CARD_DASHBOARD_VIEW_TYPE = "dashboard-view";
 
@@ -86,21 +87,6 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
     return time >= from! && time <= to!;
   }
 
-  const getAllTags = (files: TFile[]) => {
-    const tagSet = new Set<string>();
-    files.forEach((file: TFile) => {
-      const properties = app.metadataCache.getFileCache(file)?.frontmatter;
-      if (properties?.tags) {
-        if (Array.isArray(properties.tags)) {
-          properties.tags.forEach((tag: string) => tagSet.add(tag));
-        } else if (typeof properties.tags === 'string') {
-          tagSet.add(properties.tags);
-        }
-      }
-    });
-    return Array.from(tagSet);
-  }
-
   const getHeatmapValues = (files: TFile[]) => {
     const valueMap = files
       .map(file => new Date(file.stat.ctime).toISOString().slice(0, 10))
@@ -126,7 +112,7 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
     if (!dir) return;
     const files = app.vault.getMarkdownFiles().filter((file: TFile) => file.path.startsWith(dir));
     setTotalNotesNum(files.length);
-    setTotalTagsNum(getAllTags(files).length);
+    setTotalTagsNum(getAllTags(app,files).length);
     setHeatmapValues(getHeatmapValues(files));
     const filtered = files.filter((file: TFile) =>
       withinDateRange(sortType == 'created' ? file.stat.ctime : file.stat.mtime, curFilterScheme.dateRange)
@@ -135,7 +121,7 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
     setAllFilteredNotes(filtered); // Store all filtered notes
     setNotes(filtered.slice(0, notesPerPage)); // Load initial page
     setCurrentPage(1); // Reset page number on filter/sort change
-    setAllTags(getAllTags(filtered));
+    setAllTags(getAllTags(app, filtered));
 
   }, [refreshFlag, sortType, curFilterScheme, app.vault.getFiles().length, dir]); // Add dir dependency
 
@@ -416,13 +402,13 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
               title="展开侧边栏"
             ><Icon name="menu" /></button>
             {curFilterScheme.id == DefaultFilterScheme.id && <div className="main-header-title-content">{curFilterScheme.name}</div>}
-            {curFilterScheme.id != DefaultFilterScheme.id && <div style={{display:"flex"}}>
+            {curFilterScheme.id != DefaultFilterScheme.id && <div style={{ display: "flex" }}>
               <div className="main-header-title-content main-header-title-content-clickable" onClick={() => {
                 setCurFilterScheme(DefaultFilterScheme);
-                }}>{DefaultFilterScheme.name}</div>
-                <div className="main-header-title-separator">{'/'}</div>
-                <div className="main-header-title-content">{curFilterScheme.name}</div>
-              </div>}
+              }}>{DefaultFilterScheme.name}</div>
+              <div className="main-header-title-separator">{'/'}</div>
+              <div className="main-header-title-content">{curFilterScheme.name}</div>
+            </div>}
           </div>
           <Searchbar allTags={allTags} setCurFilterScheme={setCurFilterScheme} />
         </div>

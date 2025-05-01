@@ -117,14 +117,12 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
     setTotalTagsNum(getAllTags(app, files).length);
     setHeatmapValues(getHeatmapValues(files));
     let filtered = files;
-    console.log('filtered1 ', filtered.length, curScheme);
     if (curScheme.type == 'FilterScheme') {
       filtered = filtered.filter((file: TFile) => withinDateRange(sortType == 'created' ? file.stat.ctime : file.stat.mtime, curScheme.dateRange));
     }
     if (curScheme.type == 'ViewScheme') {
       filtered = curScheme.files.length === 0 ? filtered : filtered.filter((file: TFile) => curScheme.files.includes(file.path));
     }
-    console.log('filtered2 ', filtered.length, curScheme);
     filtered.sort((a, b) => sortType === 'created' ? b.stat.ctime - a.stat.ctime : b.stat.mtime - a.stat.mtime);
     setAllFilteredNotes(filtered); // Store all filtered notes
     setNotes(filtered.slice(0, notesPerPage)); // Load initial page
@@ -251,7 +249,6 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
 
   // 卡片筛选 - Apply filtering to all notes before pagination
   let filteredForDisplay = contents;
-  console.log('filteredForDisplay1 ', filteredForDisplay.length, curScheme);
   if (curScheme.type === 'FilterScheme') {
     if (curScheme.keyword.trim()) {
       const keyword = curScheme.keyword.trim().toLowerCase();
@@ -272,7 +269,6 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
       });
     }
   }
-  console.log('filteredForDisplay2 ', filteredForDisplay.length, curScheme);
 
   // 卡片置顶
   const [pinnedFiles, setPinnedFiles] = useState<string[]>(() => plugin.settings.pinnedFiles || []);
@@ -360,12 +356,10 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
       curFilterSchemeID={curScheme.type == 'FilterScheme' ? curScheme.id : undefined}
       onClickAllNotesBtn={() => {
         if (curScheme === DefaultFilterScheme) return;
-        console.log('all notes', DefaultFilterScheme);
         setCurScheme(DefaultFilterScheme);
       }}
       onClickFilterScheme={(index) => {
         if (curScheme === filterSchemes[index]) return;
-        console.log('filterSchemes', filterSchemes[index]);
         setCurScheme(filterSchemes[index]);
       }}
       filterSchemes={filterSchemes}

@@ -3,8 +3,8 @@ import { SidebarButton } from './SidebarButton';
 import { App } from 'obsidian';
 import { DefaultFilterScheme, FilterScheme } from 'src/models/FilterScheme';
 import { ViewScheme } from 'src/models/ViewScheme';
-import { FilterSchemesInfo } from './FilterSchemesInfo';
-import { ViewSchemesInfo } from './ViewSchemesInfo';
+import { FilterSchemesInfo } from './filterScheme/FilterSchemesInfo';
+import { ViewSchemesInfo } from './viewScheme/ViewSchemesInfo';
 
 export interface SidebarContentProps {
     notesNum: number,

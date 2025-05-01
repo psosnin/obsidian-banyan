@@ -257,18 +257,18 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
     const keyword = curFilterScheme.keyword.trim().toLowerCase();
     filteredForDisplay = filteredForDisplay.filter(({ content }) => content.toLowerCase().includes(keyword));
   }
-  if (curFilterScheme?.tagFilter?.or?.length > 0) {
+  if (curFilterScheme.tagFilter.or.length > 0) {
     filteredForDisplay = filteredForDisplay.filter(({ file }) => {
       const fileTags: string[] = app.metadataCache.getFileCache(file)?.frontmatter?.tags ?? [];
-      return curFilterScheme!.tagFilter!.or!.some((andTags) => andTags.every((andTag) => {
+      return curFilterScheme.tagFilter.or.some((andTags) => andTags.every((andTag) => {
         return fileTags.some((fileTag) => fileTag.startsWith(andTag));
       }));
     });
   }
-  if (curFilterScheme?.tagFilter?.not?.length > 0) {
+  if (curFilterScheme.tagFilter.not.length > 0) {
     filteredForDisplay = filteredForDisplay.filter(({ file }) => {
-      const tags = app.metadataCache.getFileCache(file)?.frontmatter?.tags ?? [];
-      return !curFilterScheme!.tagFilter!.not!.some((tag) => tags.includes(tag));
+      const fileTags = app.metadataCache.getFileCache(file)?.frontmatter?.tags ?? [];
+      return !curFilterScheme.tagFilter.not.some((tag) => fileTags.some((fileTag: string) => fileTag.startsWith(tag)));
     });
   }
 

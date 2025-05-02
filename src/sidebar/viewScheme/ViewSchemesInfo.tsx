@@ -87,15 +87,14 @@ export const ViewSchemesInfo = ({
     };
 
     const handleDrop = (index: number) => {
-        if (draggedIndex === null || draggedIndex === index) {
-            setDraggedIndex(null);
-            setDragOverIndex(null);
-            return;
-        }
+        if (draggedIndex === null) return;
         const newSchemes = [...viewSchemes];
         const [removed] = newSchemes.splice(draggedIndex, 1);
         newSchemes.splice(index, 0, removed);
         onDragEnd(newSchemes);
+    };
+
+    const handleDragEnd = () => {
         setDraggedIndex(null);
         setDragOverIndex(null);
     };
@@ -122,6 +121,7 @@ export const ViewSchemesInfo = ({
                         onDragStart={() => handleDragStart(index)}
                         onDragOver={(e) => handleDragOver(index, e)}
                         onDrop={() => handleDrop(index)}
+                        onDragEnd={() => handleDragEnd()}
                         style={{
                             opacity: draggedIndex === index ? 0.5 : 1,
                             border: dragOverIndex === index && draggedIndex !== null ? '1px dashed var(--interactive-accent)' : undefined,

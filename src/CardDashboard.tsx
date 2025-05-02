@@ -246,13 +246,11 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
   useEffect(() => {
     plugin.settings.viewSchemes = viewSchemes;
     plugin.saveSettings();
-    console.log('更新 view schemes设置', viewSchemes);
   }, [viewSchemes]);
 
   useEffect(() => {
     plugin.settings.filterSchemes = filterSchemes;
     plugin.saveSettings();
-    console.log('更新 filter schemes设置', filterSchemes);
   }, [filterSchemes]);
 
   const handleBatchImportToView = () => {

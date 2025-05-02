@@ -1,6 +1,7 @@
-import { App, Editor, MarkdownView, Modal, normalizePath, Notice, Plugin, PluginSettingTab, Setting, SuggestModal, TFolder, WorkspaceLeaf } from 'obsidian';
+import { normalizePath, Plugin, WorkspaceLeaf } from 'obsidian';
 import { MyPluginSettings, MySettingTab, DEFAULT_SETTINGS } from './MySettingTab';
 import { CARD_DASHBOARD_VIEW_TYPE, CardDashboard } from './CardDashboard';
+import { DefaultFilterSchemeID, getDefaultFilterScheme } from './models/FilterScheme';
 
 export default class MyPlugin extends Plugin {
 	settings: MyPluginSettings;
@@ -100,12 +101,23 @@ export default class MyPlugin extends Plugin {
 			const newPinned = [...scheme.pinned.filter((file) => allFiles.includes(file))];
 			return {...scheme, files: newFiles, pinned: newPinned};
 		})];
-		this.saveSettings();
+	}
+
+	updateFilterSchemes = () => {
+		this.settings.filterSchemes = [...this.settings.filterSchemes.map((scheme) => {
+			if (scheme.pinned) return scheme;
+			return {...scheme, pinned: []};
+		})];
+		if (!this.settings.filterSchemes.find((scheme) => scheme.id == DefaultFilterSchemeID)) {
+			this.settings.filterSchemes = [getDefaultFilterScheme([]), ...this.settings.filterSchemes];
+		}
 	}
 
 	async loadSettings() {
 		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
 		this.updateViewSchemes();
+		this.updateFilterSchemes();
+		this.saveSettings();
 	}
 
 	async saveSettings() {

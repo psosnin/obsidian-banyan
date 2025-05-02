@@ -7,7 +7,7 @@ import { ViewEditModal } from "./ViewEditModal";
 
 export const ViewSchemesInfo = ({
     app, viewSchemes, curViewSchemeID,
-    onClick, onDragEnd, setViewScheme, deleteViewScheme, pinViewScheme
+    onClick, onDragEnd, setViewScheme, deleteViewScheme
 }: {
     app: App,
     viewSchemes: ViewScheme[],
@@ -15,8 +15,7 @@ export const ViewSchemesInfo = ({
     onClick: (index: number) => void,
     onDragEnd: (newOrder: ViewScheme[]) => void,
     setViewScheme: (scheme: ViewScheme) => void,
-    deleteViewScheme: (schemeID: number) => void,
-    pinViewScheme: (schemeID: number) => void
+    deleteViewScheme: (schemeID: number) => void
 }) => {
 
     const [draggedIndex, setDraggedIndex] = React.useState<number | null>(null);
@@ -59,8 +58,6 @@ export const ViewSchemesInfo = ({
                 name: viewSchemes[index].name + ' 副本'
             };
             setViewScheme(newScheme);
-        } else if (action === 'pin') {
-            pinViewScheme(viewSchemes[index].id);
         } else if (action === 'delete') {
             deleteViewScheme(viewSchemes[index].id);
         }
@@ -71,10 +68,6 @@ export const ViewSchemesInfo = ({
         menu.addItem((item) => {
             item.setTitle("更新");
             item.onClick(() => handleMenuClick('update', index));
-        });
-        menu.addItem((item) => {
-            item.setTitle("置顶");
-            item.onClick(() => handleMenuClick('pin', index));
         });
         menu.addSeparator();
         menu.addItem((item) => {

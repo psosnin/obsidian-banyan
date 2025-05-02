@@ -1,13 +1,12 @@
 import { App, PluginSettingTab, Setting } from 'obsidian';
 import MyPlugin from './main';
 import { getAllFolders, createFolderSuggest } from './utils/fileUtils';
-import { FilterScheme } from './models/FilterScheme';
+import { FilterScheme, getDefaultFilterScheme } from './models/FilterScheme';
 import { ViewScheme } from './models/ViewScheme';
 
 export interface MyPluginSettings {
 	cardsDirectory: string;
 	sortType: 'created' | 'modified';
-	pinnedFiles: string[];
 	openWhenStartObsidian: boolean;
 	filterSchemes: FilterScheme[];
 	viewSchemes: ViewScheme[];
@@ -16,9 +15,8 @@ export interface MyPluginSettings {
 export const DEFAULT_SETTINGS: MyPluginSettings = {
 	cardsDirectory: 'cards',
 	sortType: 'created',
-	pinnedFiles: [],
 	openWhenStartObsidian: true,
-	filterSchemes: [],
+	filterSchemes: [getDefaultFilterScheme([])],
 	viewSchemes: [],
 }
 

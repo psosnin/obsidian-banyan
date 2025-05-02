@@ -10,7 +10,7 @@ interface SearchbarProps {
 }
 
 export const Searchbar: React.FC<SearchbarProps> = ({ allTags, setCurFilterScheme }) => {
-    const [tempFilterScheme, setTempFilterScheme] = useState(SearchFilterScheme);
+    const [tempFilterScheme, setTempFilterScheme] = useState({...SearchFilterScheme});
     const [showFilterBox, setShowFilterBox] = useState(false);
 
     const handleSearch = () => {

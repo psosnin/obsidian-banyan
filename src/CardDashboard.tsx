@@ -6,7 +6,7 @@ import * as React from "react";
 import CardNote from "./cards/CardNote";
 import { Icon } from "./components/Icon";
 import Sidebar from "./sidebar/Sidebar";
-import { DefaultFilterScheme, FilterScheme } from "./models/FilterScheme";
+import { DefaultFilterSchemeID, FilterScheme, getDefaultFilterScheme, SearchFilterSchemeID } from "./models/FilterScheme";
 import { SidebarContent } from "./sidebar/SideBarContent";
 import { HeatmapData } from "./components/Heatmap";
 import { Searchbar } from "./searchbar/Searchbar";
@@ -66,7 +66,7 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
 
   const [filterSchemes, setFilterSchemes] = useState<FilterScheme[]>(plugin.settings.filterSchemes);
   const [viewSchemes, setViewSchemes] = useState<ViewScheme[]>(plugin.settings.viewSchemes);
-  const [curScheme, setCurScheme] = useState<FilterScheme | ViewScheme>(DefaultFilterScheme);
+  const [curScheme, setCurScheme] = useState<FilterScheme | ViewScheme>(getDefaultFilterScheme(plugin.settings.filterSchemes));
 
   const [notes, setNotes] = useState<TFile[]>([]);
   const [contents, setContents] = useState<{ file: TFile, content: string }[]>([]);
@@ -246,12 +246,13 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
   useEffect(() => {
     plugin.settings.viewSchemes = viewSchemes;
     plugin.saveSettings();
-    console.log('Saved view schemes', viewSchemes);
+    console.log('更新 view schemes设置', viewSchemes);
   }, [viewSchemes]);
 
   useEffect(() => {
     plugin.settings.filterSchemes = filterSchemes;
     plugin.saveSettings();
+    console.log('更新 filter schemes设置', filterSchemes);
   }, [filterSchemes]);
 
   const handleBatchImportToView = () => {
@@ -350,31 +351,33 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
   }
 
   // 卡片置顶
-  const [pinnedFiles, setPinnedFiles] = useState<string[]>(() => plugin.settings.pinnedFiles || []);
   const handlePin = (file: TFile, isPinned: boolean) => {
-    if (!isPinned) {
-      setPinnedFiles(pinnedFiles.filter(p => p !== file.path));
-      new Notice('已取消置顶');
+    const newPinned = [...curScheme.pinned.filter(p => p != file.path)].concat(isPinned ? [file.path] : []);
+    const noticeStr = isPinned ? '已置顶' : '已取消置顶';
+    const newScheme = {...curScheme, pinned: newPinned };
+    if (newScheme.type === 'ViewScheme') {
+      const newSchemes = viewSchemes.map(scheme => scheme.id == newScheme.id ? newScheme : scheme);
+      setViewSchemes(newSchemes);        
     } else {
-      setPinnedFiles([file.path, ...pinnedFiles]);
-      new Notice('已置顶');
-    }
-  };
-
-  useEffect(() => {
-    // 保证 pinned 状态和设置同步
-    if (JSON.stringify(pinnedFiles) !== JSON.stringify(plugin.settings.pinnedFiles)) {
-      plugin.settings.pinnedFiles = pinnedFiles;
-      plugin.saveSettings().then(() => {
-        console.log('Saved pinned files', pinnedFiles);
+      const newSchemes = filterSchemes.map(scheme => {
+        if (scheme.id == newScheme.id) {
+          return newScheme;
+        }
+        if (newScheme.id == SearchFilterSchemeID && scheme.id == DefaultFilterSchemeID) { // 「搜索」的置顶其实要给到「默认」
+          return {...getDefaultFilterScheme(filterSchemes), pinned: newPinned};
+        }
+        return scheme;
       });
+      setFilterSchemes(newSchemes);     
     }
-  }, [pinnedFiles]);
+    setCurScheme(newScheme)
+    new Notice(noticeStr);
+  };
 
   // 渲染卡片时优先显示置顶
   const pinnedAndFiltered = filteredForDisplay
-    .filter(({ file }) => pinnedFiles.includes(file.path))
-    .concat(filteredForDisplay.filter(({ file }) => !pinnedFiles.includes(file.path)));
+    .filter(({ file }) => curScheme.pinned.includes(file.path))
+    .concat(filteredForDisplay.filter(({ file }) => !curScheme.pinned.includes(file.path)));
 
   const cardNodes = pinnedAndFiltered.map(({ file, content }, index) => {
     // Attach ref to the last card for intersection observer
@@ -391,7 +394,7 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
           onDelete={handleDelete}
           onOpen={handleOpen}
           setPin={handlePin}
-          isPinned={pinnedFiles.includes(file.path)}
+          isPinned={curScheme.pinned.includes(file.path)}
           isInView={curScheme.type === 'ViewScheme'}
           onImportToView={handleImportToView}
           onRemoveFromView={handleRemoveFromView}
@@ -436,10 +439,6 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
       heatmapValues={heatmapValues}
 
       curFilterSchemeID={curScheme.type == 'FilterScheme' ? curScheme.id : undefined}
-      onClickAllNotesBtn={() => {
-        if (curScheme === DefaultFilterScheme) return;
-        setCurScheme(DefaultFilterScheme);
-      }}
       onClickFilterScheme={(index) => {
         if (curScheme === filterSchemes[index]) return;
         setCurScheme(filterSchemes[index]);
@@ -462,12 +461,6 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
       deleteFilterScheme={(id) => {
         const updatedFilterSchemes = filterSchemes.filter((s) => s.id != id);
         setFilterSchemes(updatedFilterSchemes);
-      }}
-      pinFilterScheme={(_id) => {
-        // const updated = pinnedFilterSchemes.map((id, i) => i == id? {...s, isPinned: true} : s);
-        // setPinnedFilterSchemes(updated);
-        // plugin.settings.pinnedFilterSchemes = updated;
-        new Notice('置顶功能暂未实现');
       }}
 
       viewSchemes={viewSchemes}
@@ -494,9 +487,6 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
         const updatedViewSchemes = viewSchemes.filter((s) => s.id != id);
         setViewSchemes(updatedViewSchemes);
       }}
-      pinViewScheme={(_id) => {
-        new Notice('置顶功能暂未实现');
-      }}
     />;
   })();
 
@@ -514,12 +504,12 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
               onClick={() => setShowSidebar('show')}
               title="展开侧边栏"
             ><Icon name="menu" /></button>
-            {curScheme === DefaultFilterScheme && <div className="main-header-title-content">{curScheme.name}</div>}
-            {curScheme !== DefaultFilterScheme &&
+            {curScheme.id === DefaultFilterSchemeID && <div className="main-header-title-content">{curScheme.name}</div>}
+            {curScheme.id !== DefaultFilterSchemeID &&
               <div style={{ display: "flex" }}>
                 <div className="main-header-title-content main-header-title-content-clickable" onClick={() => {
-                  setCurScheme(DefaultFilterScheme);
-                }}>{DefaultFilterScheme.name}</div>
+                  setCurScheme(getDefaultFilterScheme(filterSchemes));
+                }}>{getDefaultFilterScheme(filterSchemes).name}</div>
                 <div className="main-header-title-separator">{'/'}</div>
                 <div className="main-header-title-content">{curScheme.name}</div>
               </div>}
@@ -541,7 +531,7 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
         </div>
         <div className="main-cards" style={{ display: 'flex', gap: 16, }}>
           {cardNodes.length === 0 ? (
-            <EmptyStateCard isSearch={curScheme.type == 'FilterScheme' && curScheme !== DefaultFilterScheme} />
+            <EmptyStateCard isSearch={curScheme.type == 'FilterScheme' && curScheme.id !== DefaultFilterSchemeID} />
           ) : (
             columns.map((col, idx) => (
               <div className="main-cards-column" key={idx}>{col}</div>

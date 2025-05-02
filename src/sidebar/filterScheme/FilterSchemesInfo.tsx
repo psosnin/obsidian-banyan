@@ -1,5 +1,5 @@
 import React from "react";
-import { FilterScheme } from "src/models/FilterScheme";
+import { DefaultFilterSchemeID, FilterScheme } from "src/models/FilterScheme";
 import { FilterEditModal } from "./FilterEditModal";
 import { Icon } from "src/components/Icon";
 import { SidebarButton } from "../SidebarButton";
@@ -7,7 +7,7 @@ import { App, Menu } from "obsidian";
 
 export const FilterSchemesInfo = ({
     app, allTags, filterSchemes, curFilterSchemeID,
-    onClick, onDragEnd, setFilterScheme, deleteFilterScheme, pinFilterScheme
+    onClick, onDragEnd, setFilterScheme, deleteFilterScheme
 }: {
     app: App,
     allTags: string[],
@@ -16,8 +16,7 @@ export const FilterSchemesInfo = ({
     onClick: (index: number) => void,
     onDragEnd: (newOrder: FilterScheme[]) => void,
     setFilterScheme: (scheme: FilterScheme) => void,
-    deleteFilterScheme: (schemeID: number) => void,
-    pinFilterScheme: (schemeID: number) => void
+    deleteFilterScheme: (schemeID: number) => void
 }) => {
     const [draggedIndex, setDraggedIndex] = React.useState<number | null>(null);
     const [dragOverIndex, setDragOverIndex] = React.useState<number | null>(null);
@@ -30,6 +29,7 @@ export const FilterSchemesInfo = ({
             tagFilter: { or: [[]], not: [] },
             dateRange: { from: "", to: "" },
             keyword: '',
+            pinned: [],
             type: 'FilterScheme' as const
         };
         const modal = new FilterEditModal(app, {
@@ -62,8 +62,6 @@ export const FilterSchemesInfo = ({
                 name: filterSchemes[index].name + ' 副本'
             };
             setFilterScheme(newScheme);
-        } else if (action === 'pin') {
-            pinFilterScheme(filterSchemes[index].id);
         } else if (action === 'delete') {
             deleteFilterScheme(filterSchemes[index].id);
         }
@@ -79,10 +77,6 @@ export const FilterSchemesInfo = ({
         menu.addItem((item) => {
             item.setTitle("创建副本");
             item.onClick(() => handleMenuClick('duplicate', index));
-        });
-        menu.addItem((item) => {
-            item.setTitle("置顶");
-            item.onClick(() => handleMenuClick('pin', index));
         });
         menu.addSeparator();
         menu.addItem((item) => {
@@ -115,6 +109,10 @@ export const FilterSchemesInfo = ({
         setDragOverIndex(null);
     };
 
+    const isDefault = (scheme: FilterScheme) => {
+        return scheme.id === DefaultFilterSchemeID;
+    };
+
     return (
         <div className='filter-scheme-container' style={{ marginTop: 16 }}>
             <div className='filter-scheme-header' style={{
@@ -137,9 +135,9 @@ export const FilterSchemesInfo = ({
                     <div
                         key={scheme.id}
                         draggable
-                        onDragStart={() => handleDragStart(index)}
-                        onDragOver={(e) => handleDragOver(index, e)}
-                        onDrop={() => handleDrop(index)}
+                        onDragStart={isDefault(scheme) ? undefined : () => handleDragStart(index)}
+                        onDragOver={isDefault(scheme) ? undefined : (e) => handleDragOver(index, e)}
+                        onDrop={isDefault(scheme) ? undefined : () => handleDrop(index)}
                         style={{
                             opacity: draggedIndex === index ? 0.5 : 1,
                             border: dragOverIndex === index && draggedIndex !== null ? '1px dashed var(--interactive-accent)' : undefined,
@@ -150,8 +148,8 @@ export const FilterSchemesInfo = ({
                             label={scheme.name}
                             selected={curFilterSchemeID === scheme.id}
                             onClick={() => onClick(index)}
-                            rightIconName='ellipsis'
-                            onClickRightIcon={(e) => handleClickMore(e, index)}
+                            rightIconName={isDefault(scheme) ? undefined : 'ellipsis'}
+                            onClickRightIcon={isDefault(scheme) ? undefined : (e) => handleClickMore(e, index)}
                         />
                     </div>
                 ))}

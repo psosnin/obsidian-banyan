@@ -122,7 +122,7 @@ export const FilterSchemesInfo = ({
                 flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'
             }}>
                 <div className='filter-scheme-header-title' style={{ fontSize: 'var(--font-smaller)', color: 'var(--interactive-accent)' }}>
-                    <span>过滤方案</span>
+                    <span>常用过滤</span>
                 </div>
                 <div className='filter-scheme-header-add' style={{ marginRight: 8 }}>
                     <button className='filter-scheme-header-add-btn'

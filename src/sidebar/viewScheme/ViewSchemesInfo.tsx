@@ -139,6 +139,7 @@ export const ViewSchemesInfo = ({
                             selected={curViewSchemeID === scheme.id}
                             onClick={() => onClick(index)}
                             rightIconName='ellipsis'
+                            rightLabel={`${scheme.files.length}`}
                             onClickRightIcon={(e) => handleViewSchemeClickMore(e, index)}
                         />
                     </div>

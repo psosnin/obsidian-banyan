@@ -46,7 +46,7 @@ const FilterViewContainer = ({props, close} : {props: FilterEditModalProps, clos
     };
     return <div className="filter-modal-container">
         <div style={{ minWidth: 320 }}>
-            <div style={{ marginBottom: 16, fontWeight: "bold" }}>{isNew ? "创建" : "更新"}筛选方案</div>
+            <div style={{ marginBottom: 16, fontWeight: "bold" }}>{isNew ? "创建" : "更新"}过滤方案</div>
             <FilterView
                 allTags={allTags}
                 filterScheme={scheme}

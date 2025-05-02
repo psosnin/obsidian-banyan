@@ -92,9 +92,20 @@ export default class MyPlugin extends Plugin {
 	onunload() {
 		this.app.workspace.getLeavesOfType(CARD_DASHBOARD_VIEW_TYPE).forEach(leaf => leaf.detach());
 	}
+	
+	updateViewSchemes = () => {
+		const allFiles = this.app.vault.getMarkdownFiles().map((file) => file.path);
+		this.settings.viewSchemes = [...this.settings.viewSchemes.map((scheme) => {
+			const newFiles = [...scheme.files.filter((file) => allFiles.includes(file))];
+			const newPinned = [...scheme.pinned.filter((file) => allFiles.includes(file))];
+			return {...scheme, files: newFiles, pinned: newPinned};
+		})];
+		this.saveSettings();
+	}
 
 	async loadSettings() {
 		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
+		this.updateViewSchemes();
 	}
 
 	async saveSettings() {

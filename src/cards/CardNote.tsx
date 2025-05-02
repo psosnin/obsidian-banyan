@@ -15,6 +15,9 @@ interface CardNoteProps {
   onOpen: (file: TFile) => void;
   setPin: (file: TFile, isPinned: boolean) => void;
   isPinned: boolean;
+  onImportToView: (file: TFile) => void;
+  isInView: boolean;
+  onRemoveFromView: (file: TFile) => void;
 }
 
 function extractBody(md: string): string {
@@ -40,8 +43,10 @@ const MarkdownContent = ({ app, markdown, sourcePath, component }: {
   return <div ref={ref} />;
 };
 
-const CardNote: React.FC<CardNoteProps> = ({ file, tags, sortType, content, app, component,
-  onDelete, onOpen, setPin, isPinned }) => {
+const CardNote: React.FC<CardNoteProps> = ({ 
+  file, tags, sortType, content, app, component, isPinned, isInView, 
+  onDelete, onOpen, setPin, onImportToView, onRemoveFromView
+}) => {
   const contentRef = React.useRef<HTMLDivElement>(null);
   const [overflow, setOverflow] = React.useState(false);
 
@@ -69,7 +74,8 @@ const CardNote: React.FC<CardNoteProps> = ({ file, tags, sortType, content, app,
         <div className="card-note-more">
           <button className="clickable-icon"
             children={<Icon name='ellipsis'/>}
-            onClick={(e) => openCardNoteMoreMenu({ event: e.nativeEvent, file, content, onOpen, onDelete, setPin, isPinned })}
+            onClick={(e) => openCardNoteMoreMenu({ event: e.nativeEvent, file, isInView, isPinned, 
+              onOpen, onDelete, setPin, onImportToView, onRemoveFromView })}
           />
         </div>
       </div>

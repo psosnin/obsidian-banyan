@@ -13,6 +13,7 @@ import { Searchbar } from "./searchbar/Searchbar";
 import EmptyStateCard from "./cards/EmptyStateCard";
 import { getAllTags } from "./utils/tagUtils";
 import { ViewScheme } from "./models/ViewScheme";
+import { ViewSelectModal } from "./sidebar/viewScheme/ViewSelectModal";
 
 export const CARD_DASHBOARD_VIEW_TYPE = "dashboard-view";
 
@@ -71,7 +72,7 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
   const [allFilteredNotes, setAllFilteredNotes] = useState<TFile[]>([]); // Store all filtered notes before pagination
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
-  const notesPerPage = 20;
+  const notesPerPage = 9999;
 
   const [refreshFlag, setRefreshFlag] = useState(0);
 
@@ -121,7 +122,7 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
       filtered = filtered.filter((file: TFile) => withinDateRange(sortType == 'created' ? file.stat.ctime : file.stat.mtime, curScheme.dateRange));
     }
     if (curScheme.type == 'ViewScheme') {
-      filtered = curScheme.files.length === 0 ? filtered : filtered.filter((file: TFile) => curScheme.files.includes(file.path));
+      filtered = filtered.filter((file: TFile) => curScheme.files.includes(file.path));
     }
     filtered.sort((a, b) => sortType === 'created' ? b.stat.ctime - a.stat.ctime : b.stat.mtime - a.stat.mtime);
     setAllFilteredNotes(filtered); // Store all filtered notes
@@ -214,6 +215,57 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
   const handleOpen = (file: TFile) => {
     app.workspace.openLinkText(file.path, '', false);
   };
+
+  useEffect(() => {
+    plugin.settings.viewSchemes = viewSchemes;
+    plugin.saveSettings();
+    console.log('Saved view schemes', viewSchemes);
+  }, [viewSchemes]);
+
+  useEffect(() => {
+    plugin.settings.filterSchemes = filterSchemes;
+    plugin.saveSettings();
+  }, [filterSchemes]);
+
+  const handleBatchImportToView = () => {
+    const modal = new ViewSelectModal(app, {
+      viewSchemes: viewSchemes,
+      onSelect: (scheme) => {
+        const temp = new Set<string>([...scheme.files, ...pinnedAndFiltered.map(({ file }) => file.path)]);
+        const newFiles = Array.from(temp);
+        const newScheme = {...scheme, files: newFiles};
+        const newSchemes = viewSchemes.map(scheme => scheme.id == newScheme.id ? newScheme : scheme);
+        setViewSchemes(newSchemes);
+      }
+    });
+    modal.open();
+  };
+
+  const handleImportToView = (file: TFile) => {
+    const modal = new ViewSelectModal(app, {
+      viewSchemes: viewSchemes,
+      onSelect: (scheme) => {
+        if (scheme.files.includes(file.path)) {
+          new Notice('笔记已存在于该视图中');
+          return;
+        }
+        const newFiles = scheme.files.includes(file.path)? scheme.files : [...scheme.files, file.path];
+        const newScheme = {...scheme, files: newFiles};
+        const newSchemes = viewSchemes.map(scheme => scheme.id == newScheme.id ? newScheme : scheme);
+        setViewSchemes(newSchemes);
+      }
+    });
+    modal.open();
+  }
+
+  const handleRemoveFromView = (file: TFile) => {
+    if (curScheme.type !== 'ViewScheme') return;
+    const newFiles = [...curScheme.files.filter((path: string) => path !== file.path)];
+    const newScheme = {...curScheme, files: newFiles};
+    const newSchemes = viewSchemes.map(scheme => scheme.id == newScheme.id ? newScheme : scheme);
+    setViewSchemes(newSchemes);
+    setCurScheme(newScheme);
+  }
 
   // 瀑布流布局
   const getColumns = (cards: React.JSX.Element[], colCount: number) => {
@@ -313,6 +365,9 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
           onOpen={handleOpen}
           setPin={handlePin}
           isPinned={pinnedFiles.includes(file.path)}
+          isInView={curScheme.type === 'ViewScheme'}
+          onImportToView={handleImportToView}
+          onRemoveFromView={handleRemoveFromView}
         />
       </div>
     );
@@ -365,19 +420,14 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
       filterSchemes={filterSchemes}
       onFilterDragEnd={(newSchemes) => {
         setFilterSchemes(newSchemes);
-        plugin.settings.filterSchemes = newSchemes;
-        plugin.saveSettings();
       }}
       setFilterScheme={(fs) => {
         if (filterSchemes.filter(f => f.id == fs.id).length == 0) {
           setFilterSchemes([...filterSchemes, fs]);
-          plugin.settings.filterSchemes = [...filterSchemes, fs];
         } else {
           const updatedFilterSchemes = filterSchemes.map((s) => s.id == fs.id ? fs : s);
           setFilterSchemes(updatedFilterSchemes);
-          plugin.settings.filterSchemes = updatedFilterSchemes;
         }
-        plugin.saveSettings();
         if (curScheme.type === 'FilterScheme' && curScheme.id == fs.id) {
           setCurScheme(fs);
         }
@@ -385,8 +435,6 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
       deleteFilterScheme={(id) => {
         const updatedFilterSchemes = filterSchemes.filter((s) => s.id != id);
         setFilterSchemes(updatedFilterSchemes);
-        plugin.settings.filterSchemes = updatedFilterSchemes;
-        plugin.saveSettings();
       }}
       pinFilterScheme={(_id) => {
         // const updated = pinnedFilterSchemes.map((id, i) => i == id? {...s, isPinned: true} : s);
@@ -404,27 +452,20 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
       setViewScheme={(vs) => {
         if (viewSchemes.filter(v => v.id == vs.id).length == 0) {
           setViewSchemes([...viewSchemes, vs]);
-          plugin.settings.viewSchemes = [...viewSchemes, vs];
         } else {
           const updated = viewSchemes.map((v) => v.id == vs.id ? vs : v);
           setViewSchemes(updated);
-          plugin.settings.viewSchemes = updated;
         }
-        plugin.saveSettings();
         if (curScheme.type === 'ViewScheme' && curScheme.id == vs.id) {
           setCurScheme(vs);
         }
       }}
       onViewDragEnd={(newSchemes) => {
         setViewSchemes(newSchemes);
-        plugin.settings.viewSchemes = newSchemes;
-        plugin.saveSettings();
       }}
       deleteViewScheme={(id) => {
         const updatedViewSchemes = viewSchemes.filter((s) => s.id != id);
         setViewSchemes(updatedViewSchemes);
-        plugin.settings.viewSchemes = updatedViewSchemes;
-        plugin.saveSettings();
       }}
       pinViewScheme={(_id) => {
         new Notice('置顶功能暂未实现');
@@ -458,7 +499,7 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
           </div>
           <Searchbar allTags={allTags} setCurFilterScheme={setCurScheme} />
         </div>
-        <div className="main-subheader-container" style={{ marginBottom: 6, marginRight: 16, display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
+        <div className="main-subheader-container" style={{ marginBottom: 6, marginTop: 8, marginRight: 16, display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
           <div style={{ display: "flex", alignItems: 'center' }}>
             <span style={{ padding: '12px 6px', color: 'var(--text-muted)', fontSize: 'var(--font-smaller)' }}>已加载 {cardNodes.length} 条笔记</span>
             {cardNodes.length > 0 && <button style={{ marginLeft: '6px', padding: '0 6px', background: 'transparent' }}
@@ -466,11 +507,14 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
               onClick={(e) => sortMenu(e.nativeEvent, sortType, setSortType)}
             />}
           </div>
-          <button onClick={() => plugin.addCardNote()} style={{ padding: '4px 12px' }}>添加笔记</button>
+          <div className="main-subheader-btn-section" style={{ display: "flex", gap: 8 }}>
+            {curScheme.type != 'ViewScheme' && pinnedAndFiltered.length > 0 && <button onClick={handleBatchImportToView} style={{ padding: '4px 12px', backgroundColor: 'transparent', color: 'var(--interactive-accent)' }}>批量添加到视图</button>}
+            {/* <button onClick={() => plugin.addCardNote()} style={{ padding: '4px 12px' }}>添加笔记</button> */}
+          </div>
         </div>
         <div className="main-cards" style={{ display: 'flex', gap: 16, }}>
           {cardNodes.length === 0 ? (
-            <EmptyStateCard isSearch={curScheme !== DefaultFilterScheme} />
+            <EmptyStateCard isSearch={curScheme.type == 'FilterScheme' && curScheme !== DefaultFilterScheme} />
           ) : (
             columns.map((col, idx) => (
               <div className="main-cards-column" key={idx}>{col}</div>

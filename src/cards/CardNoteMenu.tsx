@@ -1,16 +1,21 @@
-import { Menu, sanitizeHTMLToDom, TFile, Notice, App } from "obsidian";
+import { Menu, TFile, Notice } from "obsidian";
 
 export interface CardNoteMenuParams {
   event: MouseEvent;
   file: TFile;
-  content: string;
+  isInView: boolean;
+  isPinned: boolean;
   onOpen: (file: TFile) => void;
   onDelete: (file: TFile) => void;
   setPin: (file: TFile, isPinned: boolean) => void;
-  isPinned: boolean;
+  onImportToView: (file: TFile) => void;
+  onRemoveFromView: (file: TFile) => void;
 }
 
-export const openCardNoteMoreMenu = ({ event, file, content, onOpen, onDelete, setPin, isPinned }: CardNoteMenuParams) => {
+export const openCardNoteMoreMenu = ({ 
+  event, file, isInView, isPinned,
+  onOpen, onDelete, setPin, onImportToView, onRemoveFromView
+}: CardNoteMenuParams) => {
   const menu = new Menu();
 
   const openNote = () => {
@@ -18,6 +23,22 @@ export const openCardNoteMoreMenu = ({ event, file, content, onOpen, onDelete, s
       item.setTitle("打开");
       item.onClick(() => {
         onOpen(file);
+      });
+    });
+  };
+  const removeFromView = () => {
+    menu.addItem((item) => {
+      item.setTitle("从当前视图移除");
+      item.onClick(() => {
+        onRemoveFromView(file);
+      });
+    });
+  };
+  const addToView = () => {
+    menu.addItem((item) => {
+      item.setTitle("添加到视图");
+      item.onClick(() => {
+        onImportToView(file);
       });
     });
   };
@@ -61,6 +82,7 @@ export const openCardNoteMoreMenu = ({ event, file, content, onOpen, onDelete, s
   };
 
   openNote();
+  isInView ? removeFromView() : addToView();
   pinNote();
   copyLink();
   menu.addSeparator();

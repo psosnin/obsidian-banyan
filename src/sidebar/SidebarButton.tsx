@@ -6,12 +6,13 @@ interface SidebarButtonProps {
     label: string;
     selected?: boolean;
     onClick?: () => void;
+    rightLabel?: string;
     rightIconName?: string;
     onClickRightIcon?: (e: MouseEvent) => void;
 }
 
-export const SidebarButton: React.FC<SidebarButtonProps> = ({ iconName, label, selected = false, onClick, 
-    rightIconName, onClickRightIcon
+export const SidebarButton: React.FC<SidebarButtonProps> = ({ iconName, label, selected = false, onClick,
+    rightIconName, rightLabel, onClickRightIcon
 }) => {
     const [hover, setHover] = useState(false);
     const baseStyle: React.CSSProperties = {
@@ -35,15 +36,20 @@ export const SidebarButton: React.FC<SidebarButtonProps> = ({ iconName, label, s
             onMouseLeave={() => setHover(false)}
         >
             {iconName && <Icon name={iconName} size="m" color={selected ? 'var(--text-normal)' : 'var(--text-muted)'} />}
-            <span style={{ fontWeight: selected ? 'var(--bold-weight)' : 'var(--font-normal)', 
+            <span style={{
+                fontWeight: selected ? 'var(--bold-weight)' : 'var(--font-normal)',
                 overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', flex: 1,
-                display: 'inline-block' }}>{label}</span>
-            {rightIconName && <button onClick={(e) => {
-                e.stopPropagation();
-                onClickRightIcon && onClickRightIcon(e.nativeEvent);
-            }} style={{paddingLeft: 4, paddingRight: 4, background: 'transparent', marginRight: 4}}>
-                <Icon name={rightIconName} size="s" color={selected ? 'var(--text-normal)' : 'var(--text-muted)'} />
-            </button>}
+                display: 'inline-block'
+            }}>{label}</span>
+            <div className="sidebar-btn-right" style={{ display: "flex", gap: 12, alignItems: 'center' }}>
+                {rightLabel && <span style={{ fontSize: 'var(--font-smaller)' }}>{rightLabel}</span>}
+                {rightIconName && <button onClick={(e) => {
+                    e.stopPropagation();
+                    onClickRightIcon && onClickRightIcon(e.nativeEvent);
+                }} style={{ paddingLeft: 4, paddingRight: 4, background: 'transparent', marginRight: 4 }}>
+                    <Icon name={rightIconName} size="s" color={selected ? 'var(--text-normal)' : 'var(--text-muted)'} />
+                </button>}
+            </div>
         </div>
     );
 };

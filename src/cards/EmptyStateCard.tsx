@@ -20,8 +20,7 @@ const EmptyStateCard = ({isSearch}: {isSearch: boolean}) => {
             </>}
             {!isSearch && <>
                 <div style={{ marginBottom: 24 }}><Icon name="file-plus" size={72} color="var(--text-muted)" /></div>
-                <div style={{ fontSize: 20, color: 'var(--text-normal)', fontWeight: 500, marginBottom: 8 }}>暂无笔记</div>
-                <div style={{ color: 'var(--text-muted)', fontSize: 15, marginBottom: 16 }}>点击右上角“添加笔记”按钮，开始你的第一条笔记吧！</div>
+                <div style={{ fontSize: 20, color: 'var(--text-normal)', fontWeight: 500, marginBottom: 8 }}>暂无笔记</div> 
             </>}
         </div>
     );

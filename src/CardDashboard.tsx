@@ -14,6 +14,7 @@ import EmptyStateCard from "./cards/EmptyStateCard";
 import { getAllTags } from "./utils/tagUtils";
 import { ViewScheme } from "./models/ViewScheme";
 import { ViewSelectModal } from "./sidebar/viewScheme/ViewSelectModal";
+import { createFileWatcher, FileChange } from './utils/fileWatcher';
 
 export const CARD_DASHBOARD_VIEW_TYPE = "dashboard-view";
 
@@ -110,6 +111,32 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+  // 文件监听逻辑
+  useEffect(() => {
+    const watcher = createFileWatcher(app);
+    const unsubscribe = watcher.onChange(({ type, file }) => {
+      setRefreshFlag(f => f + 1);
+      if (type === 'delete') {
+        const newSchemes = viewSchemes.map(scheme => {
+          const newFiles = scheme.files.filter((path: string) => path !== file.path);
+          const newPinned = scheme.pinned.filter((path: string) => path !== file.path);
+          return { ...scheme, files: newFiles, pinned: newPinned };
+        });
+        setViewSchemes(newSchemes);
+        if (curScheme.type == 'ViewScheme') {
+          const newScheme = newSchemes.filter(scheme => scheme.id == curScheme.id).first();
+          if (newScheme) {
+            setCurScheme(newScheme);
+          }
+        }
+      }
+    });
+    return () => {
+      unsubscribe();
+      watcher.dispose();
+    };
+  }, [app]);
 
   useEffect(() => {
     if (!dir) return;
@@ -233,7 +260,7 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
       onSelect: (scheme) => {
         const temp = new Set<string>([...scheme.files, ...pinnedAndFiltered.map(({ file }) => file.path)]);
         const newFiles = Array.from(temp);
-        const newScheme = {...scheme, files: newFiles};
+        const newScheme = { ...scheme, files: newFiles };
         const newSchemes = viewSchemes.map(scheme => scheme.id == newScheme.id ? newScheme : scheme);
         setViewSchemes(newSchemes);
       }
@@ -249,8 +276,8 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
           new Notice('笔记已存在于该视图中');
           return;
         }
-        const newFiles = scheme.files.includes(file.path)? scheme.files : [...scheme.files, file.path];
-        const newScheme = {...scheme, files: newFiles};
+        const newFiles = scheme.files.includes(file.path) ? scheme.files : [...scheme.files, file.path];
+        const newScheme = { ...scheme, files: newFiles };
         const newSchemes = viewSchemes.map(scheme => scheme.id == newScheme.id ? newScheme : scheme);
         setViewSchemes(newSchemes);
       }
@@ -261,7 +288,7 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
   const handleRemoveFromView = (file: TFile) => {
     if (curScheme.type !== 'ViewScheme') return;
     const newFiles = [...curScheme.files.filter((path: string) => path !== file.path)];
-    const newScheme = {...curScheme, files: newFiles};
+    const newScheme = { ...curScheme, files: newFiles };
     const newSchemes = viewSchemes.map(scheme => scheme.id == newScheme.id ? newScheme : scheme);
     setViewSchemes(newSchemes);
     setCurScheme(newScheme);
@@ -508,7 +535,7 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
             />}
           </div>
           <div className="main-subheader-btn-section" style={{ display: "flex", gap: 8 }}>
-            {curScheme.type != 'ViewScheme' && pinnedAndFiltered.length > 0 && <button onClick={handleBatchImportToView} style={{ padding: '4px 12px', backgroundColor: 'transparent', color: 'var(--interactive-accent)' }}>批量添加到视图</button>}
+            {curScheme.type != 'ViewScheme' && cardNodes.length > 0 && <button onClick={handleBatchImportToView} style={{ padding: '4px 12px', backgroundColor: 'transparent', color: 'var(--interactive-accent)' }}>批量添加到视图</button>}
             {/* <button onClick={() => plugin.addCardNote()} style={{ padding: '4px 12px' }}>添加笔记</button> */}
           </div>
         </div>
@@ -530,4 +557,3 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
     </div>
   );
 }
-

@@ -68,12 +68,11 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
   const [viewSchemes, setViewSchemes] = useState<ViewScheme[]>(plugin.settings.viewSchemes);
   const [curScheme, setCurScheme] = useState<FilterScheme | ViewScheme>(getDefaultFilterScheme(plugin.settings.filterSchemes));
 
-  const [notes, setNotes] = useState<TFile[]>([]);
-  const [contents, setContents] = useState<{ file: TFile, content: string }[]>([]);
-  const [allFilteredNotes, setAllFilteredNotes] = useState<TFile[]>([]); // Store all filtered notes before pagination
+  const [allContents, setAllContents] = useState<{ file: TFile, content: string }[]>([]);
+  const [displayedNotes, setDisplayedNotes] = useState<{ file: TFile, content: string }[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
-  const notesPerPage = 9999;
+  const notesPerPage = 30; // 每页显示的笔记数量
 
   const [refreshFlag, setRefreshFlag] = useState(0);
 
@@ -131,12 +130,18 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
     };
   }, [app]);
 
+  // 加载所有文件并获取内容
   useEffect(() => {
     if (!dir) return;
+    setIsLoading(true);
+
+    // 获取所有符合目录条件的文件
     const files = app.vault.getMarkdownFiles().filter((file: TFile) => file.path.startsWith(dir));
     setTotalNotesNum(files.length);
     setTotalTagsNum(getAllTags(app, files).length);
     setHeatmapValues(getHeatmapValues(files));
+
+    // 应用日期范围和视图筛选
     let filtered = files;
     if (curScheme.type == 'FilterScheme') {
       filtered = filtered.filter((file: TFile) => withinDateRange(sortType == 'created' ? file.stat.ctime : file.stat.mtime, curScheme.dateRange));
@@ -144,61 +149,73 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
     if (curScheme.type == 'ViewScheme') {
       filtered = filtered.filter((file: TFile) => curScheme.files.includes(file.getID()));
     }
+
+    // 排序
     filtered.sort((a, b) => sortType === 'created' ? b.stat.ctime - a.stat.ctime : b.stat.mtime - a.stat.mtime);
-    setAllFilteredNotes(filtered); // Store all filtered notes
-    setNotes(filtered.slice(0, notesPerPage)); // Load initial page
-    setCurrentPage(1); // Reset page number on filter/sort change
+
     setAllTags(getAllTags(app, filtered));
+
+    // 加载所有文件内容
+    Promise.all(filtered.map(async (file: TFile) => {
+      const content = await app.vault.cachedRead(file);
+      return { file, content };
+    }))
+      .then(allLoadedContents => {
+        setAllContents(allLoadedContents);
+        setCurrentPage(1);
+        setIsLoading(false);
+      })
+      .catch(error => {
+        console.error("Error loading notes content:", error);
+        new Notice('加载笔记内容时出错');
+        setIsLoading(false);
+      });
 
   }, [refreshFlag, sortType, curScheme, app.vault.getFiles().length, dir]); // Add dir dependency
 
-  const loadMoreNotes = useCallback(async () => {
-    if (isLoading || notes.length >= allFilteredNotes.length) return;
-
-    setIsLoading(true);
-    const nextPage = currentPage + 1;
-    const nextNotes = allFilteredNotes.slice(0, nextPage * notesPerPage);
-
-    // Fetch content for the newly added notes only
-    const notesToFetchContent = nextNotes.slice(notes.length);
-    try {
-      const newContents = await Promise.all(notesToFetchContent.map(async (file: TFile) => {
-        const content = await app.vault.cachedRead(file);
-        return { file, content };
-      }));
-      setNotes(nextNotes);
-      setContents(prevContents => [...prevContents, ...newContents]);
-      setCurrentPage(nextPage);
-    } catch (error) {
-      console.error("Error loading more notes content:", error);
-      new Notice('加载更多笔记时出错');
-    } finally {
-      setIsLoading(false);
-    }
-  }, [isLoading, notes, allFilteredNotes, currentPage, notesPerPage, app.vault]);
-
-  // Initial content load for the first page
+  // 根据筛选条件和分页设置显示的笔记
   useEffect(() => {
-    if (notes.length === 0) {
-      setContents([]);
+    if (allContents.length === 0) {
+      setDisplayedNotes([]);
       return;
     }
-    // Only load content if contents array is empty (initial load or filter change)
-    if (contents.length === 0 && notes.length > 0) {
-      setIsLoading(true);
-      Promise.all(notes.map(async (file: TFile) => {
-        const content = await app.vault.cachedRead(file);
-        return { file, content };
-      })).then(initialContents => {
-        setContents(initialContents);
-        setIsLoading(false);
-      }).catch(error => {
-        console.error("Error loading initial notes content:", error);
-        new Notice('加载初始笔记时出错');
-        setIsLoading(false);
-      });
+
+    // 应用关键词和标签筛选
+    let filtered = allContents;
+    if (curScheme.type === 'FilterScheme') {
+      if (curScheme.keyword.trim()) {
+        const keyword = curScheme.keyword.trim().toLowerCase();
+        filtered = filtered.filter(({ content }) => content.toLowerCase().includes(keyword));
+      }
+      if (curScheme.tagFilter.or.length > 0) {
+        filtered = filtered.filter(({ file }) => {
+          const fileTags: string[] = app.metadataCache.getFileCache(file)?.frontmatter?.tags ?? [];
+          return curScheme.tagFilter.or.some((andTags) => andTags.every((andTag) => {
+            return fileTags.some((fileTag) => fileTag.startsWith(andTag));
+          }));
+        });
+      }
+      if (curScheme.tagFilter.not.length > 0) {
+        filtered = filtered.filter(({ file }) => {
+          const fileTags = app.metadataCache.getFileCache(file)?.frontmatter?.tags ?? [];
+          return !curScheme.tagFilter.not.some((tag) => fileTags.some((fileTag: string) => fileTag.startsWith(tag)));
+        });
+      }
     }
-  }, [notes]); // Dependency only on notes for initial load
+
+    setCurSchemeNotesLength(filtered.length);
+    // 应用分页
+    const endIndex = currentPage * notesPerPage;
+    setDisplayedNotes(filtered.slice(0, endIndex));
+  }, [allContents, currentPage, curScheme, app.metadataCache]);
+
+  const [curSchemeNotesLength, setCurSchemeNotesLength] = useState(0);
+
+  // 加载更多笔记（增加页码）
+  const loadMoreNotes = useCallback(() => {
+    if (isLoading) return;
+    setCurrentPage(prevPage => prevPage + 1);
+  }, [isLoading]);
 
   // Infinite scroll effect
   const observer = useRef<IntersectionObserver>(null);
@@ -206,23 +223,12 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
     if (isLoading) return;
     if (observer.current) observer.current.disconnect();
     observer.current = new IntersectionObserver(entries => {
-      if (entries[0].isIntersecting && notes.length < allFilteredNotes.length) {
+      if (entries[0].isIntersecting) {
         loadMoreNotes();
       }
     });
     if (node) observer.current.observe(node);
-  }, [isLoading, loadMoreNotes, notes.length, allFilteredNotes.length]);
-
-  useEffect(() => {
-    if (notes.length === 0) {
-      setContents([]);
-      return;
-    }
-    Promise.all(notes.map(async (file: TFile) => {
-      const content = await app.vault.cachedRead(file);
-      return { file, content };
-    })).then(setContents);
-  }, [notes]);
+  }, [isLoading, loadMoreNotes]);
 
   // 卡片删除
   const handleDelete = async (file: TFile) => {
@@ -250,7 +256,7 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
     const modal = new ViewSelectModal(app, {
       viewSchemes: viewSchemes,
       onSelect: (scheme) => {
-        const temp = new Set<number>([...scheme.files, ...pinnedAndFiltered.map(({ file }) => file.getID())]);
+        const temp = new Set<number>([...scheme.files, ...displayedNotes.map(({ file }) => file.getID())]);
         const newFiles = Array.from(temp);
         const newScheme = { ...scheme, files: newFiles };
         const newSchemes = viewSchemes.map(scheme => scheme.id == newScheme.id ? newScheme : scheme);
@@ -311,41 +317,19 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
       setColCount(mainWidth >= widthFor2Cards ? 2 : 1);
       setShowSidebar(_showSidebar);
     };
-    
+
     // 初始化时执行一次
     updateCol();
-    
+
     // 使用ResizeObserver监听主容器尺寸变化
     const resizeObserver = new ResizeObserver(updateCol);
     if (dashboardRef.current) {
       resizeObserver.observe(dashboardRef.current);
     }
-    
+
     return () => resizeObserver.disconnect();
   }, [showSidebar]); // 保留showSidebar依赖，因为侧边栏显示状态变化会影响主容器宽度
 
-  // 卡片筛选 - Apply filtering to all notes before pagination
-  let filteredForDisplay = contents;
-  if (curScheme.type === 'FilterScheme') {
-    if (curScheme.keyword.trim()) {
-      const keyword = curScheme.keyword.trim().toLowerCase();
-      filteredForDisplay = filteredForDisplay.filter(({ content }) => content.toLowerCase().includes(keyword));
-    }
-    if (curScheme.tagFilter.or.length > 0) {
-      filteredForDisplay = filteredForDisplay.filter(({ file }) => {
-        const fileTags: string[] = app.metadataCache.getFileCache(file)?.frontmatter?.tags ?? [];
-        return curScheme.tagFilter.or.some((andTags) => andTags.every((andTag) => {
-          return fileTags.some((fileTag) => fileTag.startsWith(andTag));
-        }));
-      });
-    }
-    if (curScheme.tagFilter.not.length > 0) {
-      filteredForDisplay = filteredForDisplay.filter(({ file }) => {
-        const fileTags = app.metadataCache.getFileCache(file)?.frontmatter?.tags ?? [];
-        return !curScheme.tagFilter.not.some((tag) => fileTags.some((fileTag: string) => fileTag.startsWith(tag)));
-      });
-    }
-  }
 
   // 卡片置顶
   const handlePin = (file: TFile, isPinned: boolean) => {
@@ -353,34 +337,34 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
     const fileId = file.getID();
     const newPinned = [...curScheme.pinned.filter(p => p !== fileId)].concat(isPinned ? [fileId] : []);
     const noticeStr = isPinned ? '已置顶' : '已取消置顶';
-    const newScheme = {...curScheme, pinned: newPinned };
+    const newScheme = { ...curScheme, pinned: newPinned };
     if (newScheme.type === 'ViewScheme') {
       const newSchemes = viewSchemes.map(scheme => scheme.id == newScheme.id ? newScheme : scheme);
-      setViewSchemes(newSchemes);        
+      setViewSchemes(newSchemes);
     } else {
       const newSchemes = filterSchemes.map(scheme => {
         if (scheme.id == newScheme.id) {
           return newScheme;
         }
         if (newScheme.id == SearchFilterSchemeID && scheme.id == DefaultFilterSchemeID) { // 「搜索」的置顶其实要给到「默认」
-          return {...getDefaultFilterScheme(filterSchemes), pinned: newPinned};
+          return { ...getDefaultFilterScheme(filterSchemes), pinned: newPinned };
         }
         return scheme;
       });
-      setFilterSchemes(newSchemes);     
+      setFilterSchemes(newSchemes);
     }
     setCurScheme(newScheme)
     new Notice(noticeStr);
   };
 
   // 渲染卡片时优先显示置顶
-  const pinnedAndFiltered = filteredForDisplay
+  const pinnedNotes = displayedNotes
     .filter(({ file }) => curScheme.pinned.includes(file.getID()))
-    .concat(filteredForDisplay.filter(({ file }) => !curScheme.pinned.includes(file.getID())));
+    .concat(displayedNotes.filter(({ file }) => !curScheme.pinned.includes(file.getID())));
 
-  const cardNodes = pinnedAndFiltered.map(({ file, content }, index) => {
+  const cardNodes = pinnedNotes.map(({ file, content }, index) => {
     // Attach ref to the last card for intersection observer
-    const isLastCard = index === pinnedAndFiltered.length - 1;
+    const isLastCard = index === pinnedNotes.length - 1;
     return (
       <div ref={isLastCard ? lastCardElementRef : null} key={file.getID()}>
         <CardNote
@@ -517,7 +501,7 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
         </div>
         <div className="main-subheader-container" style={{ marginBottom: 6, marginTop: 8, marginRight: 16, display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
           <div style={{ display: "flex", alignItems: 'center' }}>
-            <span style={{ padding: '12px 6px', color: 'var(--text-muted)', fontSize: 'var(--font-smaller)' }}>已加载 {cardNodes.length} 条笔记</span>
+            <span style={{ padding: '12px 6px', color: 'var(--text-muted)', fontSize: 'var(--font-smaller)' }}>已加载 {displayedNotes.length} / {curSchemeNotesLength} 条笔记</span>
             {cardNodes.length > 0 && <button style={{ marginLeft: '6px', padding: '0 6px', background: 'transparent' }}
               children={<Icon name="arrow-down-wide-narrow" />}
               onClick={(e) => sortMenu(e.nativeEvent, sortType, setSortType)}
@@ -540,7 +524,7 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
         {/* Add loading and end-of-list indicators here */}
         <div style={{ textAlign: 'center', padding: '20px', color: 'var(--text-muted)' }}>
           {isLoading && <div>加载中...</div>}
-          {!isLoading && notes.length >= allFilteredNotes.length && cardNodes.length > 0 && <div>你已经到底部了</div>}
+          {!isLoading && displayedNotes.length >= curSchemeNotesLength && cardNodes.length > 0 && <div>你已经到底部了</div>}
         </div>
       </div>
     </div>

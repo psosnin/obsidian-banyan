@@ -73,35 +73,17 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const notesPerPage = 30; // 每页显示的笔记数量
+  const [curSchemeNotesLength, setCurSchemeNotesLength] = useState(0);
+
+  const [colCount, setColCount] = useState(1);
+
+  const dashboardRef = React.useRef<HTMLDivElement>(null);
 
   const [refreshFlag, setRefreshFlag] = useState(0);
 
   const [totalNotesNum, setTotalNotesNum] = useState(0);
   const [totalTagsNum, setTotalTagsNum] = useState(0);
   const [heatmapValues, setHeatmapValues] = useState<HeatmapData[]>([]);
-
-  const withinDateRange = (time: number, dateRange: { from: string; to: string }) => {
-    const from = dateRange.from.length > 0 ? (new Date(dateRange.from).getTime()) : undefined;
-    const to = dateRange.to.length > 0 ? (new Date(dateRange.to).getTime()) : undefined;
-
-    if (!from && !to) return true;
-    if (from && !to) return time >= from;
-    if (!from && to) return time <= to;
-    return time >= from! && time <= to!;
-  }
-
-  const getHeatmapValues = (files: TFile[]) => {
-    const valueMap = files
-      .map(file => new Date(file.stat.ctime).toISOString().slice(0, 10))
-      .reduce<Map<string, number>>(
-        (pre, cur) => pre.set(cur, pre.has(cur) ? pre.get(cur)! + 1 : 1),
-        new Map<string, number>());
-    return Array
-      .from(valueMap.entries())
-      .map(([key, value]) => {
-        return { date: key, count: value };
-      }); // 第一层转换
-  }
 
   // 文件监听逻辑
   useEffect(() => {
@@ -209,7 +191,15 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
     setDisplayedNotes(filtered.slice(0, endIndex));
   }, [allContents, currentPage, curScheme, app.metadataCache]);
 
-  const [curSchemeNotesLength, setCurSchemeNotesLength] = useState(0);
+  useEffect(() => {
+    plugin.settings.viewSchemes = viewSchemes;
+    plugin.saveSettings();
+  }, [viewSchemes]);
+
+  useEffect(() => {
+    plugin.settings.filterSchemes = filterSchemes;
+    plugin.saveSettings();
+  }, [filterSchemes]);
 
   // 加载更多笔记（增加页码）
   const loadMoreNotes = useCallback(() => {
@@ -230,6 +220,31 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
     if (node) observer.current.observe(node);
   }, [isLoading, loadMoreNotes]);
 
+  React.useEffect(() => {
+    const updateCol = () => {
+      if (!dashboardRef.current) return;
+      const containerWidth = dashboardRef.current.clientWidth;
+      const _showSidebar = containerWidth >= 700 ? 'normal' : 'hide';
+      const mainWidth = containerWidth - (_showSidebar == 'normal' ? 400 : 0);
+      const cardWidth = 600;
+      const cardsPadding = 24;
+      const widthFor2Cards = cardWidth * 2 + cardsPadding;
+      setColCount(mainWidth >= widthFor2Cards ? 2 : 1);
+      setShowSidebar(_showSidebar);
+    };
+
+    // 初始化时执行一次
+    updateCol();
+
+    // 使用ResizeObserver监听主容器尺寸变化
+    const resizeObserver = new ResizeObserver(updateCol);
+    if (dashboardRef.current) {
+      resizeObserver.observe(dashboardRef.current);
+    }
+
+    return () => resizeObserver.disconnect();
+  }, [showSidebar]); // 保留showSidebar依赖，因为侧边栏显示状态变化会影响主容器宽度
+
   // 卡片删除
   const handleDelete = async (file: TFile) => {
     await app.vault.delete(file);
@@ -241,16 +256,6 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
   const handleOpen = (file: TFile) => {
     app.workspace.openLinkText(file.path, '', false);
   };
-
-  useEffect(() => {
-    plugin.settings.viewSchemes = viewSchemes;
-    plugin.saveSettings();
-  }, [viewSchemes]);
-
-  useEffect(() => {
-    plugin.settings.filterSchemes = filterSchemes;
-    plugin.saveSettings();
-  }, [filterSchemes]);
 
   const handleBatchImportToView = () => {
     const modal = new ViewSelectModal(app, {
@@ -291,45 +296,6 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
     setViewSchemes(newSchemes);
     setCurScheme(newScheme);
   }
-
-  // 瀑布流布局
-  const getColumns = (cards: React.JSX.Element[], colCount: number) => {
-    const cols: React.JSX.Element[][] = Array.from({ length: colCount }, () => []);
-    cards.forEach((card, idx) => {
-      cols[idx % colCount].push(card);
-    });
-    return cols;
-  };
-
-  // 根据窗口宽度自适应列数
-  const [colCount, setColCount] = useState(1);
-
-  const dashboardRef = React.useRef<HTMLDivElement>(null);
-  React.useEffect(() => {
-    const updateCol = () => {
-      if (!dashboardRef.current) return;
-      const containerWidth = dashboardRef.current.clientWidth;
-      const _showSidebar = containerWidth >= 700 ? 'normal' : 'hide';
-      const mainWidth = containerWidth - (_showSidebar == 'normal' ? 400 : 0);
-      const cardWidth = 600;
-      const cardsPadding = 24;
-      const widthFor2Cards = cardWidth * 2 + cardsPadding;
-      setColCount(mainWidth >= widthFor2Cards ? 2 : 1);
-      setShowSidebar(_showSidebar);
-    };
-
-    // 初始化时执行一次
-    updateCol();
-
-    // 使用ResizeObserver监听主容器尺寸变化
-    const resizeObserver = new ResizeObserver(updateCol);
-    if (dashboardRef.current) {
-      resizeObserver.observe(dashboardRef.current);
-    }
-
-    return () => resizeObserver.disconnect();
-  }, [showSidebar]); // 保留showSidebar依赖，因为侧边栏显示状态变化会影响主容器宽度
-
 
   // 卡片置顶
   const handlePin = (file: TFile, isPinned: boolean) => {
@@ -385,6 +351,15 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
       </div>
     );
   });
+
+  // 瀑布流布局
+  const getColumns = (cards: React.JSX.Element[], colCount: number) => {
+    const cols: React.JSX.Element[][] = Array.from({ length: colCount }, () => []);
+    cards.forEach((card, idx) => {
+      cols[idx % colCount].push(card);
+    });
+    return cols;
+  };
   const columns = getColumns(cardNodes, colCount);
 
   const sortMenu = (
@@ -509,7 +484,6 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
           </div>
           <div className="main-subheader-btn-section" style={{ display: "flex", gap: 8 }}>
             {curScheme.type != 'ViewScheme' && cardNodes.length > 0 && <button onClick={handleBatchImportToView} style={{ padding: '4px 12px', backgroundColor: 'transparent', color: 'var(--interactive-accent)' }}>批量添加到视图</button>}
-            {/* <button onClick={() => plugin.addCardNote()} style={{ padding: '4px 12px' }}>添加笔记</button> */}
           </div>
         </div>
         <div className="main-cards" style={{ display: 'flex', gap: 16, }}>
@@ -529,4 +503,27 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
       </div>
     </div>
   );
+}
+
+const withinDateRange = (time: number, dateRange: { from: string; to: string }) => {
+  const from = dateRange.from.length > 0 ? (new Date(dateRange.from).getTime()) : undefined;
+  const to = dateRange.to.length > 0 ? (new Date(dateRange.to).getTime()) : undefined;
+
+  if (!from && !to) return true;
+  if (from && !to) return time >= from;
+  if (!from && to) return time <= to;
+  return time >= from! && time <= to!;
+}
+
+const getHeatmapValues = (files: TFile[]) => {
+  const valueMap = files
+    .map(file => new Date(file.stat.ctime).toISOString().slice(0, 10))
+    .reduce<Map<string, number>>(
+      (pre, cur) => pre.set(cur, pre.has(cur) ? pre.get(cur)! + 1 : 1),
+      new Map<string, number>());
+  return Array
+    .from(valueMap.entries())
+    .map(([key, value]) => {
+      return { date: key, count: value };
+    }); // 第一层转换
 }

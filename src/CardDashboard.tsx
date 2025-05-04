@@ -14,7 +14,7 @@ import EmptyStateCard from "./cards/EmptyStateCard";
 import { getAllTags } from "./utils/tagUtils";
 import { ViewScheme } from "./models/ViewScheme";
 import { ViewSelectModal } from "./sidebar/viewScheme/ViewSelectModal";
-import { createFileWatcher, FileChange } from './utils/fileWatcher';
+import { createFileWatcher } from './utils/fileWatcher';
 
 export const CARD_DASHBOARD_VIEW_TYPE = "dashboard-view";
 
@@ -103,14 +103,6 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
         return { date: key, count: value };
       }); // 第一层转换
   }
-
-  useEffect(() => {
-    const handleResize = () => {
-      setShowSidebar(window.innerWidth >= 700 ? 'normal' : 'hide');
-    };
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
 
   // 文件监听逻辑
   useEffect(() => {
@@ -305,26 +297,32 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
 
   // 根据窗口宽度自适应列数
   const [colCount, setColCount] = useState(1);
-  const mainBoardRef = React.useRef<HTMLDivElement>(null);
 
+  const dashboardRef = React.useRef<HTMLDivElement>(null);
   React.useEffect(() => {
     const updateCol = () => {
-      // 获取主内容区宽度（减去侧边栏宽度）
-      let mainWidth = window.innerWidth;
-      const sidebarEl = document.querySelector('#sidebar') as HTMLElement;
-      if (sidebarEl && showSidebar === 'normal') {
-        const padding = 80;
-        mainWidth -= sidebarEl.offsetWidth + padding;
-      }
+      if (!dashboardRef.current) return;
+      const containerWidth = dashboardRef.current.clientWidth;
+      const _showSidebar = containerWidth >= 700 ? 'normal' : 'hide';
+      const mainWidth = containerWidth - (_showSidebar == 'normal' ? 400 : 0);
       const cardWidth = 600;
-      const cardsPadding = 24
+      const cardsPadding = 24;
       const widthFor2Cards = cardWidth * 2 + cardsPadding;
       setColCount(mainWidth >= widthFor2Cards ? 2 : 1);
+      setShowSidebar(_showSidebar);
     };
+    
+    // 初始化时执行一次
     updateCol();
-    window.addEventListener('resize', updateCol);
-    return () => window.removeEventListener('resize', updateCol);
-  }, [showSidebar]);
+    
+    // 使用ResizeObserver监听主容器尺寸变化
+    const resizeObserver = new ResizeObserver(updateCol);
+    if (dashboardRef.current) {
+      resizeObserver.observe(dashboardRef.current);
+    }
+    
+    return () => resizeObserver.disconnect();
+  }, [showSidebar]); // 保留showSidebar依赖，因为侧边栏显示状态变化会影响主容器宽度
 
   // 卡片筛选 - Apply filtering to all notes before pagination
   let filteredForDisplay = contents;
@@ -492,10 +490,10 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
   })();
 
   return (
-    <div className="dashboard-container" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', width: '100%' }}>
+    <div className="dashboard-container" ref={dashboardRef} style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', width: '100%' }}>
       {showSidebar != 'normal' && <Sidebar visible={showSidebar == 'show'} onClose={() => setShowSidebar('hide')}>{sidebarContent}</Sidebar>}
       {showSidebar == 'normal' && sidebarContent}
-      <div className="main-container" style={{ display: 'inline-block' }} ref={mainBoardRef}>
+      <div className="main-container" style={{ display: 'inline-block' }}>
         <div className="main-header-container" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
           <div className="main-header-title" style={{ display: "flex", alignItems: "center" }}>
             <button style={{

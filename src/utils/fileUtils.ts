@@ -1,4 +1,4 @@
-import { TFolder, App } from "obsidian";
+import { TFolder, App, TFile } from "obsidian";
 
 export async function getAllFolders(app: App): Promise<string[]> {
   const folders: string[] = [];
@@ -56,3 +56,14 @@ export function createFolderSuggest(
     setTimeout(() => { if (suggestEl) suggestEl.remove(); }, 100);
   });
 }
+
+// 给TFile添加拓展方法 
+declare module 'obsidian' {
+  interface TFile {
+    getID(): number;
+  }
+}
+
+TFile.prototype.getID = function () {
+  return this.stat.ctime;
+};

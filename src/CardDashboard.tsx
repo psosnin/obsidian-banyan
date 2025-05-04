@@ -118,9 +118,10 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
     const unsubscribe = watcher.onChange(({ type, file }) => {
       setRefreshFlag(f => f + 1);
       if (type === 'delete') {
+        // 当文件被删除时，从视图中移除该文件
         const newSchemes = viewSchemes.map(scheme => {
-          const newFiles = scheme.files.filter((path: string) => path !== file.path);
-          const newPinned = scheme.pinned.filter((path: string) => path !== file.path);
+          const newFiles = scheme.files.filter((fileID) => fileID !== file.getID());
+          const newPinned = scheme.pinned.filter((fileID) => fileID !== file.getID());
           return { ...scheme, files: newFiles, pinned: newPinned };
         });
         setViewSchemes(newSchemes);
@@ -149,7 +150,7 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
       filtered = filtered.filter((file: TFile) => withinDateRange(sortType == 'created' ? file.stat.ctime : file.stat.mtime, curScheme.dateRange));
     }
     if (curScheme.type == 'ViewScheme') {
-      filtered = filtered.filter((file: TFile) => curScheme.files.includes(file.path));
+      filtered = filtered.filter((file: TFile) => curScheme.files.includes(file.getID()));
     }
     filtered.sort((a, b) => sortType === 'created' ? b.stat.ctime - a.stat.ctime : b.stat.mtime - a.stat.mtime);
     setAllFilteredNotes(filtered); // Store all filtered notes
@@ -257,7 +258,7 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
     const modal = new ViewSelectModal(app, {
       viewSchemes: viewSchemes,
       onSelect: (scheme) => {
-        const temp = new Set<string>([...scheme.files, ...pinnedAndFiltered.map(({ file }) => file.path)]);
+        const temp = new Set<number>([...scheme.files, ...pinnedAndFiltered.map(({ file }) => file.getID())]);
         const newFiles = Array.from(temp);
         const newScheme = { ...scheme, files: newFiles };
         const newSchemes = viewSchemes.map(scheme => scheme.id == newScheme.id ? newScheme : scheme);
@@ -271,11 +272,11 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
     const modal = new ViewSelectModal(app, {
       viewSchemes: viewSchemes,
       onSelect: (scheme) => {
-        if (scheme.files.includes(file.path)) {
+        if (scheme.files.includes(file.getID())) {
           new Notice('笔记已存在于该视图中');
           return;
         }
-        const newFiles = scheme.files.includes(file.path) ? scheme.files : [...scheme.files, file.path];
+        const newFiles = scheme.files.includes(file.getID()) ? scheme.files : [...scheme.files, file.getID()];
         const newScheme = { ...scheme, files: newFiles };
         const newSchemes = viewSchemes.map(scheme => scheme.id == newScheme.id ? newScheme : scheme);
         setViewSchemes(newSchemes);
@@ -286,7 +287,7 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
 
   const handleRemoveFromView = (file: TFile) => {
     if (curScheme.type !== 'ViewScheme') return;
-    const newFiles = [...curScheme.files.filter((path: string) => path !== file.path)];
+    const newFiles = [...curScheme.files.filter((fileID) => fileID !== file.getID())];
     const newScheme = { ...curScheme, files: newFiles };
     const newSchemes = viewSchemes.map(scheme => scheme.id == newScheme.id ? newScheme : scheme);
     setViewSchemes(newSchemes);
@@ -350,7 +351,9 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
 
   // 卡片置顶
   const handlePin = (file: TFile, isPinned: boolean) => {
-    const newPinned = [...curScheme.pinned.filter(p => p != file.path)].concat(isPinned ? [file.path] : []);
+    // 使用文件的创建时间戳作为唯一标识符，而非文件路径
+    const fileId = file.getID();
+    const newPinned = [...curScheme.pinned.filter(p => p !== fileId)].concat(isPinned ? [fileId] : []);
     const noticeStr = isPinned ? '已置顶' : '已取消置顶';
     const newScheme = {...curScheme, pinned: newPinned };
     if (newScheme.type === 'ViewScheme') {
@@ -374,14 +377,14 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
 
   // 渲染卡片时优先显示置顶
   const pinnedAndFiltered = filteredForDisplay
-    .filter(({ file }) => curScheme.pinned.includes(file.path))
-    .concat(filteredForDisplay.filter(({ file }) => !curScheme.pinned.includes(file.path)));
+    .filter(({ file }) => curScheme.pinned.includes(file.getID()))
+    .concat(filteredForDisplay.filter(({ file }) => !curScheme.pinned.includes(file.getID())));
 
   const cardNodes = pinnedAndFiltered.map(({ file, content }, index) => {
     // Attach ref to the last card for intersection observer
     const isLastCard = index === pinnedAndFiltered.length - 1;
     return (
-      <div ref={isLastCard ? lastCardElementRef : null} key={file.path}>
+      <div ref={isLastCard ? lastCardElementRef : null} key={file.getID()}>
         <CardNote
           sortType={sortType}
           file={file}
@@ -392,7 +395,7 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
           onDelete={handleDelete}
           onOpen={handleOpen}
           setPin={handlePin}
-          isPinned={curScheme.pinned.includes(file.path)}
+          isPinned={curScheme.pinned.includes(file.getID())}
           isInView={curScheme.type === 'ViewScheme'}
           onImportToView={handleImportToView}
           onRemoveFromView={handleRemoveFromView}

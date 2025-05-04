@@ -1,7 +1,6 @@
 import { normalizePath, Plugin, WorkspaceLeaf } from 'obsidian';
 import { MyPluginSettings, MySettingTab, DEFAULT_SETTINGS } from './MySettingTab';
 import { CARD_DASHBOARD_VIEW_TYPE, CardDashboard } from './CardDashboard';
-import { DefaultFilterSchemeID, getDefaultFilterScheme } from './models/FilterScheme';
 
 export default class MyPlugin extends Plugin {
 	settings: MyPluginSettings;
@@ -94,78 +93,24 @@ export default class MyPlugin extends Plugin {
 		this.app.workspace.getLeavesOfType(CARD_DASHBOARD_VIEW_TYPE).forEach(leaf => leaf.detach());
 	}
 
-	// 迁移置顶数据：从基于路径到基于创建时间戳
-	migratePinnedData = () => {
-		const allFiles = this.app.vault.getMarkdownFiles();
-		const pathToIDMap = new Map<string, number>();
-
-		// 创建文件路径到创建时间戳的映射
-		allFiles.forEach(file => {
-			pathToIDMap.set(file.path, file.getID());
-		});
-
-		// 迁移ViewScheme中的pinned数据
-		this.settings.viewSchemes = this.settings.viewSchemes.map(scheme => {
-			// 检查pinned是否为字符串数组（旧格式）
-			if (scheme.pinned.length > 0 && typeof scheme.pinned[0] === 'string') {
-				// 将路径转换为创建时间戳
-				const newPinned = (scheme.pinned as unknown as string[])
-					.map(path => pathToIDMap.get(path))
-					.filter(ctime => ctime !== undefined) as number[];
-				return { ...scheme, pinned: newPinned };
-			}
-			if (scheme.files.length > 0 && typeof scheme.files[0] === 'string') {
-				// 将路径转换为创建时间戳
-				const newFiles = (scheme.files as unknown as string[])
-					.map(path => pathToIDMap.get(path))
-					.filter(fileID => fileID !== undefined) as number[];
-				return { ...scheme, files: newFiles };
-			}
-			return scheme;
-		});
-
-		// 迁移FilterScheme中的pinned数据
-		this.settings.filterSchemes = this.settings.filterSchemes.map(scheme => {
-			// 检查pinned是否为字符串数组（旧格式）
-			if (scheme.pinned.length > 0 && typeof scheme.pinned[0] === 'string') {
-				// 将路径转换为创建时间戳
-				const newPinned = (scheme.pinned as unknown as string[])
-					.map(path => pathToIDMap.get(path))
-					.filter(ctime => ctime !== undefined) as number[];
-				return { ...scheme, pinned: newPinned };
-			}
-			return scheme;
-		});
-	}
-
-	updateViewSchemes = () => {
-		const allFiles = this.app.vault.getMarkdownFiles().map((file) => file.getID());
+	updateSavedFile = () => {
+		const _allFiles = this.app.vault.getMarkdownFiles().map((file) => file.getID());
+		const allFiles = new Set(_allFiles);
 		this.settings.viewSchemes = [...this.settings.viewSchemes.map((scheme) => {
-			const newFiles = [...scheme.files.filter((file) => allFiles.includes(file))];
-			const newPinned = [...scheme.pinned.filter((file) => allFiles.includes(file))];
+			const newFiles = [...scheme.files.filter((file) => allFiles.has(file))];
+			const newPinned = [...scheme.pinned.filter((file) => allFiles.has(file))];
 			return { ...scheme, files: newFiles, pinned: newPinned };
 		})];
-	}
-
-	updateFilterSchemes = () => {
-		// 旧版本可能没有pinned属性，需要初始化
 		this.settings.filterSchemes = [...this.settings.filterSchemes.map((scheme) => {
-			if (scheme.pinned) return scheme;
-			return { ...scheme, pinned: [] };
+			const newPinned = [...scheme.pinned.filter((file) => allFiles.has(file))];
+			return { ...scheme, pinned: newPinned };
 		})];
-		// 添加默认过滤，旧版本可能没有默认过滤
-		if (!this.settings.filterSchemes.find((scheme) => scheme.id == DefaultFilterSchemeID)) {
-			this.settings.filterSchemes = [getDefaultFilterScheme([]), ...this.settings.filterSchemes];
-		}
+		this.saveSettings();
 	}
 
 	async loadSettings() {
 		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
-		// 先迁移置顶数据，从基于路径到基于创建时间戳
-		this.migratePinnedData();
-		this.updateViewSchemes();
-		this.updateFilterSchemes();
-		this.saveSettings();
+		this.updateSavedFile();
 	}
 
 	async saveSettings() {

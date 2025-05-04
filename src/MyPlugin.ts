@@ -1,5 +1,5 @@
 import { normalizePath, Plugin, WorkspaceLeaf } from 'obsidian';
-import { MyPluginSettings, MySettingTab, DEFAULT_SETTINGS } from './MySettingTab';
+import { MyPluginSettings, MySettingTab, DEFAULT_SETTINGS, CUR_SETTINGS_VERSION } from './MySettingTab';
 import { CARD_DASHBOARD_VIEW_TYPE, CardDashboard } from './CardDashboard';
 
 export default class MyPlugin extends Plugin {
@@ -93,6 +93,15 @@ export default class MyPlugin extends Plugin {
 		this.app.workspace.getLeavesOfType(CARD_DASHBOARD_VIEW_TYPE).forEach(leaf => leaf.detach());
 	}
 
+	updateSettingIfNeeded = () => {
+		if (!this.settings.settingsVersion) {
+			this.settings.settingsVersion = CUR_SETTINGS_VERSION;
+		}
+		// 以后版本更新时，在此处添加更新逻辑
+		this.updateSavedFile();
+		this.saveSettings();
+	}
+
 	updateSavedFile = () => {
 		const _allFiles = this.app.vault.getMarkdownFiles().map((file) => file.getID());
 		const allFiles = new Set(_allFiles);
@@ -105,12 +114,11 @@ export default class MyPlugin extends Plugin {
 			const newPinned = [...scheme.pinned.filter((file) => allFiles.has(file))];
 			return { ...scheme, pinned: newPinned };
 		})];
-		this.saveSettings();
 	}
 
 	async loadSettings() {
 		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
-		this.updateSavedFile();
+		this.updateSettingIfNeeded();
 	}
 
 	async saveSettings() {

@@ -5,6 +5,7 @@ import { FilterScheme, getDefaultFilterScheme } from './models/FilterScheme';
 import { ViewScheme } from './models/ViewScheme';
 
 export interface MyPluginSettings {
+	settingsVersion: number;
 	cardsDirectory: string;
 	sortType: 'created' | 'modified';
 	openWhenStartObsidian: boolean;
@@ -12,7 +13,10 @@ export interface MyPluginSettings {
 	viewSchemes: ViewScheme[];
 }
 
+export const CUR_SETTINGS_VERSION = 1;
+
 export const DEFAULT_SETTINGS: MyPluginSettings = {
+	settingsVersion: CUR_SETTINGS_VERSION,
 	cardsDirectory: 'cards',
 	sortType: 'created',
 	openWhenStartObsidian: true,

@@ -171,7 +171,7 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
       }
       if (curScheme.tagFilter.or.length > 0) {
         filtered = filtered.filter(({ file }) => {
-          const fileTags: string[] = app.metadataCache.getFileCache(file)?.frontmatter?.tags ?? [];
+          const fileTags: string[] = file.getTags(app);
           return curScheme.tagFilter.or.some((andTags) => andTags.every((andTag) => {
             return fileTags.some((fileTag) => fileTag.startsWith(andTag));
           }));
@@ -179,7 +179,7 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
       }
       if (curScheme.tagFilter.not.length > 0) {
         filtered = filtered.filter(({ file }) => {
-          const fileTags = app.metadataCache.getFileCache(file)?.frontmatter?.tags ?? [];
+          const fileTags = file.getTags(app);
           return !curScheme.tagFilter.not.some((tag) => fileTags.some((fileTag: string) => fileTag.startsWith(tag)));
         });
       }
@@ -336,7 +336,7 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
         <CardNote
           sortType={sortType}
           file={file}
-          tags={app.metadataCache.getFileCache(file)?.frontmatter?.tags ?? []}
+          tags={file.getTags(app)}
           content={content}
           app={app}
           component={component}

@@ -25,3 +25,23 @@ export const getAllTags = (app: App, files: TFile[]) => {
   res.sort((a, b) => a.length - b.length);
   return res;
 }
+
+// 给TFile添加拓展方法 
+declare module 'obsidian' {
+  interface TFile {
+    getTags(app: App): string[];
+  }
+}
+
+TFile.prototype.getTags = function (app: App) {
+  const tags: string[] = [];
+  const properties = app.metadataCache.getFileCache(this)?.frontmatter;
+    if (properties?.tags) {
+      if (Array.isArray(properties.tags)) {
+        properties.tags.forEach((tag: string) => tags.push(tag));
+      } else if (typeof properties.tags === 'string') {
+        tags.push(properties.tags);
+      }
+    }
+  return tags;
+};

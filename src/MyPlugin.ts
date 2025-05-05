@@ -1,6 +1,7 @@
-import { normalizePath, Plugin, WorkspaceLeaf } from 'obsidian';
-import { MyPluginSettings, MySettingTab, DEFAULT_SETTINGS, CUR_SETTINGS_VERSION } from './MySettingTab';
+import { normalizePath, Plugin, WorkspaceLeaf, Notice, TFile } from 'obsidian';
+import { MyPluginSettings, DEFAULT_SETTINGS, CUR_SETTINGS_VERSION } from './MyPluginSettings';
 import { CARD_DASHBOARD_VIEW_TYPE, CardDashboard } from './CardDashboard';
+import { MySettingTab } from './MySettingTab';
 
 export default class MyPlugin extends Plugin {
 	settings: MyPluginSettings;
@@ -38,6 +39,19 @@ export default class MyPlugin extends Plugin {
 		});
 		CardIconEl.addClass('my-plugin-ribbon-class');
 
+		// 打开随机笔记 命令和按钮
+		this.addCommand({
+			id: 'open-random-note',
+			name: '打开随机笔记',
+			callback: async () => {
+				await this.openRandomNote();
+			}
+		});
+		const RandomNoteIconEl = this.addRibbonIcon('dice', '打开随机笔记', async (evt: MouseEvent) => {
+			await this.openRandomNote();
+		});
+		RandomNoteIconEl.addClass('my-plugin-ribbon-class');
+
 		// This adds a settings tab so the user can configure various aspects of the plugin
 		this.addSettingTab(new MySettingTab(this.app, this));
 
@@ -55,6 +69,53 @@ export default class MyPlugin extends Plugin {
 
 	async addCardNote() {
 		await this.addNote(this.settings.cardsDirectory);
+	}
+
+	// 打开随机笔记
+	async openRandomNote() {
+		const files = this.app.vault.getMarkdownFiles();
+		const filteredFiles = await this.filterFilesByTags(files);
+		if (!files || filteredFiles.length === 0) {
+			new Notice('没有找到任何笔记');
+			return;
+		}
+
+		// 随机选择一个笔记
+		const randomIndex = Math.floor(Math.random() * filteredFiles.length);
+		const randomFile = filteredFiles[randomIndex];
+
+		// 打开笔记
+		const leaf = this.app.workspace.getLeaf(false);
+		await leaf.openFile(randomFile, { active: true });
+		this.app.workspace.setActiveLeaf(leaf, { focus: true });
+		// this.app.workspace.openLinkText(randomFile.path, '', false);
+	}
+
+	// 根据标签筛选文件
+	async filterFilesByTags(files: TFile[]) {
+		const { or, not } = this.settings.randomNoteTagFilter;
+		
+		return files.filter(file => {
+			const fileTags = file.getTags(this.app);
+
+			// 检查排除标签
+			if (not.length > 0 && not.some(tag => fileTags.includes(tag))) {
+				return false;
+			}
+
+			// 如果没有设置包含标签，则返回所有不包含排除标签的文件
+			if (or.every(row => row.length === 0)) {
+				return true;
+			}
+
+			// 检查包含标签（OR 关系）
+			return or.some(row => {
+				// 如果行为空，则跳过
+				if (row.length === 0) return false;
+				// 行内标签是 AND 关系
+				return row.every(tag => fileTags.includes(tag));
+			});
+		});
 	}
 
 	async addNote(dir: string, content?: string) {

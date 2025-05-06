@@ -43,7 +43,7 @@ export class CardDashboard extends ItemView {
     this.root = createRoot(this.containerEl.children[1]);
     this.root.render(
       <StrictMode>
-        <CardDashboardView plugin={this.plugin} app={this.app} component={this} />
+        <CardDashboardView plugin={this.plugin} app={this.app} />
       </StrictMode>
     );
     return;
@@ -54,7 +54,7 @@ export class CardDashboard extends ItemView {
   }
 }
 
-const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: App, component: Component }) => {
+const CardDashboardView = ({ plugin, app }: { plugin: MyPlugin, app: App }) => {
 
   const [showSidebar, setShowSidebar] = useState<'normal' | 'hide' | 'show'>('normal');
 
@@ -72,7 +72,7 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
   const [displayedNotes, setDisplayedNotes] = useState<{ file: TFile, content: string }[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
-  const notesPerPage = 30; // 每页显示的笔记数量
+  const notesPerPage = 20; // 每页显示的笔记数量
   const [curSchemeNotesLength, setCurSchemeNotesLength] = useState(0);
 
   const [colCount, setColCount] = useState(1);
@@ -328,7 +328,7 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
     .filter(({ file }) => curScheme.pinned.includes(file.getID()))
     .concat(displayedNotes.filter(({ file }) => !curScheme.pinned.includes(file.getID())));
 
-  const cardNodes = pinnedNotes.map(({ file, content }, index) => {
+  const cardNodes = pinnedNotes.map(({ file }, index) => {
     // Attach ref to the last card for intersection observer
     const isLastCard = index === pinnedNotes.length - 1;
     return (
@@ -337,9 +337,7 @@ const CardDashboardView = ({ plugin, app, component }: { plugin: MyPlugin, app: 
           sortType={sortType}
           file={file}
           tags={file.getTags(app)}
-          content={content}
           app={app}
-          component={component}
           onDelete={handleDelete}
           onOpen={handleOpen}
           setPin={handlePin}

@@ -57,6 +57,10 @@ If your plugin does not need CSS, delete this file.
   border-radius: 4px;
 }
 
+/*
+ * 卡片笔记视图
+ */
+
 .card-note-container {
   background: var(--background-secondary);
   color: var(--text-normal);
@@ -71,9 +75,10 @@ If your plugin does not need CSS, delete this file.
 
 .card-note-content {
   max-height: 500px;
-  overflow-y: hidden;
+  overflow: hidden;
   position: relative;
   word-break: break-word;
+  margin-top: 8px;
 }
 
 .card-note-content::after {
@@ -255,4 +260,107 @@ If your plugin does not need CSS, delete this file.
 
 .react-calendar-heatmap .color-gitlab-4 {
   fill: #254e77;
+}
+
+/*
+ * 卡片笔记视图 笔记内容的渲染，需要调整obsidian原生样式
+ */
+
+
+/* .card-note-content p {
+  font-size: 0.8rem;
+  line-height: 1.2;
+} */
+
+/* .card-note-content code {
+  font-size: 0.8rem;
+  line-height: 1.2;
+} */
+
+/* .card-note-content div {
+  font-size: 0.8rem;
+} */
+
+/* .card-note-content li {
+  font-size: 0.8rem;
+  line-height: 1.2;
+} */
+
+/* 
+.card-note-content h1 {
+  font-size: 1rem;
+  line-height: 1.2;
+}
+
+.card-note-content h2 {
+  font-size: 1rem;
+  line-height: 1.2;
+}
+
+.card-note-content h3 {
+  font-size: 1rem;
+  line-height: 1.2;
+}
+
+.card-note-content h4 {
+  font-size: 1rem;
+  line-height: 1.2;
+}
+
+.card-note-content h5 {
+  font-size: 1rem;
+  line-height: 1.2;
+}
+
+.card-note-content h6 {
+  font-size: 1rem;
+  line-height: 1.2;
+} */
+
+/* .card-note-content a {
+  pointer-events: none;
+} */
+
+.card-note-content .workspace-leaf {
+  contain: initial !important;
+  height: 100%;
+}
+
+.card-note-content .workspace-leaf-resize-handle {
+  display: none;
+}
+
+.card-note-content .view-header {
+  display: none;
+}
+
+.card-note-content .view-content {
+  flex: 1;
+  overflow: hidden;
+  background-color: transparent !important;
+}
+
+.card-note-content .markdown-preview-view {
+  padding: 0;
+  overflow: hidden !important;
+}
+
+.card-note-content .modal-content {
+  margin: 0;
+}
+
+.card-note-content .mod-header {
+  display: none;
+}
+
+.card-note-content .markdown-preview-sizer {
+  min-height: 0 !important;
+  padding: 0 !important;
+  margin: 0;
+}
+
+.card-note-content .markdown-preview-section {
+  min-height: 0 !important;
+  padding: 0 !important;
+  margin: 0;
 }

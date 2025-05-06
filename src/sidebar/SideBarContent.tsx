@@ -4,6 +4,7 @@ import { FilterScheme } from 'src/models/FilterScheme';
 import { ViewScheme } from 'src/models/ViewScheme';
 import { FilterSchemesInfo } from './filterScheme/FilterSchemesInfo';
 import { ViewSchemesInfo } from './viewScheme/ViewSchemesInfo';
+import { SidebarButton } from './SidebarButton';
 
 export interface SidebarContentProps {
     notesNum: number,
@@ -24,12 +25,13 @@ export interface SidebarContentProps {
     deleteViewScheme: (schemeID: number) => void,
     onClickViewScheme: (index: number) => void,
     onClickDate: (date: string) => void,
+    onClickAddNote: () => void,
 }
 
 export const SidebarContent = ({
     app, allTags, notesNum, tagsNum, heatmapValues, curFilterSchemeID, filterSchemes, viewSchemes, curViewSchemeID,
     onClickFilterScheme, setFilterScheme, deleteFilterScheme, onFilterDragEnd,
-    onClickViewScheme, setViewScheme, onViewDragEnd, deleteViewScheme, onClickDate,
+    onClickViewScheme, setViewScheme, onViewDragEnd, deleteViewScheme, onClickDate, onClickAddNote
 }: SidebarContentProps) => {
 
     return (
@@ -37,6 +39,7 @@ export const SidebarContent = ({
             <StatisticsInfo notesNum={notesNum} tagsNum={tagsNum} />
             <Heatmap values={heatmapValues} onCickDate={onClickDate} />
             <div style={{ display: 'flex', flexDirection: 'column', marginTop: 12 }}>
+                <SidebarButton label='添加笔记' iconName='lightbulb' onClick={onClickAddNote} />
                 <FilterSchemesInfo
                     app={app}
                     allTags={allTags}

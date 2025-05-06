@@ -396,6 +396,7 @@ const CardDashboardView = ({ plugin, app }: { plugin: MyPlugin, app: App }) => {
       onClickDate={(date) => {
         setCurScheme({ ...SearchFilterScheme, name: date, dateRange: { from: date, to: date } });
       }}
+      onClickAddNote={() => plugin.addCardNote()}
 
       curFilterSchemeID={curScheme.type == 'FilterScheme' ? curScheme.id : undefined}
       onClickFilterScheme={(index) => {

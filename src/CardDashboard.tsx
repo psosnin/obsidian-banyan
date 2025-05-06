@@ -6,7 +6,7 @@ import * as React from "react";
 import CardNote from "./cards/CardNote";
 import { Icon } from "./components/Icon";
 import Sidebar from "./sidebar/Sidebar";
-import { DefaultFilterSchemeID, FilterScheme, getDefaultFilterScheme, SearchFilterSchemeID } from "./models/FilterScheme";
+import { DefaultFilterSchemeID, FilterScheme, getDefaultFilterScheme, SearchFilterScheme, SearchFilterSchemeID } from "./models/FilterScheme";
 import { SidebarContent } from "./sidebar/SideBarContent";
 import { HeatmapData } from "./components/Heatmap";
 import { Searchbar } from "./searchbar/Searchbar";
@@ -393,6 +393,9 @@ const CardDashboardView = ({ plugin, app }: { plugin: MyPlugin, app: App }) => {
       notesNum={totalNotesNum}
       tagsNum={totalTagsNum}
       heatmapValues={heatmapValues}
+      onClickDate={(date) => {
+        setCurScheme({ ...SearchFilterScheme, name: date, dateRange: { from: date, to: date } });
+      }}
 
       curFilterSchemeID={curScheme.type == 'FilterScheme' ? curScheme.id : undefined}
       onClickFilterScheme={(index) => {
@@ -504,8 +507,12 @@ const CardDashboardView = ({ plugin, app }: { plugin: MyPlugin, app: App }) => {
 }
 
 const withinDateRange = (time: number, dateRange: { from: string; to: string }) => {
-  const from = dateRange.from.length > 0 ? (new Date(dateRange.from).getTime()) : undefined;
-  const to = dateRange.to.length > 0 ? (new Date(dateRange.to).getTime()) : undefined;
+  const fromDate = dateRange.from.length > 0 ? (new Date(dateRange.from)) : undefined;
+  const toDate = dateRange.to.length > 0 ? (new Date(dateRange.to)) : undefined;
+  if (toDate) toDate.setDate(toDate.getDate() + 1); // 要加一天，因为 toDate 是包含的
+
+  const from = fromDate ? fromDate.setHours(0, 0, 0, 0) : undefined;
+  const to = toDate ? toDate.setHours(0, 0, 0, 0) : undefined;
 
   if (!from && !to) return true;
   if (from && !to) return time >= from;

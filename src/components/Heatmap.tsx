@@ -6,13 +6,16 @@ export type HeatmapData = {
     count: number,
 }
 
-export const Heatmap = ({values}: {values: HeatmapData[]}) => {
+export const Heatmap = ({ values, onCickDate }: {
+    values: HeatmapData[], onCickDate: (date: string) => void
+}) => {
     const today = new Date();
     return (
         <div>
             <CalendarHeatmap
-                startDate={shiftDate(today, -12*7)}
+                startDate={shiftDate(today, -12 * 7)}
                 endDate={today}
+                onClick={(value) => value && onCickDate(value.date)}
                 values={values}
                 gutterSize={6}
                 classForValue={(value: HeatmapData) => {
@@ -30,9 +33,9 @@ export const Heatmap = ({values}: {values: HeatmapData[]}) => {
                     };
                 }}
                 showWeekdayLabels={false}
-                monthLabels={['一月', '二月', '三月', 
-                    '四月', '五月', '六月', 
-                    '七月', '八月', '九月', 
+                monthLabels={['一月', '二月', '三月',
+                    '四月', '五月', '六月',
+                    '七月', '八月', '九月',
                     '十月', '十一月', '十二月']}
                 showOutOfRangeDays={true}
             />

@@ -23,18 +23,19 @@ export interface SidebarContentProps {
     onViewDragEnd: (vs: ViewScheme[]) => void,
     deleteViewScheme: (schemeID: number) => void,
     onClickViewScheme: (index: number) => void,
+    onClickDate: (date: string) => void,
 }
 
 export const SidebarContent = ({
     app, allTags, notesNum, tagsNum, heatmapValues, curFilterSchemeID, filterSchemes, viewSchemes, curViewSchemeID,
     onClickFilterScheme, setFilterScheme, deleteFilterScheme, onFilterDragEnd,
-    onClickViewScheme, setViewScheme, onViewDragEnd, deleteViewScheme
+    onClickViewScheme, setViewScheme, onViewDragEnd, deleteViewScheme, onClickDate,
 }: SidebarContentProps) => {
 
     return (
         <div id='sidebar' style={{ display: 'flex', flexDirection: 'column', padding: '0 16px', width: 320, marginRight: 16 }}>
             <StatisticsInfo notesNum={notesNum} tagsNum={tagsNum} />
-            <Heatmap values={heatmapValues} />
+            <Heatmap values={heatmapValues} onCickDate={onClickDate} />
             <div style={{ display: 'flex', flexDirection: 'column', marginTop: 12 }}>
                 <FilterSchemesInfo
                     app={app}

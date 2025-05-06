@@ -10,6 +10,7 @@ export interface MyPluginSettings {
 	filterSchemes: FilterScheme[];
 	viewSchemes: ViewScheme[];
 	randomNoteTagFilter: TagFilterGroupValue;
+	cardsColumns: number;
 }
 
 export const CUR_SETTINGS_VERSION = 1;
@@ -25,4 +26,5 @@ export const DEFAULT_SETTINGS: MyPluginSettings = {
 		or: [[]],
 		not: [],
 	},
+	cardsColumns: 1,
 }

@@ -18,17 +18,6 @@ export class MySettingTab extends PluginSettingTab {
 		containerEl.empty();
 
 		new Setting(containerEl)
-			.setName('启动时自动打开面板')
-			.setDesc('启用后，Obsidian 启动时会自动打开「卡片面板」')
-			.addToggle(toggle => {
-				toggle.setValue(this.plugin.settings.openWhenStartObsidian)
-					.onChange(async (value) => {
-						this.plugin.settings.openWhenStartObsidian = value;
-						await this.plugin.saveSettings();
-					});
-			});
-
-		new Setting(containerEl)
 			.setName('笔记目录')
 			.setDesc('「卡片面板」的笔记目录')
 			.addText(async text => {
@@ -42,6 +31,30 @@ export class MySettingTab extends PluginSettingTab {
 					.setValue(this.plugin.settings.cardsDirectory || "")
 					.onChange(async (value) => {
 						this.plugin.settings.cardsDirectory = value;
+						await this.plugin.saveSettings();
+					});
+			});
+
+		new Setting(containerEl)
+			.setName('启动时自动打开面板')
+			.setDesc('启用后，Obsidian 启动时会自动打开「卡片面板」')
+			.addToggle(toggle => {
+				toggle.setValue(this.plugin.settings.openWhenStartObsidian)
+					.onChange(async (value) => {
+						this.plugin.settings.openWhenStartObsidian = value;
+						await this.plugin.saveSettings();
+					});
+			});
+
+		new Setting(containerEl)
+			.setName('笔记列数')
+			.setDesc('当面板足够宽时，最多显示多少列笔记')
+			.addDropdown(dropdown => {
+				dropdown.addOption('1', '1 列')
+					.addOption('2', '2 列')
+					.setValue(this.plugin.settings.cardsColumns.toString())
+					.onChange(async (value) => {
+						this.plugin.settings.cardsColumns = parseInt(value);
 						await this.plugin.saveSettings();
 					});
 			});

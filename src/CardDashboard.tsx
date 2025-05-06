@@ -225,12 +225,18 @@ const CardDashboardView = ({ plugin, app }: { plugin: MyPlugin, app: App }) => {
       if (!dashboardRef.current) return;
       const containerWidth = dashboardRef.current.clientWidth;
       const _showSidebar = containerWidth >= 700 ? 'normal' : 'hide';
+      setShowSidebar(_showSidebar);
+      const cardsColumns = plugin.settings.cardsColumns;
+      if (cardsColumns == 1) {
+        setColCount(1);
+        return;
+      }
       const mainWidth = containerWidth - (_showSidebar == 'normal' ? 400 : 0);
       const cardWidth = 600;
       const cardsPadding = 24;
-      const widthFor2Cards = cardWidth * 2 + cardsPadding;
-      setColCount(mainWidth >= widthFor2Cards ? 2 : 1);
-      setShowSidebar(_showSidebar);
+      const widthFor2Cols = cardWidth + cardsPadding + cardWidth;
+      const cnt = mainWidth >= widthFor2Cols ? 2 : 1;
+      setColCount(cnt);
     };
 
     // 初始化时执行一次

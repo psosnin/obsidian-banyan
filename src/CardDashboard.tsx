@@ -15,6 +15,7 @@ import { getAllTags } from "./utils/tagUtils";
 import { ViewScheme } from "./models/ViewScheme";
 import { ViewSelectModal } from "./sidebar/viewScheme/ViewSelectModal";
 import { createFileWatcher } from './utils/fileWatcher';
+import { openDeleteConfirmModal } from "./components/ConfirmModal";
 
 export const CARD_DASHBOARD_VIEW_TYPE = "dashboard-view";
 
@@ -79,8 +80,6 @@ const CardDashboardView = ({ plugin, app }: { plugin: MyPlugin, app: App }) => {
 
   const dashboardRef = React.useRef<HTMLDivElement>(null);
 
-  const [refreshFlag, setRefreshFlag] = useState(0);
-
   const [totalNotesNum, setTotalNotesNum] = useState(0);
   const [totalTagsNum, setTotalTagsNum] = useState(0);
   const [heatmapValues, setHeatmapValues] = useState<HeatmapData[]>([]);
@@ -89,7 +88,6 @@ const CardDashboardView = ({ plugin, app }: { plugin: MyPlugin, app: App }) => {
   useEffect(() => {
     const watcher = createFileWatcher(app);
     const unsubscribe = watcher.onChange(({ type, file }) => {
-      setRefreshFlag(f => f + 1);
       if (type === 'delete') {
         // 当文件被删除时，从视图中移除该文件
         const newSchemes = viewSchemes.map(scheme => {
@@ -153,7 +151,7 @@ const CardDashboardView = ({ plugin, app }: { plugin: MyPlugin, app: App }) => {
         setIsLoading(false);
       });
 
-  }, [refreshFlag, sortType, curScheme, app.vault.getFiles().length, dir]); // Add dir dependency
+  }, [sortType, curScheme, app.vault.getFiles().length, dir]); // Add dir dependency
 
   // 根据筛选条件和分页设置显示的笔记
   useEffect(() => {
@@ -253,9 +251,14 @@ const CardDashboardView = ({ plugin, app }: { plugin: MyPlugin, app: App }) => {
 
   // 卡片删除
   const handleDelete = async (file: TFile) => {
-    await app.vault.delete(file);
-    setRefreshFlag(f => f + 1);
-    new Notice('笔记已删除');
+    openDeleteConfirmModal({
+      app,
+      description: `确定要将此笔记移至系统回收站吗？`,
+      onConfirm: async () => {
+        await app.vault.trash(file, true);
+        new Notice('笔记已移至系统回收站');
+      }
+    });
   };
 
   // 卡片双击打开

@@ -73,7 +73,7 @@ const CardDashboardView = ({ plugin, app }: { plugin: MyPlugin, app: App }) => {
   const [displayedNotes, setDisplayedNotes] = useState<{ file: TFile, content: string }[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
-  const notesPerPage = 20; // 每页显示的笔记数量
+  const notesPerPage = 10; // 每页显示的笔记数量
   const [curSchemeNotesLength, setCurSchemeNotesLength] = useState(0);
 
   const [colCount, setColCount] = useState(1);

@@ -11,7 +11,6 @@ interface ViewEditModalProps {
 
 export class ViewEditModal extends Modal {
     props: ViewEditModalProps;
-    container: HTMLDivElement;
     root: Root | null = null;
     unmount: (() => void) | null = null;
 

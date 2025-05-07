@@ -13,7 +13,6 @@ interface FilterEditModalProps {
 
 export class FilterEditModal extends Modal {
     props: FilterEditModalProps;
-    container: HTMLDivElement;
     root: Root | null = null;
     unmount: (() => void) | null = null;
     constructor(app: App, props: FilterEditModalProps) {

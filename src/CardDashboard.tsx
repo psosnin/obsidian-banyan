@@ -285,9 +285,9 @@ const CardDashboardView = ({ plugin, app }: { plugin: MyPlugin, app: App }) => {
           new Notice('笔记已存在于该视图中');
           return;
         }
-        const newFiles = scheme.files.includes(file.getID()) ? scheme.files : [...scheme.files, file.getID()];
+        const newFiles = [...scheme.files, file.getID()];
         const newScheme = { ...scheme, files: newFiles };
-        const newSchemes = viewSchemes.map(scheme => scheme.id == newScheme.id ? newScheme : scheme);
+        const newSchemes = viewSchemes.map(s => s.id == newScheme.id ? newScheme : s);
         setViewSchemes(newSchemes);
       }
     });
@@ -295,9 +295,10 @@ const CardDashboardView = ({ plugin, app }: { plugin: MyPlugin, app: App }) => {
   }
 
   const handleRemoveFromView = (file: TFile) => {
-    if (curScheme.type !== 'ViewScheme') return;
+    if (curScheme.type !== 'ViewScheme') return; // 按理说UI层已经保障了只有ViewScheme时才会有这个按钮
     const newFiles = [...curScheme.files.filter((fileID) => fileID !== file.getID())];
-    const newScheme = { ...curScheme, files: newFiles };
+    const newPinned = [...curScheme.pinned.filter((fileID) => fileID !== file.getID())];
+    const newScheme = { ...curScheme, files: newFiles, pinned: newPinned };
     const newSchemes = viewSchemes.map(scheme => scheme.id == newScheme.id ? newScheme : scheme);
     setViewSchemes(newSchemes);
     setCurScheme(newScheme);

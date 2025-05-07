@@ -55,16 +55,13 @@ export default class MyPlugin extends Plugin {
 		// This adds a settings tab so the user can configure various aspects of the plugin
 		this.addSettingTab(new MySettingTab(this.app, this));
 
-		// 启动时自动打开自定义面板
-		if (this.settings.openWhenStartObsidian) {
-			if ((this.app as any).workspace.layoutReady) {
+		this.app.workspace.onLayoutReady(() => {
+			this.updateSettingIfNeeded();
+			// 启动时自动打开自定义面板
+			if (this.settings.openWhenStartObsidian) {
 				this.activateView(CARD_DASHBOARD_VIEW_TYPE);
-			} else {
-				(this.app as any).workspace.on("layout-ready", () => {
-					this.activateView(CARD_DASHBOARD_VIEW_TYPE);
-				});
 			}
-		}
+		});
 	}
 
 	async addCardNote() {
@@ -178,7 +175,6 @@ export default class MyPlugin extends Plugin {
 
 	async loadSettings() {
 		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
-		this.updateSettingIfNeeded();
 	}
 
 	async saveSettings() {

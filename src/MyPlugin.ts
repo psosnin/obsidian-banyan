@@ -34,7 +34,7 @@ export default class MyPlugin extends Plugin {
 			name: '打开笔记面板',
 			callback: () => this.activateView(CARD_DASHBOARD_VIEW_TYPE),
 		});
-		const CardIconEl = this.addRibbonIcon('wallet-cards', '打开笔记面板', async (evt: MouseEvent) => {
+		const CardIconEl = this.addRibbonIcon('wallet-cards', '打开笔记面板', () => {
 			this.activateView(CARD_DASHBOARD_VIEW_TYPE);
 		});
 		CardIconEl.addClass('my-plugin-ribbon-class');
@@ -43,12 +43,12 @@ export default class MyPlugin extends Plugin {
 		this.addCommand({
 			id: 'open-random-note',
 			name: '打开随机笔记',
-			callback: async () => {
-				await this.openRandomNote();
+			callback: () => {
+				this.openRandomNote();
 			}
 		});
-		const RandomNoteIconEl = this.addRibbonIcon('dice', '打开随机笔记', async (evt: MouseEvent) => {
-			await this.openRandomNote();
+		const RandomNoteIconEl = this.addRibbonIcon('dice', '打开随机笔记', () => {
+			this.openRandomNote();
 		});
 		RandomNoteIconEl.addClass('my-plugin-ribbon-class');
 
@@ -72,9 +72,9 @@ export default class MyPlugin extends Plugin {
 	}
 
 	// 打开随机笔记
-	async openRandomNote() {
+	openRandomNote() {
 		const files = this.app.vault.getMarkdownFiles();
-		const filteredFiles = await this.filterFilesByTags(files);
+		const filteredFiles = this.filterFilesByTags(files);
 		if (!files || filteredFiles.length === 0) {
 			new Notice('没有找到任何笔记');
 			return;
@@ -86,15 +86,14 @@ export default class MyPlugin extends Plugin {
 
 		// 打开笔记
 		const leaf = this.app.workspace.getLeaf(false);
-		await leaf.openFile(randomFile, { active: true });
-		this.app.workspace.setActiveLeaf(leaf, { focus: true });
+		leaf.openFile(randomFile, { active: true }).then(() => this.app.workspace.setActiveLeaf(leaf, { focus: true }));
 		// this.app.workspace.openLinkText(randomFile.path, '', false);
 	}
 
 	// 根据标签筛选文件
-	async filterFilesByTags(files: TFile[]) {
+	filterFilesByTags(files: TFile[]) {
 		const { or, not } = this.settings.randomNoteTagFilter;
-		
+
 		return files.filter(file => {
 			const fileTags = file.getTags(this.app);
 
@@ -187,7 +186,7 @@ export default class MyPlugin extends Plugin {
 	}
 
 	// 使得打开的视图唯一
-	async activateView(viewType: string) {
+	activateView(viewType: string) {
 		const { workspace } = this.app;
 
 		var leaf: WorkspaceLeaf | null = null;
@@ -196,13 +195,12 @@ export default class MyPlugin extends Plugin {
 		if (leaves.length > 0) {
 			// A leaf with our view already exists, use that
 			leaf = leaves[0];
+			workspace.revealLeaf(leaf);
 		} else {
 			// Our view could not be found in the workspace, create a new leaf in the right sidebar for it
 			leaf = workspace.getLeaf(true);
-			await leaf.setViewState({ type: viewType, active: true });
+			leaf.setViewState({ type: viewType, active: true }).then(() => leaf && workspace.revealLeaf(leaf));
 		}
-		// "Reveal" the leaf in case it is in a collapsed sidebar
-		workspace.revealLeaf(leaf);
 	}
 }
 

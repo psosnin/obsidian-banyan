@@ -26,12 +26,13 @@ export interface SidebarContentProps {
     onClickViewScheme: (index: number) => void,
     onClickDate: (date: string) => void,
     onClickAddNote: () => void,
+    onClickRandomNote: () => void,
 }
 
 export const SidebarContent = ({
     app, allTags, notesNum, tagsNum, heatmapValues, curFilterSchemeID, filterSchemes, viewSchemes, curViewSchemeID,
     onClickFilterScheme, setFilterScheme, deleteFilterScheme, onFilterDragEnd,
-    onClickViewScheme, setViewScheme, onViewDragEnd, deleteViewScheme, onClickDate, onClickAddNote
+    onClickViewScheme, setViewScheme, onViewDragEnd, deleteViewScheme, onClickDate, onClickAddNote, onClickRandomNote
 }: SidebarContentProps) => {
 
     return (
@@ -40,6 +41,7 @@ export const SidebarContent = ({
             <Heatmap values={heatmapValues} onCickDate={onClickDate} />
             <div style={{ display: 'flex', flexDirection: 'column', marginTop: 12 }}>
                 <SidebarButton label='添加笔记' iconName='lightbulb' onClick={onClickAddNote} />
+                <SidebarButton label='随机回顾' iconName='dice' onClick={onClickRandomNote} />
                 <FilterSchemesInfo
                     app={app}
                     allTags={allTags}

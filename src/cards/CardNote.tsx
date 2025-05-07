@@ -21,25 +21,27 @@ const NoteContentView = ({ app, file }: { app: App, file: TFile }) => {
   const ref = React.useRef<HTMLDivElement>(null);
   const leaf = new (WorkspaceLeaf as any)(app);
   const [overflow, setOverflow] = React.useState(false);
+
   React.useEffect(() => {
-    if (ref.current) {
-      (leaf as WorkspaceLeaf).openFile(file).then(() => {
+    const setupView = async () => {
+      if (!ref.current) return;
+      try {
+        await (leaf as WorkspaceLeaf).openFile(file)
         if (!(leaf.view instanceof MarkdownView)) {
           console.log('视图初始化失败或类型不正确', file.name);
           return;
         }
-        ref.current?.appendChild(leaf.containerEl.children[0]); // 放这里OK
-        // leaf.view.setState(
+        // await leaf.view.setState(
         //   { ...leaf.view.getState(), mode: 'preview' },
         //   { history: false })
-        //   .then(() => {
-        //     // ref.current?.appendChild(leaf.containerEl.children[0]); // 放这里也OK
-        //   })
-        //   .catch((e: any) => { console.log('设置视图状态失败', e) });
-        // ref.current?.appendChild(leaf.containerEl.children[0]); // 放这里也OK
-      }).catch((e: any) => { console.log('打开文件失败', e, file) });
-    }
+        ref.current.empty();
+        ref.current.appendChild(leaf.containerEl); // 放这里也OK
+      } catch (e) { console.log('打开文件失败', e, file) };
+    };
+    setupView();
+  }, [file.path]);
 
+  React.useEffect(() => {
     const observer = new ResizeObserver(() => {
       const ele = ref.current?.querySelector('.view-content');
       if (ele) {
@@ -55,7 +57,7 @@ const NoteContentView = ({ app, file }: { app: App, file: TFile }) => {
       observer.observe(ref.current);
     }
     return () => observer.disconnect();
-  }, [file.path]);
+  }, []);
 
   return <div ref={ref} className={"card-note-content" + (overflow ? " card-note-content--overflow" : "")} />;
 };

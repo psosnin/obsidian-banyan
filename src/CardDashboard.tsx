@@ -8,7 +8,7 @@ import { Icon } from "./components/Icon";
 import Sidebar from "./sidebar/Sidebar";
 import { DefaultFilterSchemeID, FilterScheme, getDefaultFilterScheme, SearchFilterScheme, SearchFilterSchemeID } from "./models/FilterScheme";
 import { SidebarContent } from "./sidebar/SideBarContent";
-import { HeatmapData } from "./components/Heatmap";
+import { getHeatmapValues, HeatmapData } from "./components/Heatmap";
 import { Searchbar } from "./searchbar/Searchbar";
 import EmptyStateCard from "./cards/EmptyStateCard";
 import { getAllTags } from "./utils/tagUtils";
@@ -528,15 +528,3 @@ const withinDateRange = (time: number, dateRange: { from: string; to: string }) 
   return time >= from! && time <= to!;
 }
 
-const getHeatmapValues = (files: TFile[]) => {
-  const valueMap = files
-    .map(file => new Date(file.stat.ctime).toISOString().slice(0, 10))
-    .reduce<Map<string, number>>(
-      (pre, cur) => pre.set(cur, pre.has(cur) ? pre.get(cur)! + 1 : 1),
-      new Map<string, number>());
-  return Array
-    .from(valueMap.entries())
-    .map(([key, value]) => {
-      return { date: key, count: value };
-    }); // 第一层转换
-}

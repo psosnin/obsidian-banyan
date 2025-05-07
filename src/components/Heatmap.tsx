@@ -1,3 +1,4 @@
+import { TFile } from 'obsidian';
 import CalendarHeatmap from 'react-calendar-heatmap';
 import { Tooltip } from 'react-tooltip'
 
@@ -29,7 +30,7 @@ export const Heatmap = ({ values, onCickDate }: {
                     return {
                         // 'data-tooltip': `${value.count} 条笔记于 ${value.date.toISOString().slice(0, 10)}`,
                         'data-tooltip-id': 'my-tooltip',
-                        'data-tooltip-content': value.count != undefined && value.date != undefined ? `${value.count} 条笔记于 ${value.date}` : '',
+                        'data-tooltip-content': value.count != undefined && value.date != undefined ? `${value.count} 条笔记创建于 ${value.date}` : '',
                     };
                 }}
                 showWeekdayLabels={false}
@@ -48,6 +49,24 @@ const shiftDate = (date: Date, numDays: number) => {
     const newDate = new Date(date);
     newDate.setDate(newDate.getDate() + numDays);
     return newDate;
+}
+
+export const getHeatmapValues = (files: TFile[]) => {
+    const valueMap = files
+        .map(file => {
+            const date = new Date(file.stat.ctime); // 记录创建时间，记录修改时间没意义
+            const offset = date.getTimezoneOffset();
+            date.setTime(date.getTime() - offset * 60 * 1000); // offset是毫秒，要变成小时
+            return date.toISOString().slice(0, 10);
+        })
+        .reduce<Map<string, number>>(
+            (pre, cur) => pre.set(cur, pre.has(cur) ? pre.get(cur)! + 1 : 1),
+            new Map<string, number>());
+    return Array
+        .from(valueMap.entries())
+        .map(([key, value]) => {
+            return { date: key, count: value };
+        }); // 第一层转换
 }
 
 // 调试用

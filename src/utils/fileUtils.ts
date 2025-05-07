@@ -1,6 +1,6 @@
 import { TFolder, App, TFile } from "obsidian";
 
-export async function getAllFolders(app: App): Promise<string[]> {
+export const getAllFolders = async (app: App): Promise<string[]> => {
   const folders: string[] = [];
   const walk = (folder: TFolder, path: string) => {
     folders.push(path);
@@ -15,11 +15,11 @@ export async function getAllFolders(app: App): Promise<string[]> {
   return folders.filter(f => f !== "");
 }
 
-export function createFolderSuggest(
+export const createFolderSuggest = (
   inputEl: HTMLInputElement,
   folders: string[],
   onSelect: (folder: string) => void
-) {
+) => {
   let suggestEl: HTMLDivElement | null = null;
   const showSuggestions = (value: string) => {
     if (suggestEl) suggestEl.remove();

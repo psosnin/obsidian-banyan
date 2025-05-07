@@ -91,6 +91,6 @@ export class FileWatcher {
   }
 }
 
-export function createFileWatcher(app: App) {
+export const createFileWatcher = (app: App) => {
   return new FileWatcher(app);
 }

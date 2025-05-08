@@ -1,17 +1,24 @@
-import { App, TFile } from "obsidian";
+import { App, TFile, getAllTags } from "obsidian";
 
-export const getAllTags = (app: App, files: TFile[]) => {
-  const tagSet = new Set<string>();
-  files.forEach((file: TFile) => {
-    const properties = app.metadataCache.getFileCache(file)?.frontmatter;
-    if (properties?.tags) {
-      if (Array.isArray(properties.tags)) {
-        properties.tags.forEach((tag: string) => tagSet.add(tag));
-      } else if (typeof properties.tags === 'string') {
-        tagSet.add(properties.tags);
-      }
-    }
-  });
+// 给TFile添加拓展方法 
+declare module 'obsidian' {
+  interface TFile {
+    getTags(app: App): string[];
+  }
+}
+
+TFile.prototype.getTags = function (app: App) {
+  const cache = app.metadataCache.getFileCache(this);
+  if (!cache) return [];
+  const fileTags = getAllTags(cache)?.map((tag) => tag.slice(1)) ?? [];
+  return Array.from(new Set(fileTags));
+};
+
+export const getFilesTags = (app: App, files: TFile[]) => {
+  const rawTags = files
+    .map(f => f.getTags(app))
+    .reduce((pre, cur) => pre.concat(cur), []);
+  const tagSet = new Set(rawTags);
   // 多级标签的初级标签也要添加，如 a/b/c 也要添加 a/b 和 a
   tagSet.forEach((tag) => {
     const subs = tag.split("/");
@@ -25,23 +32,3 @@ export const getAllTags = (app: App, files: TFile[]) => {
   res.sort((a, b) => a.length - b.length);
   return res;
 }
-
-// 给TFile添加拓展方法 
-declare module 'obsidian' {
-  interface TFile {
-    getTags(app: App): string[];
-  }
-}
-
-TFile.prototype.getTags = function (app: App) {
-  const tags: string[] = [];
-  const properties = app.metadataCache.getFileCache(this)?.frontmatter;
-    if (properties?.tags) {
-      if (Array.isArray(properties.tags)) {
-        properties.tags.forEach((tag: string) => tags.push(tag));
-      } else if (typeof properties.tags === 'string') {
-        tags.push(properties.tags);
-      }
-    }
-  return tags;
-};

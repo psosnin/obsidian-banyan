@@ -11,7 +11,7 @@ import { SidebarContent } from "./sidebar/SideBarContent";
 import { getHeatmapValues, HeatmapData } from "./components/Heatmap";
 import { Searchbar } from "./searchbar/Searchbar";
 import EmptyStateCard from "./cards/EmptyStateCard";
-import { getAllTags } from "./utils/tagUtils";
+import { getFilesTags } from "./utils/tagUtils";
 import { ViewScheme } from "./models/ViewScheme";
 import { ViewSelectModal } from "./sidebar/viewScheme/ViewSelectModal";
 import { createFileWatcher } from './utils/fileWatcher';
@@ -118,7 +118,7 @@ const CardDashboardView = ({ plugin, app }: { plugin: MyPlugin, app: App }) => {
     // 获取所有符合目录条件的文件
     const files = app.vault.getMarkdownFiles().filter((file: TFile) => file.path.startsWith(dir));
     setTotalNotesNum(files.length);
-    setTotalTagsNum(getAllTags(app, files).length);
+    setTotalTagsNum(getFilesTags(app, files).length);
     setHeatmapValues(getHeatmapValues(files));
 
     // 应用日期范围和视图筛选
@@ -133,7 +133,7 @@ const CardDashboardView = ({ plugin, app }: { plugin: MyPlugin, app: App }) => {
     // 排序
     filtered.sort((a, b) => sortType === 'created' ? b.stat.ctime - a.stat.ctime : b.stat.mtime - a.stat.mtime);
 
-    setAllTags(getAllTags(app, filtered));
+    setAllTags(getFilesTags(app, filtered));
 
     // 加载所有文件内容
     Promise.all(filtered.map(async (file: TFile) => {

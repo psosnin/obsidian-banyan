@@ -1,7 +1,7 @@
 import { App, PluginSettingTab, Setting, TFile } from 'obsidian';
 import MyPlugin from './main';
 import { getAllFolders, createFolderSuggest } from './utils/fileUtils';
-import { getAllTags } from './utils/tagUtils';
+import { getFilesTags } from './utils/tagUtils';
 import { createRoot } from 'react-dom/client';
 import { StrictMode, useState, } from 'react';
 import { TagFilterGroup } from './sidebar/filterScheme/TagFilterGroup';
@@ -65,7 +65,7 @@ export class MySettingTab extends PluginSettingTab {
 			.setDesc('随机回顾「笔记目录」下的笔记，可用标签缩小范围（允许为空）')
 		const dir = this.plugin.settings.cardsDirectory;
 		const files = this.app.vault.getMarkdownFiles().filter((file: TFile) => file.path.startsWith(dir));
-		const allTags = getAllTags(this.app, files);
+		const allTags = getFilesTags(this.app, files);
 
 		const root = createRoot(randomSetting.controlEl);
 		root.render(

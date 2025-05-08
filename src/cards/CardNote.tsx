@@ -34,8 +34,8 @@ const NoteContentView = ({ app, file }: { app: App, file: TFile }) => {
         // await leaf.view.setState(
         //   { ...leaf.view.getState(), mode: 'preview' },
         //   { history: false })
-        ref.current.empty();
-        ref.current.appendChild(leaf.containerEl); // 放这里也OK
+        ref.current?.empty();
+        ref.current?.appendChild(leaf.containerEl); // 放这里也OK
       } catch (e) { console.log('打开文件失败', e, file) };
     };
     setupView();

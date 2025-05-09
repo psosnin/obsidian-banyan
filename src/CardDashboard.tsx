@@ -473,7 +473,7 @@ const CardDashboardView = ({ plugin, app }: { plugin: MyPlugin, app: App }) => {
         <div className="main-header-container" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
           <div className="main-header-title" style={{ display: "flex", alignItems: "center" }}>
             <button style={{
-              marginLeft: 12, background: 'none', border: 'none', color: 'inherit', cursor: 'pointer',
+              background: 'none', border: 'none', color: 'inherit', cursor: 'pointer',
               display: showSidebar == 'normal' ? 'none' : 'inline-flex', alignItems: 'center'
             }}
               onClick={() => setShowSidebar('show')}

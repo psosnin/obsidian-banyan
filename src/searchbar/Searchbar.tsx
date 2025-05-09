@@ -28,7 +28,7 @@ export const Searchbar: React.FC<SearchbarProps> = ({ allTags, setCurFilterSchem
     }
 
     return (
-        <div className="main-header-searchbar" style={{ position: 'relative', display: 'flex', marginLeft: 16, marginRight: 16, alignItems: 'center', backgroundColor: 'var(--background-secondary)', borderRadius: 8, padding: '0 8px', height: 32, minWidth: 220, }}>
+        <div className="main-header-searchbar" style={{ position: 'relative', display: 'flex', marginLeft: 16, alignItems: 'center', backgroundColor: 'var(--background-secondary)', borderRadius: 8, padding: '0 8px', height: 32, minWidth: 220, }}>
             <Icon name="search" />
             <input
                 type="text"

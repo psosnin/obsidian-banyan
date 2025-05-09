@@ -40,7 +40,7 @@ export const SidebarContent = ({
             <StatisticsInfo notesNum={notesNum} tagsNum={tagsNum} />
             <Heatmap values={heatmapValues} onCickDate={onClickDate} />
             <div style={{ display: 'flex', flexDirection: 'column', marginTop: 12 }}>
-                <SidebarButton label='添加笔记' iconName='lightbulb' onClick={onClickAddNote} />
+                {/* <SidebarButton label='添加笔记' iconName='lightbulb' onClick={onClickAddNote} /> */}
                 <SidebarButton label='随机回顾' iconName='dice' onClick={onClickRandomNote} />
                 <FilterSchemesInfo
                     app={app}

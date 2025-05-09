@@ -66,7 +66,7 @@ export default class MyPlugin extends Plugin {
 	}
 
 	async addCardNote() {
-		await this.addNote(this.settings.cardsDirectory);
+		await this.addNote({});
 	}
 
 	// 打开随机笔记
@@ -115,16 +115,18 @@ export default class MyPlugin extends Plugin {
 		});
 	}
 
-	async addNote(dir: string, content?: string) {
-		const filePath = await this.getCardFilePath(dir);
+	async addNote({content, open = true}:{content?: string, open?: boolean}) {
+		const filePath = await this.getCardFilePath();
 		const _content = content ?? `---\ntags: \n---\n`;
 		const file = await this.app.vault.create(filePath, _content);
+		if (!open) return;
 		const leaf = this.app.workspace.getLeaf(true);
 		await leaf.openFile(file, { active: true, state: { mode: 'source' }, });
 		this.app.workspace.setActiveLeaf(leaf, { focus: true });
 	}
 
-	async getCardFilePath(dir: string) {
+	async getCardFilePath() {
+		const dir = this.settings.cardsDirectory;
 		const now = new Date();
 		const year = now.getFullYear();
 		const quarter = Math.floor((now.getMonth() + 3) / 3);

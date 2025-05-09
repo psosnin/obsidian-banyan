@@ -31,9 +31,9 @@ const NoteContentView = ({ app, file }: { app: App, file: TFile }) => {
           console.log('视图初始化失败或类型不正确', file.name);
           return;
         }
-        // await leaf.view.setState(
-        //   { ...leaf.view.getState(), mode: 'preview' },
-        //   { history: false })
+        await leaf.view.setState(
+          { ...leaf.view.getState(), mode: 'preview' },
+          { history: false })
         ref.current?.empty();
         ref.current?.appendChild(leaf.containerEl); // 放这里也OK
       } catch (e) { console.log('打开文件失败', e, file) };

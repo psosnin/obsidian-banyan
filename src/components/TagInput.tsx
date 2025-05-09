@@ -7,9 +7,10 @@ interface TagInputProps {
   allTags: string[];
   placeholder?: string;
   allowCreate?: boolean;
+  backgroundColor?: string;
 }
 
-const TagInput: React.FC<TagInputProps> = ({ tags, onChange, allTags, placeholder, allowCreate = false }) => {
+const TagInput: React.FC<TagInputProps> = ({ tags, onChange, allTags, placeholder, allowCreate = false, backgroundColor }) => {
 
   const [input, setInput] = useState("");
 
@@ -79,8 +80,8 @@ const TagInput: React.FC<TagInputProps> = ({ tags, onChange, allTags, placeholde
   };
 
   return (
-    <div style={{ backgroundColor: 'var(--background-secondary)', padding: '6px 12px', borderRadius: 8, position: "relative" }}>
-      <div style={{ display: "flex", flexWrap: "wrap", overflowX: "hidden", alignItems: "center", gap: 4, rowGap: 6, width: 240 }}>
+    <div style={{ backgroundColor: backgroundColor ?? 'var(--background-secondary)', padding: '6px 12px', borderRadius: 8, position: "relative" }}>
+      <div style={{ display: "flex", flexWrap: "wrap", overflowX: "hidden", alignItems: "center", gap: 4, rowGap: 6 }}>
         {tags.map((tag, idx) => (
           <span key={tag} className="card-note-tag">
             {tag}

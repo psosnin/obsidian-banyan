@@ -16,6 +16,7 @@ import { ViewScheme } from "./models/ViewScheme";
 import { ViewSelectModal } from "./sidebar/viewScheme/ViewSelectModal";
 import { createFileWatcher } from './utils/fileWatcher';
 import { openDeleteConfirmModal } from "./components/ConfirmModal";
+import AddNoteView from "./cards/AddNoteView";
 import { getAllCardFiles } from "./utils/fileUtils";
 
 export const CARD_DASHBOARD_VIEW_TYPE = "dashboard-view";
@@ -490,7 +491,8 @@ const CardDashboardView = ({ plugin, app }: { plugin: MyPlugin, app: App }) => {
           </div>
           <Searchbar allTags={allTags} setCurFilterScheme={setCurScheme} />
         </div>
-        <div className="main-subheader-container" style={{ marginBottom: 6, marginTop: 8, marginRight: 16, display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
+        <div style={{marginTop: 16}}><AddNoteView app={app} plugin={plugin} onAdd={() => setRefreshFlag(f => f + 1)} /></div>
+        <div className="main-subheader-container" style={{ marginBottom: 6, marginTop: 0, marginRight: 16, display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
           <div style={{ display: "flex", alignItems: 'center' }}>
             <span style={{ padding: '12px 6px', color: 'var(--text-muted)', fontSize: 'var(--font-smaller)' }}>已加载 {displayedNotes.length} / {curSchemeNotesLength} 条笔记</span>
             {cardNodes.length > 0 && <button style={{ marginLeft: '6px', padding: '0 6px', background: 'transparent' }}

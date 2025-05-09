@@ -35,7 +35,7 @@ If your plugin does not need CSS, delete this file.
 }
 
 .main-header-title-content {
-  padding: 6px 4px;
+  padding: 6px 8px;
   color: var(--text-normal);
   font-size: var(--font-text-size);
   font-weight: var(--font-ui-semibold);
@@ -144,7 +144,6 @@ If your plugin does not need CSS, delete this file.
   border: var(--tag-border-width) solid var(--tag-border-color);
   border-radius: var(--tag-radius);
   color: var(--tag-color);
-  cursor: var(--cursor);
   font-weight: var(--tag-weight);
   font-size: var(--font-ui-small);
   padding: var(--tag-padding-y) var(--tag-padding-x);
@@ -363,4 +362,85 @@ If your plugin does not need CSS, delete this file.
   min-height: 0 !important;
   padding: 0 !important;
   margin: 0;
+}
+
+/* 
+ * 添加笔记视图
+ */
+
+ .add-note-container {
+  background: var(--background-secondary);
+  color: var(--text-normal);
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 6px;
+  position: relative;
+  box-shadow: 0 2px 8px #0002;
+  width: 600px;
+  border: 1px solid transparent;
+}
+
+.add-note-container--focusd {
+  border: 1px solid var(--interactive-accent-hover);
+}
+
+.add-note-content {
+  min-height: 100px;
+  overflow: hidden;
+  position: relative;
+  word-break: break-word;
+  margin-top: 8px;
+}
+
+.add-note-content .workspace-leaf {
+  contain: initial !important;
+  height: 100%;
+}
+
+.add-note-content .workspace-leaf-resize-handle {
+  display: none;
+}
+
+.add-note-content .view-header {
+  display: none;
+}
+
+.add-note-content .view-content {
+  flex: 1;
+  overflow: hidden;
+  background-color: transparent !important;
+}
+
+.add-note-content .markdown-preview-view {
+  padding: 0;
+  overflow: hidden !important;
+}
+
+.add-note-content .modal-content {
+  margin: 0;
+}
+
+.add-note-content .mod-header {
+  display: none;
+}
+
+.add-note-content .markdown-preview-sizer {
+  min-height: 0 !important;
+  padding: 0 !important;
+  margin: 0;
+}
+
+.add-note-content .markdown-preview-section {
+  min-height: 0 !important;
+  padding: 0 !important;
+  margin: 0;
+}
+
+.add-note-content .cm-scroller {
+  padding: 0 0 0 12px !important;
+  margin: 0 !important;
+}
+
+.add-note-content .cm-gutters {
+  display: none ;
 }

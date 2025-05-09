@@ -2,6 +2,7 @@ import { normalizePath, Plugin, WorkspaceLeaf, Notice, TFile } from 'obsidian';
 import { MyPluginSettings, DEFAULT_SETTINGS, CUR_SETTINGS_VERSION } from './MyPluginSettings';
 import { CARD_DASHBOARD_VIEW_TYPE, CardDashboard } from './CardDashboard';
 import { MySettingTab } from './MySettingTab';
+import { getAllCardFiles } from './utils/fileUtils';
 
 export default class MyPlugin extends Plugin {
 	settings: MyPluginSettings;
@@ -70,7 +71,7 @@ export default class MyPlugin extends Plugin {
 
 	// 打开随机笔记
 	openRandomNote() {
-		const files = this.app.vault.getMarkdownFiles();
+		const files = getAllCardFiles(this);
 		const filteredFiles = this.filterFilesByTags(files);
 		if (!files || filteredFiles.length === 0) {
 			new Notice('没有找到任何笔记');
@@ -133,17 +134,17 @@ export default class MyPlugin extends Plugin {
 		const minute = now.getMinutes().toString().padStart(2, '0');
 		const second = now.getSeconds().toString().padStart(2, '0');
 		const folderPath = `${dir}/${year}年/${quarter}季度/${month}月/${day}日`;
-		const folders = folderPath.split("/");
-		let currentPath = "";
-		for (const folder of folders) {
-			currentPath = currentPath ? `${currentPath}/${folder}` : folder;
-			if (!this.app.vault.getAbstractFileByPath(currentPath)) {
-				await this.app.vault.createFolder(currentPath);
-			}
-		}
+		await this.ensureDirectoryExists(folderPath);
 		const fileName = `${year}-${month}-${day} ${hour}-${minute}-${second}.md`;
 		const filePath = normalizePath(`${folderPath}/${fileName}`);
 		return filePath;
+	}
+
+	async ensureDirectoryExists(dir: string) {
+		const normalizedPath = normalizePath(dir);
+		if (!this.app.vault.getAbstractFileByPath(normalizedPath)) {
+			await this.app.vault.createFolder(normalizedPath);
+		}
 	}
 
 	onunload() {
@@ -160,7 +161,7 @@ export default class MyPlugin extends Plugin {
 	}
 
 	updateSavedFile = () => {
-		const _allFiles = this.app.vault.getMarkdownFiles().map((file) => file.getID());
+		const _allFiles = getAllCardFiles(this).map((file) => file.getID());
 		const allFiles = new Set(_allFiles);
 		this.settings.viewSchemes = [...this.settings.viewSchemes.map((scheme) => {
 			const newFiles = [...scheme.files.filter((file) => allFiles.has(file))];

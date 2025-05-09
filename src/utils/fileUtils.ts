@@ -1,4 +1,5 @@
-import { TFolder, App, TFile } from "obsidian";
+import { TFolder, App, TFile, normalizePath } from "obsidian";
+import MyPlugin from "src/main";
 
 export const getAllFolders = async (app: App): Promise<string[]> => {
   const folders: string[] = [];
@@ -67,3 +68,22 @@ declare module 'obsidian' {
 TFile.prototype.getID = function () {
   return this.stat.ctime;
 };
+
+export const getAllCardFiles = (plugin: MyPlugin): TFile[] => {
+  const dir = plugin.settings.cardsDirectory;
+  const files = plugin.app.vault.getMarkdownFiles()
+    .filter((file: TFile) => file.path.startsWith(dir))
+    .filter((file: TFile) => file.path !== normalizePath(`${dir}/${AddCardNoteName}`));
+  return files;
+}
+
+const AddCardNoteName = "placeholder.md";
+
+export const getAddCardFile = async (plugin: MyPlugin) => {
+  const dir = plugin.settings.cardsDirectory;
+  const path = normalizePath(`${dir}/${AddCardNoteName}`);
+  const file = plugin.app.vault.getFileByPath(path);
+  if (file) return file;
+  const res = await plugin.app.vault.create(path, "");
+  return res;
+}

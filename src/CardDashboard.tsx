@@ -16,6 +16,7 @@ import { ViewScheme } from "./models/ViewScheme";
 import { ViewSelectModal } from "./sidebar/viewScheme/ViewSelectModal";
 import { createFileWatcher } from './utils/fileWatcher';
 import { openDeleteConfirmModal } from "./components/ConfirmModal";
+import { getAllCardFiles } from "./utils/fileUtils";
 
 export const CARD_DASHBOARD_VIEW_TYPE = "dashboard-view";
 
@@ -84,9 +85,11 @@ const CardDashboardView = ({ plugin, app }: { plugin: MyPlugin, app: App }) => {
   const [totalTagsNum, setTotalTagsNum] = useState(0);
   const [heatmapValues, setHeatmapValues] = useState<HeatmapData[]>([]);
 
+  const [refreshFlag, setRefreshFlag] = useState(0);
+
   // 文件监听逻辑
   useEffect(() => {
-    const watcher = createFileWatcher(app);
+    const watcher = createFileWatcher(plugin);
     const unsubscribe = watcher.onChange(({ type, file }) => {
       if (type === 'delete') {
         // 当文件被删除时，从视图中移除该文件
@@ -116,7 +119,8 @@ const CardDashboardView = ({ plugin, app }: { plugin: MyPlugin, app: App }) => {
     setIsLoading(true);
 
     // 获取所有符合目录条件的文件
-    const files = app.vault.getMarkdownFiles().filter((file: TFile) => file.path.startsWith(dir));
+    const files = getAllCardFiles(plugin);
+
     setTotalNotesNum(files.length);
     setTotalTagsNum(getFilesTags(app, files).length);
     setHeatmapValues(getHeatmapValues(files));
@@ -150,8 +154,7 @@ const CardDashboardView = ({ plugin, app }: { plugin: MyPlugin, app: App }) => {
         new Notice('加载笔记内容时出错');
         setIsLoading(false);
       });
-
-  }, [sortType, curScheme, app.vault.getFiles().length, dir]); // Add dir dependency
+  }, [sortType, curScheme, refreshFlag, getAllCardFiles(plugin).length, dir]); // Add dir dependency
 
   // 根据筛选条件和分页设置显示的笔记
   useEffect(() => {

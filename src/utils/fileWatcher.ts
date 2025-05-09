@@ -1,4 +1,6 @@
 import { App, TFile, Vault, MetadataCache } from 'obsidian';
+import MyPlugin from 'src/main';
+import { getAllCardFiles } from './fileUtils';
 
 export type FileChangeType = 'create' | 'delete' | 'modify' | 'rename' | 'meta-change';
 export interface FileChange {
@@ -9,16 +11,16 @@ export interface FileChange {
 export type FileChangeCallback = (change: FileChange) => void;
 
 export class FileWatcher {
-  private app: App;
+  private plugin: MyPlugin;
   private vault: Vault;
   private metadataCache: MetadataCache;
   private callbacks: Set<FileChangeCallback> = new Set();
   private fileCache: Map<string, number> = new Map();
 
-  constructor(app: App) {
-    this.app = app;
-    this.vault = app.vault;
-    this.metadataCache = app.metadataCache;
+  constructor(plugin: MyPlugin) {
+    this.plugin = plugin;
+    this.vault = plugin.app.vault;
+    this.metadataCache = plugin.app.metadataCache;
     this.handleCreate = this.handleCreate.bind(this);
     this.handleDelete = this.handleDelete.bind(this);
     this.handleModify = this.handleModify.bind(this);
@@ -28,7 +30,7 @@ export class FileWatcher {
   }
 
   private initFileCache() {
-    this.vault.getMarkdownFiles().forEach(file => {
+    getAllCardFiles(this.plugin).forEach(file => {
       this.fileCache.set(file.path, file.stat.mtime);
     });
   }
@@ -64,7 +66,6 @@ export class FileWatcher {
     this.fileCache.set(file.path, this.fileCache.get(oldPath)!);
     this.fileCache.delete(oldPath);
     this.emit({ type:'rename', file: file});
-    
   }
 
   private handleMetaChange(file: TFile) {
@@ -91,6 +92,6 @@ export class FileWatcher {
   }
 }
 
-export const createFileWatcher = (app: App) => {
-  return new FileWatcher(app);
+export const createFileWatcher = (plugin: MyPlugin) => {
+  return new FileWatcher(plugin);
 }

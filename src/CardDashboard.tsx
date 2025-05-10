@@ -35,7 +35,7 @@ export class CardDashboard extends ItemView {
   }
 
   getDisplayText(): string {
-    return "Ted Note Way";
+    return "Ourobores";
   }
 
   getIcon(): string {

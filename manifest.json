@@ -1,11 +1,11 @@
 {
-	"id": "ted-note-way",
-	"name": "Ted Note Way",
-	"version": "0.0.1",
-	"minAppVersion": "0.15.0",
-	"description": "Using the notes in Ted's methodology",
+	"id": "ourobores",
+	"name": "Ourobores - Obsidian navigator",
+	"version": "1.0.0",
+	"minAppVersion": "0.18.0",
+	"description": "browse your notes in card form, and with multi tags filter, you can access and manage your notes easily.",
 	"author": "ratiger",
-	"authorUrl": "https://obsidian.md",
-	"fundingUrl": "https://obsidian.md/pricing",
+	"authorUrl": "https://github.com/ratiger/",
+	"fundingUrl": "https://afdian.com/a/ratiger",
 	"isDesktopOnly": false
 }

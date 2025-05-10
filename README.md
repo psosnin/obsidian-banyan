@@ -1,94 +1,98 @@
-# Obsidian Sample Plugin
+# Ourobores - Obsidian Note Navigator
 
-This is a sample plugin for Obsidian (https://obsidian.md).
+English | [简体中文](./README_zh.md)
 
-This project uses TypeScript to provide type checking and documentation.
-The repo depends on the latest plugin API (obsidian.d.ts) in TypeScript Definition format, which contains TSDoc comments describing what it does.
+> A powerful Obsidian note management and navigation plugin
 
-This sample plugin demonstrates some of the basic functionality the plugin API can do.
-- Adds a ribbon icon, which shows a Notice when clicked.
-- Adds a command "Open Sample Modal" which opens a Modal.
-- Adds a plugin setting tab to the settings page.
-- Registers a global click event and output 'click' to the console.
-- Registers a global interval which logs 'setInterval' to the console.
+## Introduction
 
-## First time developing plugins?
+Ourobores is an Obsidian note management and navigation plugin that helps you efficiently browse and manage your Obsidian notes.
+Through an intuitive card view interface, you can quickly access and operate notes in a single panel.
+The plugin supports multi-dimensional filtering functions, allowing you to filter notes through tag combinations, keyword searches, creation dates, and other conditions, and save commonly used filtering rules for quick access later.
+In addition, Ourobores also provides multiple view modes, heat map statistics display, and other features, making your note management experience more flexible, intuitive, and efficient.
 
-Quick starting guide for new plugin devs:
+## Core Features
 
-- Check if [someone already developed a plugin for what you want](https://obsidian.md/plugins)! There might be an existing plugin similar enough that you can partner up with.
-- Make a copy of this repo as a template with the "Use this template" button (login to GitHub if you don't see it).
-- Clone your repo to a local development folder. For convenience, you can place this folder in your `.obsidian/plugins/your-plugin-name` folder.
-- Install NodeJS, then run `npm i` in the command line under your repo folder.
-- Run `npm run dev` to compile your plugin from `main.ts` to `main.js`.
-- Make changes to `main.ts` (or create new `.ts` files). Those changes should be automatically compiled into `main.js`.
-- Reload Obsidian to load the new version of your plugin.
-- Enable plugin in settings window.
-- For updates to the Obsidian API run `npm update` in the command line under your repo folder.
+### Card Panel
 
-## Releasing new releases
+- **Card-style Note View**: Display note content in an aesthetically pleasing and intuitive card format
+- **Smart Layout**: Support single/double column layouts, automatically optimizing display effects based on panel width
+- **Rich Operations**: Support quick opening, deleting, pinning notes, and copying note links
 
-- Update your `manifest.json` with your new version number, such as `1.0.1`, and the minimum Obsidian version required for your latest release.
-- Update your `versions.json` file with `"new-plugin-version": "minimum-obsidian-version"` so older versions of Obsidian can download an older version of your plugin that's compatible.
-- Create new GitHub release using your new version number as the "Tag version". Use the exact version number, don't include a prefix `v`. See here for an example: https://github.com/obsidianmd/obsidian-sample-plugin/releases
-- Upload the files `manifest.json`, `main.js`, `styles.css` as binary attachments. Note: The manifest.json file must be in two places, first the root path of your repository and also in the release.
-- Publish the release.
+### Advanced Filtering
 
-> You can simplify the version bump process by running `npm version patch`, `npm version minor` or `npm version major` after updating `minAppVersion` manually in `manifest.json`.
-> The command will bump version in `manifest.json` and `package.json`, and add the entry for the new version to `versions.json`
+- **Tag Filtering**: Precisely filter notes through tag combinations, supporting both inclusion and exclusion of tags
+- **Time Filtering**: Filter by note creation date range
+- **Content Search**: Search for keywords in note content
 
-## Adding your plugin to the community plugin list
+### Filter Plans and View Management
 
-- Check the [plugin guidelines](https://docs.obsidian.md/Plugins/Releasing/Plugin+guidelines).
-- Publish an initial version.
-- Make sure you have a `README.md` file in the root of your repo.
-- Make a pull request at https://github.com/obsidianmd/obsidian-releases to add your plugin.
+- **Filter Plans**: Set up combinations of commonly used filtering conditions
+- **Custom Views**: Create and save personalized note collections
 
-## How to use
+### Auxiliary Functions
 
-- Clone this repo.
-- Make sure your NodeJS is at least v16 (`node --version`).
-- `npm i` or `yarn` to install dependencies.
-- `npm run dev` to start compilation in watch mode.
+- **Heat Map Statistics**: Intuitively display the distribution of note creation times
+- **Random Review**: Unlike Obsidian's built-in "Random Note" which doesn't support setting a scope, this plugin supports limiting the scope with multiple tags for better random note review.
 
-## Manually installing the plugin
+## Installation Guide
 
-- Copy over `main.js`, `styles.css`, `manifest.json` to your vault `VaultFolder/.obsidian/plugins/your-plugin-id/`.
+### Install from Obsidian Community Plugin Library
 
-## Improve code quality with eslint (optional)
-- [ESLint](https://eslint.org/) is a tool that analyzes your code to quickly find problems. You can run ESLint against your plugin to find common bugs and ways to improve your code. 
-- To use eslint with this project, make sure to install eslint from terminal:
-  - `npm install -g eslint`
-- To use eslint to analyze this project use this command:
-  - `eslint main.ts`
-  - eslint will then create a report with suggestions for code improvement by file and line number.
-- If your source code is in a folder, such as `src`, you can use eslint with this command to analyze all files in that folder:
-  - `eslint .\src\`
+1. Open Obsidian settings panel
+2. Go to "Third-party plugins" option
+3. Turn off "Safe mode"
+4. Click "Browse", search for "Ourobores"
+5. Click install and enable the plugin
 
-## Funding URL
+### Manual Installation
 
-You can include funding URLs where people who use your plugin can financially support it.
+1. Download the latest version of the release package
+2. Extract the files, copy the resulting `ourobores/` directory to your Obsidian vault's `.obsidian/plugins/` directory
+3. Restart Obsidian and enable the plugin in settings
 
-The simple way is to set the `fundingUrl` field to your link in your `manifest.json` file:
+## Usage Guide
 
-```json
-{
-    "fundingUrl": "https://buymeacoffee.com"
-}
-```
+### Basic Operations
 
-If you have multiple URLs, you can also do:
+- **Open Note Panel**: Click the "Card" icon in the left sidebar, or execute the "Open Note Panel" command through the command palette
+- **Add Card Note**: Click the "Bulb" icon in the left sidebar, or execute the "Add Card Note" command through the command palette
+- **Open Random Note**: Click the "Dice" icon in the left sidebar, or execute the "Open Random Note" command through the command palette
 
-```json
-{
-    "fundingUrl": {
-        "Buy Me a Coffee": "https://buymeacoffee.com",
-        "GitHub Sponsor": "https://github.com/sponsors",
-        "Patreon": "https://www.patreon.com/"
-    }
-}
-```
+### Card Operations
 
-## API Documentation
+Right-click on a card to perform the following operations:
+- Open note
+- Add to view/Remove from current view
+- Pin/Unpin
+- Copy link
+- Delete note
 
-See https://github.com/obsidianmd/obsidian-api
+### Filter Notes
+
+1. In the note panel, use the filtering options in the left sidebar
+2. You can precisely filter through tag combinations, date ranges, and other conditions
+3. Save commonly used filtering conditions as filter plans for quick access
+
+### View Management
+
+1. In the note panel, switch to the "View" tab
+2. Create a new view and add the required notes
+3. Switch freely between different views
+
+## Configuration Options
+
+In the plugin settings panel, you can customize the following options:
+
+- **Note Directory**: Set the default note directory displayed in the card panel
+- **Auto-open on Startup**: When enabled, the note panel will automatically open when Obsidian starts
+- **Display Columns**: Set the number of note display columns in the card panel (1 column or 2 columns)
+- **Random Note Scope**: Set tag filtering conditions for the random note function
+
+## Contributing
+
+Welcome to submit issue reports and feature suggestions! If you want to contribute code to the project, feel free to submit a Pull Request.
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.

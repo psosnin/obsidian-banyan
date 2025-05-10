@@ -1,4 +1,4 @@
-# Ourobores - Obsidian Note Navigator
+# Banyan - Obsidian Note Navigator
 
 English | [简体中文](./README_zh.md)
 
@@ -6,10 +6,10 @@ English | [简体中文](./README_zh.md)
 
 ## Introduction
 
-Ourobores is an Obsidian note management and navigation plugin that helps you efficiently browse and manage your Obsidian notes.
+Banyan is an Obsidian note management and navigation plugin that helps you efficiently browse and manage your Obsidian notes.
 Through an intuitive card view interface, you can quickly access and operate notes in a single panel.
 The plugin supports multi-dimensional filtering functions, allowing you to filter notes through tag combinations, keyword searches, creation dates, and other conditions, and save commonly used filtering rules for quick access later.
-In addition, Ourobores also provides multiple view modes, heat map statistics display, and other features, making your note management experience more flexible, intuitive, and efficient.
+In addition, Banyan also provides multiple view modes, heat map statistics display, and other features, making your note management experience more flexible, intuitive, and efficient.
 
 ## Core Features
 
@@ -42,13 +42,13 @@ In addition, Ourobores also provides multiple view modes, heat map statistics di
 1. Open Obsidian settings panel
 2. Go to "Third-party plugins" option
 3. Turn off "Safe mode"
-4. Click "Browse", search for "Ourobores"
+4. Click "Browse", search for "Banyan"
 5. Click install and enable the plugin
 
 ### Manual Installation
 
 1. Download the latest version of the release package
-2. Extract the files, copy the resulting `ourobores/` directory to your Obsidian vault's `.obsidian/plugins/` directory
+2. Extract the files, copy the resulting `banyan/` directory to your Obsidian vault's `.obsidian/plugins/` directory
 3. Restart Obsidian and enable the plugin in settings
 
 ## Usage Guide

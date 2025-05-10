@@ -73,7 +73,7 @@ export class MySettingTab extends PluginSettingTab {
 		// 随机笔记设置
 		const randomSetting = new Setting(containerEl)
 			.setName('随机笔记的范围')
-			.setDesc('随机回顾「笔记目录」下的笔记，可用标签缩小范围（允许为空）');
+			.setDesc('随机回顾「笔记目录」下的笔记）');
 		const files = getAllCardFiles(this.plugin);
 		const allTags = getFilesTags(this.app, files);
 

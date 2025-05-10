@@ -1,9 +1,9 @@
 {
-	"id": "ourobores",
-	"name": "Ourobores - Obsidian navigator",
+	"id": "banyan",
+	"name": "Banyan",
 	"version": "1.0.0",
 	"minAppVersion": "0.18.0",
-	"description": "browse your notes in card form, and with multi tags filter, you can access and manage your notes easily.",
+	"description": "browse notes in card form, and with multi-tags filter, access and manage notes easily.",
 	"author": "ratiger",
 	"authorUrl": "https://github.com/ratiger/",
 	"fundingUrl": "https://afdian.com/a/ratiger",

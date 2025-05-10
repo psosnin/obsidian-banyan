@@ -47,6 +47,17 @@ export class MySettingTab extends PluginSettingTab {
 			});
 
 		new Setting(containerEl)
+			.setName('显示标题')
+			.setDesc('是否显示卡片视图的标题')
+			.addToggle(toggle => {
+				toggle.setValue(this.plugin.settings.showTitle)
+					.onChange(async (value) => {
+						this.plugin.settings.showTitle = value;
+						await this.plugin.saveSettings();
+					});
+			});
+
+		new Setting(containerEl)
 			.setName('笔记列数')
 			.setDesc('当面板足够宽时，最多显示多少列笔记')
 			.addDropdown(dropdown => {

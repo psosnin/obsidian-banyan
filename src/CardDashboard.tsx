@@ -352,6 +352,7 @@ const CardDashboardView = ({ plugin, app }: { plugin: MyPlugin, app: App }) => {
           file={file}
           tags={file.getTags(app)}
           app={app}
+          showTitle={plugin.settings.showTitle}
           onDelete={handleDelete}
           onOpen={handleOpen}
           setPin={handlePin}

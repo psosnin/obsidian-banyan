@@ -11,6 +11,7 @@ export interface MyPluginSettings {
 	viewSchemes: ViewScheme[];
 	randomNoteTagFilter: TagFilterGroupValue;
 	cardsColumns: number;
+	showTitle: boolean;
 }
 
 export const CUR_SETTINGS_VERSION = 1;
@@ -20,6 +21,7 @@ export const DEFAULT_SETTINGS: MyPluginSettings = {
 	cardsDirectory: 'cards',
 	sortType: 'created',
 	openWhenStartObsidian: true,
+	showTitle: true,
 	filterSchemes: [getDefaultFilterScheme([])],
 	viewSchemes: [],
 	randomNoteTagFilter: {

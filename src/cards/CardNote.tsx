@@ -8,6 +8,7 @@ interface CardNoteProps {
   sortType: 'created' | 'modified';
   tags: string[];
   app: App;
+  showTitle: boolean;
   onDelete: (file: TFile) => void;
   onOpen: (file: TFile) => void;
   setPin: (file: TFile, isPinned: boolean) => void;
@@ -63,7 +64,7 @@ const NoteContentView = ({ app, file }: { app: App, file: TFile }) => {
 };
 
 const CardNote: React.FC<CardNoteProps> = ({
-  file, tags, sortType, app, isPinned, isInView,
+  file, tags, sortType, app, isPinned, isInView, showTitle,
   onDelete, onOpen, setPin, onImportToView, onRemoveFromView
 }) => {
   const isCreated = sortType === 'created';
@@ -75,6 +76,7 @@ const CardNote: React.FC<CardNoteProps> = ({
     }}>
       <div className="card-note-header">
         <div className="card-note-time">{isPinned ? "置顶 · " : ""}{isCreated ? "创建于" : "更新于"} {new Date(isCreated ? file.stat.ctime : file.stat.mtime).toLocaleString()}</div>
+        {showTitle && <div className="card-note-title"><h3>{file.basename}</h3></div>}
         {tags.length > 0 && <div className="card-note-tags"> {tags.map((tag) =>
           <div className="card-note-tag" key={tag}>
             <div className="card-note-tag-content">{tag}</div>

@@ -86,7 +86,7 @@ const AddNoteView: React.FC<AddNoteViewProps> = ({ app, plugin, onAdd }) => {
       {showPlaceholder && <div style={{ position: 'absolute', left: 32, top: 26, color: 'var(--text-faint)' }}>此刻的想法是...</div>}
       <div ref={ref} className={"add-note-content"} />
       <div className="add-note-footer" style={{ display: "flex", justifyContent: "space-between", alignItems: 'end' }}>
-        <div style={{ width: 460 }}><TagInput tags={tags} onChange={setTags} allTags={allTags} placeholder="在这里输入标签"
+        <div style={{ width: 460 }}><TagInput tags={tags} onChange={setTags} allTags={allTags} placeholder="在这里输入标签" allowCreate={true}
         /></div>
         <button style={{ padding: "12px 20px", background: focused ? "var(--interactive-accent)" : "var(--background-modifier-hover)" }}
           onClick={async () => {

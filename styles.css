@@ -444,3 +444,7 @@ If your plugin does not need CSS, delete this file.
 .add-note-content .cm-gutters {
   display: none ;
 }
+
+.add-note-content .cm-content {
+  padding: 0!important;
+}

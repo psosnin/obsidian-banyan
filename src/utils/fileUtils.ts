@@ -77,7 +77,7 @@ export const getAllCardFiles = (plugin: MyPlugin): TFile[] => {
   return files;
 }
 
-const AddCardNoteName = "placeholder.md";
+const AddCardNoteName = "banyan_editor_placeholder.md";
 
 export const getAddCardFile = async (plugin: MyPlugin) => {
   const dir = plugin.settings.cardsDirectory;

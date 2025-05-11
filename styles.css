@@ -104,6 +104,10 @@ If your plugin does not need CSS, delete this file.
   flex-shrink: 0;
 }
 
+.card-note-title h3 {
+  margin: 8px 0 0 0;
+}
+
 .card-note-more {
   position: absolute;
   top: 12px;
@@ -447,4 +451,8 @@ If your plugin does not need CSS, delete this file.
 
 .add-note-content .cm-content {
   padding: 0!important;
+}
+
+.view-content .empty-state {
+  display: none;
 }

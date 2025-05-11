@@ -21,9 +21,9 @@ const AddNoteView: React.FC<AddNoteViewProps> = ({ app, plugin, onAdd }) => {
 
   const updateHasContent = useCallback(() => {
     const ele = leaf.view.containerEl.querySelector('.cm-content') as HTMLElement;
-    const content = ele.innerText.trim();
+    const content = ele?.innerText.trim() ?? '';
     setHasContent(content.length > 0);
-  }, []);
+  }, [leaf.view.containerEl]);
 
   useEffect(() => {
     const setupView = async () => {

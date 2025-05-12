@@ -1,7 +1,7 @@
 {
-	"name": "obsidian-sample-plugin",
+	"name": "banyan",
 	"version": "1.0.0",
-	"description": "This is a sample plugin for Obsidian (https://obsidian.md)",
+	"description": "A card-based homepage to browse, organize, and navigate notes effortlessly with multi-tag filtering.",
 	"main": "main.js",
 	"scripts": {
 		"dev": "node esbuild.config.mjs",

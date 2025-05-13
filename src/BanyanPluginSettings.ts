@@ -2,7 +2,7 @@ import { FilterScheme, getDefaultFilterScheme } from "./models/FilterScheme";
 import { ViewScheme } from "./models/ViewScheme";
 import { TagFilterGroupValue } from "./sidebar/filterScheme/TagFilterGroup";
 
-export interface MyPluginSettings {
+export interface BanyanPluginSettings {
 	settingsVersion: number;
 	cardsDirectory: string;
 	sortType: 'created' | 'modified';
@@ -16,7 +16,7 @@ export interface MyPluginSettings {
 
 export const CUR_SETTINGS_VERSION = 1;
 
-export const DEFAULT_SETTINGS: MyPluginSettings = {
+export const DEFAULT_SETTINGS: BanyanPluginSettings = {
 	settingsVersion: CUR_SETTINGS_VERSION,
 	cardsDirectory: 'cards',
 	sortType: 'created',

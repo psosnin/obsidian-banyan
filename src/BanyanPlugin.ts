@@ -1,11 +1,11 @@
 import { normalizePath, Plugin, WorkspaceLeaf, Notice, TFile } from 'obsidian';
-import { MyPluginSettings, DEFAULT_SETTINGS, CUR_SETTINGS_VERSION } from './MyPluginSettings';
+import { BanyanPluginSettings, DEFAULT_SETTINGS, CUR_SETTINGS_VERSION } from './BanyanPluginSettings';
 import { CARD_DASHBOARD_VIEW_TYPE, CardDashboard } from './CardDashboard';
-import { MySettingTab } from './MySettingTab';
+import { BanyanSettingTab } from './BanyanSettingTab';
 import { getAllCardFiles } from './utils/fileUtils';
 
-export default class MyPlugin extends Plugin {
-	settings: MyPluginSettings;
+export default class BanyanPlugin extends Plugin {
+	settings: BanyanPluginSettings;
 
 	async onload() {
 		await this.loadSettings();
@@ -54,7 +54,7 @@ export default class MyPlugin extends Plugin {
 		RandomNoteIconEl.addClass('my-plugin-ribbon-class');
 
 		// This adds a settings tab so the user can configure various aspects of the plugin
-		this.addSettingTab(new MySettingTab(this.app, this));
+		this.addSettingTab(new BanyanSettingTab(this.app, this));
 
 		this.app.workspace.onLayoutReady(() => {
 			this.updateSettingIfNeeded();

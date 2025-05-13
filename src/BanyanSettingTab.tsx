@@ -1,15 +1,15 @@
 import { App, PluginSettingTab, Setting, TFile } from 'obsidian';
-import MyPlugin from './main';
+import BanyanPlugin from './main';
 import { getAllFolders, createFolderSuggest, getAllCardFiles } from './utils/fileUtils';
 import { getFilesTags } from './utils/tagUtils';
 import { createRoot } from 'react-dom/client';
 import { StrictMode, useState, } from 'react';
 import { TagFilterGroup } from './sidebar/filterScheme/TagFilterGroup';
 
-export class MySettingTab extends PluginSettingTab {
-	plugin: MyPlugin;
+export class BanyanSettingTab extends PluginSettingTab {
+	plugin: BanyanPlugin;
 
-	constructor(app: App, plugin: MyPlugin) {
+	constructor(app: App, plugin: BanyanPlugin) {
 		super(app, plugin);
 		this.plugin = plugin;
 	}

@@ -1,3 +1,3 @@
-import MyPlugin from "./MyPlugin";
+import BanyanPlugin from "./BanyanPlugin";
 
-export default MyPlugin;
+export default BanyanPlugin;

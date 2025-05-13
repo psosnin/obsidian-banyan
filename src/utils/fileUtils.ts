@@ -1,5 +1,5 @@
 import { TFolder, App, TFile, normalizePath } from "obsidian";
-import MyPlugin from "src/main";
+import BanyanPlugin from "src/main";
 
 export const getAllFolders = async (app: App): Promise<string[]> => {
   const folders: string[] = [];
@@ -69,7 +69,7 @@ TFile.prototype.getID = function () {
   return this.stat.ctime;
 };
 
-export const getAllCardFiles = (plugin: MyPlugin): TFile[] => {
+export const getAllCardFiles = (plugin: BanyanPlugin): TFile[] => {
   const dir = plugin.settings.cardsDirectory;
   const files = plugin.app.vault.getMarkdownFiles()
     .filter((file: TFile) => file.path.startsWith(dir))
@@ -79,7 +79,7 @@ export const getAllCardFiles = (plugin: MyPlugin): TFile[] => {
 
 const AddCardNoteName = "banyan_editor_placeholder.md";
 
-export const getAddCardFile = async (plugin: MyPlugin) => {
+export const getAddCardFile = async (plugin: BanyanPlugin) => {
   const dir = plugin.settings.cardsDirectory;
   const path = normalizePath(`${dir}/${AddCardNoteName}`);
   const file = plugin.app.vault.getFileByPath(path);

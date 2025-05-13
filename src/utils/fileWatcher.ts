@@ -1,5 +1,5 @@
 import { App, TFile, Vault, MetadataCache } from 'obsidian';
-import MyPlugin from 'src/main';
+import BanyanPlugin from 'src/main';
 import { getAllCardFiles } from './fileUtils';
 
 export type FileChangeType = 'create' | 'delete' | 'modify' | 'rename' | 'meta-change';
@@ -11,13 +11,13 @@ export interface FileChange {
 export type FileChangeCallback = (change: FileChange) => void;
 
 export class FileWatcher {
-  private plugin: MyPlugin;
+  private plugin: BanyanPlugin;
   private vault: Vault;
   private metadataCache: MetadataCache;
   private callbacks: Set<FileChangeCallback> = new Set();
   private fileCache: Map<string, number> = new Map();
 
-  constructor(plugin: MyPlugin) {
+  constructor(plugin: BanyanPlugin) {
     this.plugin = plugin;
     this.vault = plugin.app.vault;
     this.metadataCache = plugin.app.metadataCache;
@@ -92,6 +92,6 @@ export class FileWatcher {
   }
 }
 
-export const createFileWatcher = (plugin: MyPlugin) => {
+export const createFileWatcher = (plugin: BanyanPlugin) => {
   return new FileWatcher(plugin);
 }

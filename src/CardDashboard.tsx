@@ -1,5 +1,5 @@
 import { App, ItemView, WorkspaceLeaf, TFile, Notice, Menu, Component } from "obsidian";
-import MyPlugin from "./main";
+import BanyanPlugin from "./main";
 import { StrictMode, useEffect, useState, useRef, useCallback } from 'react';
 import { Root, createRoot } from 'react-dom/client';
 import * as React from "react";
@@ -23,9 +23,9 @@ export const CARD_DASHBOARD_VIEW_TYPE = "dashboard-view";
 
 export class CardDashboard extends ItemView {
   root: Root | null = null;
-  plugin: MyPlugin;
+  plugin: BanyanPlugin;
 
-  constructor(leaf: WorkspaceLeaf, plugin: MyPlugin) {
+  constructor(leaf: WorkspaceLeaf, plugin: BanyanPlugin) {
     super(leaf);
     this.plugin = plugin;
   }
@@ -57,7 +57,7 @@ export class CardDashboard extends ItemView {
   }
 }
 
-const CardDashboardView = ({ plugin, app }: { plugin: MyPlugin, app: App }) => {
+const CardDashboardView = ({ plugin, app }: { plugin: BanyanPlugin, app: App }) => {
 
   const [showSidebar, setShowSidebar] = useState<'normal' | 'hide' | 'show'>('normal');
 

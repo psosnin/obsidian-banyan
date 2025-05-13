@@ -2,13 +2,13 @@ import { App, WorkspaceLeaf, MarkdownView } from "obsidian";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Icon } from "src/components/Icon";
 import TagInput from "src/components/TagInput";
-import MyPlugin from "src/main";
+import BanyanPlugin from "src/main";
 import { getAddCardFile, getAllCardFiles } from "src/utils/fileUtils";
 import { getFilesTags } from "src/utils/tagUtils";
 
 interface AddNoteViewProps {
   app: App;
-  plugin: MyPlugin;
+  plugin: BanyanPlugin;
   onAdd: () => void;
 }
 

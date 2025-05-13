@@ -335,6 +335,7 @@ If your plugin does not need CSS, delete this file.
 .card-note-content .workspace-leaf {
   contain: initial !important;
   height: 100%;
+  background-color: transparent !important;
 }
 
 .card-note-content .workspace-leaf-resize-handle {
@@ -459,6 +460,10 @@ If your plugin does not need CSS, delete this file.
 
 .add-note-content .cm-content {
   padding: 0!important;
+}
+
+.add-note-content .cm-active.cm-line {
+  background-color: transparent !important;
 }
 
 .view-content .empty-state {

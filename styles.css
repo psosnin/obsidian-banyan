@@ -7,6 +7,10 @@ If your plugin does not need CSS, delete this file.
 
 */
 
+.confirm-modal {
+  min-width: 0;
+}
+
 .folder-suggest-dropdown {
   position: absolute;
   background: var(--background-primary, #fff);
@@ -20,6 +24,10 @@ If your plugin does not need CSS, delete this file.
   left: 0;
   top: 100%;
   width: 100%;
+}
+
+.setting-item-control {
+  position: relative;
 }
 
 .folder-suggest-item {

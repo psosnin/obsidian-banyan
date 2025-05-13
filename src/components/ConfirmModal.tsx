@@ -20,7 +20,7 @@ export class ConfirmModal extends Modal {
 
     onOpen() {
         const modalEl = this.containerEl.children[1] as HTMLElement;
-        modalEl.style.minWidth = '0'; // ob默认样式有宽度
+        modalEl.addClass('confirm-modal');
         this.root = createRoot(modalEl);
         this.root.render(
             <React.StrictMode>

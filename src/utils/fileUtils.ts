@@ -40,12 +40,6 @@ export const createFolderSuggest = (
       suggestEl?.appendChild(item);
     });
     inputEl.parentElement?.appendChild(suggestEl);
-    // 定位
-    // const inputRect = inputEl.getBoundingClientRect();
-    suggestEl.style.position = 'absolute';
-    suggestEl.style.left = (inputEl.offsetLeft - 240) + 'px';
-    suggestEl.style.top = (inputEl.offsetTop + inputEl.offsetHeight) + 'px';
-    suggestEl.style.width = (inputEl.offsetWidth + 280) + 'px';
   };
   inputEl.addEventListener('focus', () => {
     showSuggestions(inputEl.value);

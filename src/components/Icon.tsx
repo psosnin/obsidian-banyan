@@ -12,18 +12,14 @@ export const Icon = ({ name, size = 's', color = 'var(--icon-color)', className 
   useLayoutEffect(() => {
     if (ref.current) {
       setIcon(ref.current, name);
-      if (typeof size === 'string') {
-        ref.current.style.setProperty('--icon-size', `var(--icon-${size}`);
-      } else {
-        ref.current.style.setProperty('--icon-size', `${size}px`);
-      }
-
     }
-  }, [name, size]);
+  }, [name]);
+
+  const value = typeof size === 'string' ? `var(--icon-${size}` : `${size}px`;
 
   return <div ref={ref} className={`${className ?? ""}`} style={{
-    height: `var(--icon-size)`,
-    width: 'var(--icon-size)',
+    height: value,
+    width: value,
     color: color,
   }} />;
 }

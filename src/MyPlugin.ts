@@ -188,7 +188,7 @@ export default class MyPlugin extends Plugin {
 	activateView(viewType: string) {
 		const { workspace } = this.app;
 
-		var leaf: WorkspaceLeaf | null = null;
+		let leaf: WorkspaceLeaf | null = null;
 		const leaves = workspace.getLeavesOfType(viewType);
 
 		if (leaves.length > 0) {

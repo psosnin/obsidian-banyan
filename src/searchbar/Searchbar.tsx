@@ -3,6 +3,7 @@ import { SearchView } from "./SearchView";
 import { useState } from "react";
 import { FilterScheme, SearchFilterScheme } from "src/models/FilterScheme";
 import React from "react";
+import { Platform } from "obsidian";
 
 interface SearchbarProps {
     allTags: string[];
@@ -10,7 +11,7 @@ interface SearchbarProps {
 }
 
 export const Searchbar: React.FC<SearchbarProps> = ({ allTags, setCurFilterScheme }) => {
-    const [tempFilterScheme, setTempFilterScheme] = useState({...SearchFilterScheme});
+    const [tempFilterScheme, setTempFilterScheme] = useState({ ...SearchFilterScheme });
     const [showFilterBox, setShowFilterBox] = useState(false);
 
     const handleSearch = () => {
@@ -25,6 +26,45 @@ export const Searchbar: React.FC<SearchbarProps> = ({ allTags, setCurFilterSchem
     const handleCancel = () => {
         setTempFilterScheme(SearchFilterScheme);
         setShowFilterBox(false);
+    }
+
+    if (Platform.isMobile) {
+        return (
+            <div style={{ position: 'relative' }}>
+                <div onClick={() => setShowFilterBox(v => !v)} style={{ cursor: 'pointer', marginLeft: 4, marginRight: 16 }}><Icon name="search" /></div>
+                {showFilterBox && (
+                    <div style={{ position: 'absolute', top: '100%', marginTop: 6, right: 0, zIndex: 10, background: 'var(--background-primary)', boxShadow: '0 2px 8px 8px rgba(0,0,0,0.15)', borderRadius: 8, padding: 16, width: '90vw' }}>
+                        <div style={{ marginBottom: 12, fontSize: 'var(--font-text-size)', fontWeight: 'var(--font-semibold)' }}>搜索</div>
+                        <input
+                            type="text"
+                            placeholder="关键字"
+                            value={tempFilterScheme.keyword}
+                            onChange={e => {
+                                const newKeyword = e.target.value;
+                                setTempFilterScheme(prev => ({ ...prev, keyword: newKeyword }));
+                            }}
+                            onKeyDown={e => {
+                                if (e.key === 'Enter') {
+                                    handleSearch();
+                                }
+                            }}
+                            style={{ background: 'var(--background-secondary)', border: 'none', outline: 'none', flex: 1, marginBottom: 16 }}
+                        />
+                        <SearchView
+                            allTags={allTags}
+                            filterScheme={tempFilterScheme}
+                            setFilterScheme={setTempFilterScheme}
+                        />
+                        <div style={{ display: 'flex', justifyContent: 'flex-start', gap: 8, marginTop: 16 }}>
+                            <button onClick={handleSearch} style={{ padding: '4px 16px', background: 'var(--interactive-accent)' }}>搜索</button>
+                            <button onClick={handleReset} style={{ padding: '4px 16px', backgroundColor: 'transparent' }}>重置</button>
+                            <div style={{ flex: 1 }}></div>
+                            <button onClick={handleCancel} style={{ padding: '4px 16px' }}>取消</button>
+                        </div>
+                    </div>
+                )}
+            </div>
+        );
     }
 
     return (

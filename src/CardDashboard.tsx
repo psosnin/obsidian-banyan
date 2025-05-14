@@ -1,4 +1,4 @@
-import { App, ItemView, WorkspaceLeaf, TFile, Notice, Menu, Component } from "obsidian";
+import { App, ItemView, WorkspaceLeaf, TFile, Notice, Menu, Platform } from "obsidian";
 import BanyanPlugin from "./main";
 import { StrictMode, useEffect, useState, useRef, useCallback } from 'react';
 import { Root, createRoot } from 'react-dom/client';
@@ -59,7 +59,7 @@ export class CardDashboard extends ItemView {
 
 const CardDashboardView = ({ plugin, app }: { plugin: BanyanPlugin, app: App }) => {
 
-  const [showSidebar, setShowSidebar] = useState<'normal' | 'hide' | 'show'>('normal');
+  const [showSidebar, setShowSidebar] = useState<'normal' | 'hide' | 'show'>(Platform.isMobile ? 'hide' : 'normal');
 
   const dir = plugin.settings.cardsDirectory;
 
@@ -224,6 +224,11 @@ const CardDashboardView = ({ plugin, app }: { plugin: BanyanPlugin, app: App }) 
 
   React.useEffect(() => {
     const updateCol = () => {
+      if (Platform.isMobile) {
+        setShowSidebar('hide');
+        setColCount(1);
+        return;
+      }
       if (!dashboardRef.current) return;
       const containerWidth = dashboardRef.current.clientWidth;
       const _showSidebar = containerWidth >= 700 ? 'normal' : 'hide';
@@ -251,7 +256,7 @@ const CardDashboardView = ({ plugin, app }: { plugin: BanyanPlugin, app: App }) 
     }
 
     return () => resizeObserver.disconnect();
-  }, [showSidebar]); // 保留showSidebar依赖，因为侧边栏显示状态变化会影响主容器宽度
+  }, []);
 
   // 卡片删除
   const handleDelete = async (file: TFile) => {

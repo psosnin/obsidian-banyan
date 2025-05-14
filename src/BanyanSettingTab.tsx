@@ -1,4 +1,4 @@
-import { App, PluginSettingTab, Setting, TFile } from 'obsidian';
+import { App, Platform, PluginSettingTab, Setting } from 'obsidian';
 import BanyanPlugin from './main';
 import { getAllFolders, createFolderSuggest, getAllCardFiles } from './utils/fileUtils';
 import { getFilesTags } from './utils/tagUtils';
@@ -57,18 +57,21 @@ export class BanyanSettingTab extends PluginSettingTab {
 					});
 			});
 
-		new Setting(containerEl)
-			.setName('笔记列数')
-			.setDesc('当面板足够宽时，最多显示多少列笔记')
-			.addDropdown(dropdown => {
-				dropdown.addOption('1', '1 列')
-					.addOption('2', '2 列')
-					.setValue(this.plugin.settings.cardsColumns.toString())
-					.onChange(async (value) => {
-						this.plugin.settings.cardsColumns = parseInt(value);
-						await this.plugin.saveSettings();
-					});
-			});
+
+		if (!Platform.isMobile) {
+			new Setting(containerEl)
+				.setName('笔记列数')
+				.setDesc('当面板足够宽时，最多显示多少列笔记')
+				.addDropdown(dropdown => {
+					dropdown.addOption('1', '1 列')
+						.addOption('2', '2 列')
+						.setValue(this.plugin.settings.cardsColumns.toString())
+						.onChange(async (value) => {
+							this.plugin.settings.cardsColumns = parseInt(value);
+							await this.plugin.saveSettings();
+						});
+				});
+		}
 
 		// 随机笔记设置
 		const randomSetting = new Setting(containerEl)

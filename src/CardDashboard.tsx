@@ -87,6 +87,7 @@ const CardDashboardView = ({ plugin, app }: { plugin: BanyanPlugin, app: App }) 
   const [heatmapValues, setHeatmapValues] = useState<HeatmapData[]>([]);
 
   const [refreshFlag, setRefreshFlag] = useState(0);
+  // const [panelSize, setPanelSize] = useState({ width: 0, height: 0 });
 
   // 文件监听逻辑
   useEffect(() => {
@@ -231,7 +232,12 @@ const CardDashboardView = ({ plugin, app }: { plugin: BanyanPlugin, app: App }) 
       }
       if (!dashboardRef.current) return;
       const containerWidth = dashboardRef.current.clientWidth;
-      const _showSidebar = containerWidth >= 700 ? 'normal' : 'hide';
+      // const containerHeight = dashboardRef.current.clientHeight;
+      // // 获取可视区域的宽高
+      // const viewportWidth = window.visualViewport?.width || window.innerWidth;
+      // const viewportHeight = window.visualViewport?.height || window.innerHeight;
+      // setPanelSize({ width: Math.floor(viewportWidth), height: Math.floor(viewportHeight) });
+      const _showSidebar = containerWidth >= 900 ? 'normal' : 'hide';
       setShowSidebar(_showSidebar);
       const cardsColumns = plugin.settings.cardsColumns;
       if (cardsColumns == 1) {
@@ -475,8 +481,11 @@ const CardDashboardView = ({ plugin, app }: { plugin: BanyanPlugin, app: App }) 
     <div className="dashboard-container" ref={dashboardRef} style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', width: '100%' }}>
       {showSidebar != 'normal' && <Sidebar visible={showSidebar == 'show'} onClose={() => setShowSidebar('hide')}>{sidebarContent}</Sidebar>}
       {showSidebar == 'normal' && sidebarContent}
-      <div className="main-container" style={{ display: 'inline-block' }}>
-        <div className="main-header-container" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+      {/* <div className="dashboard-size-display">
+        {panelSize.width} x {panelSize.height}
+      </div> */}
+      <div className="main-container">
+        <div className="main-header-container" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', fontSize: 'var(--font-small)' }}>
           <div className="main-header-title" style={{ display: "flex", alignItems: "center" }}>
             <button style={{
               background: 'none', border: 'none', color: 'inherit', cursor: 'pointer',
@@ -497,7 +506,7 @@ const CardDashboardView = ({ plugin, app }: { plugin: BanyanPlugin, app: App }) 
           </div>
           <Searchbar allTags={allTags} setCurFilterScheme={setCurScheme} />
         </div>
-        <div style={{marginTop: 16}}><AddNoteView app={app} plugin={plugin} onAdd={() => setRefreshFlag(f => f + 1)} /></div>
+        {!Platform.isMobile && <div style={{ marginTop: 16 }}><AddNoteView app={app} plugin={plugin} onAdd={() => setRefreshFlag(f => f + 1)} /></div>}
         <div className="main-subheader-container" style={{ marginBottom: 6, marginTop: 0, marginRight: 16, display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
           <div style={{ display: "flex", alignItems: 'center' }}>
             <span style={{ padding: '12px 6px', color: 'var(--text-muted)', fontSize: 'var(--font-smaller)' }}>已加载 {displayedNotes.length} / {curSchemeNotesLength} 条笔记</span>
@@ -507,7 +516,7 @@ const CardDashboardView = ({ plugin, app }: { plugin: BanyanPlugin, app: App }) 
             />}
           </div>
           <div className="main-subheader-btn-section" style={{ display: "flex", gap: 8 }}>
-            {curScheme.type != 'ViewScheme' && cardNodes.length > 0 && <button onClick={handleBatchImportToView} style={{ padding: '4px 12px', backgroundColor: 'transparent', color: 'var(--interactive-accent)' }}>批量添加到视图</button>}
+            {curScheme.type != 'ViewScheme' && curScheme.id != DefaultFilterSchemeID && cardNodes.length > 0 && <button onClick={handleBatchImportToView} style={{ padding: '4px 0', backgroundColor: 'transparent', color: 'var(--interactive-accent)' }}>批量添加到视图</button>}
           </div>
         </div>
         <div className="main-cards" style={{ display: 'flex', gap: 16, }}>

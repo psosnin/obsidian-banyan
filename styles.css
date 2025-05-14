@@ -26,6 +26,7 @@ If your plugin does not need CSS, delete this file.
   width: 100%;
 }
 
+/* 为了让folder-suggest位置得以对齐 */
 .setting-item-control {
   position: relative;
 }
@@ -65,6 +66,17 @@ If your plugin does not need CSS, delete this file.
   border-radius: 4px;
 }
 
+/* 主容器响应式布局 */
+.main-container {
+  display: inline-block;
+}
+
+@media (max-width: 768px) {
+  .main-container {
+    width: 100%;
+  }
+}
+
 /*
  * 卡片笔记视图
  */
@@ -78,7 +90,8 @@ If your plugin does not need CSS, delete this file.
   position: relative;
   box-shadow: 0 2px 8px #0002;
   cursor: pointer;
-  width: 600px;
+  width: 100%;
+  max-width: 600px;
 }
 
 .card-note-content {
@@ -147,6 +160,8 @@ If your plugin does not need CSS, delete this file.
   outline: none;
   gap: var(--size-2-3);
   margin-top: 12px;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 .card-note-tag {
@@ -165,6 +180,13 @@ If your plugin does not need CSS, delete this file.
   position: relative;
   cursor: var(--cursor-link);
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.card-note-tag-content {
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /*
@@ -381,7 +403,7 @@ If your plugin does not need CSS, delete this file.
  * 添加笔记视图
  */
 
- .add-note-container {
+.add-note-container {
   background: var(--background-secondary);
   color: var(--text-normal);
   border-radius: 8px;
@@ -389,7 +411,8 @@ If your plugin does not need CSS, delete this file.
   margin-bottom: 6px;
   position: relative;
   box-shadow: 0 2px 8px #0002;
-  width: 600px;
+  width: 100%;
+  max-width: 600px;
   border: 1px solid transparent;
 }
 
@@ -455,11 +478,11 @@ If your plugin does not need CSS, delete this file.
 }
 
 .add-note-content .cm-gutters {
-  display: none ;
+  display: none;
 }
 
 .add-note-content .cm-content {
-  padding: 0!important;
+  padding: 0 !important;
 }
 
 .add-note-content .cm-active.cm-line {
@@ -468,4 +491,93 @@ If your plugin does not need CSS, delete this file.
 
 .view-content .empty-state {
   display: none;
+}
+
+/* 
+ * 面板尺寸显示
+ */
+/* .dashboard-container {
+  position: relative;
+  border: 1px dashed white;
+}
+
+.dashboard-size-display {
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  background: var(--background-secondary-alt);
+  color: var(--text-muted);
+  font-size: var(--font-smaller);
+  padding: 4px 8px;
+  border-radius: 4px;
+  z-index: 100;
+  opacity: 0.8;
+  pointer-events: none;
+} */
+
+
+
+/* 移动设备 */
+@media (max-width: 767px) {
+  .main-cards-column {
+    width: 100%;
+  }
+
+  .card-note-container {
+    font-size: 8px;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 16px;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .add-note-container {
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 6px;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .add-note-footer {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .add-note-footer>div {
+    width: 100% !important;
+    margin-bottom: 10px;
+  }
+
+  .card-note-header {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .card-note-time {
+    width: 100%;
+    margin-bottom: 4px;
+  }
+
+  .card-note-title {
+    width: 100%;
+    padding-right: 24px;
+  }
+
+  .card-note-title h3 {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+/* 平板设备 */
+@media (min-width: 768px) and (max-width: 1023px) {
+  /* 平板样式 */
+}
+
+/* 桌面设备 */
+@media (min-width: 1024px) {
+  /* 桌面样式 */
 }

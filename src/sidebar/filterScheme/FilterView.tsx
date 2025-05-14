@@ -1,6 +1,7 @@
 import * as React from "react";
 import { TagFilterGroup } from "./TagFilterGroup";
 import { FilterScheme } from "src/models/FilterScheme";
+import { Platform } from "obsidian";
 
 export interface FilterViewProps {
   allTags: string[];
@@ -8,23 +9,25 @@ export interface FilterViewProps {
   setFilterScheme: (fs: FilterScheme) => void;
   showName?: boolean; // 是否显示名称
   showKeyword?: boolean; // 是否显示关键词
+  showLabel?: boolean; // 是否显示标签
 }
 
-export const FilterView: React.FC<FilterViewProps> = ({ allTags, filterScheme, setFilterScheme, showName = true, showKeyword = true }) => {
+export const FilterView: React.FC<FilterViewProps> = ({ allTags, filterScheme, setFilterScheme, showName = true, showKeyword = true, showLabel = true }) => {
 
   return (
-    <div style={{ marginBottom: '0.5em', display: 'flex', gap: '1em', flexWrap: 'wrap', flexDirection: 'column' }}>
+    <div style={{ marginBottom: '0.5em', display: 'flex', gap: Platform.isMobile ? '1.2em' : '1em', flexWrap: 'wrap', flexDirection: 'column' }}>
       {showName && <div className="filter-name-container" >
-        <label style={{ marginRight: 12 }}>方案名称</label>
+        {showLabel && <label style={{ marginRight: 12 }}>方案名称</label>}
         <input
           type="text"
           value={filterScheme.name}
+          placeholder={showLabel ? "" : "输入方案名称"}
           onChange={e => setFilterScheme({ ...filterScheme, name: e.target.value })}
           style={{ marginRight: 4, padding: '20px 16px', backgroundColor: 'var(--background-secondary)', border: 'none', outline: 'none' }}
         />
       </div>}
       <div className="filter-date-container">
-        <label style={{ marginRight: 12 }}>日期</label>
+        {showLabel && <label style={{ marginRight: 12 }}>日期</label>}
         <input
           type="date"
           value={filterScheme.dateRange.from}
@@ -44,13 +47,15 @@ export const FilterView: React.FC<FilterViewProps> = ({ allTags, filterScheme, s
           allTags={allTags}
           value={filterScheme.tagFilter}
           onChange={v => setFilterScheme({ ...filterScheme, tagFilter: v })}
+          showLabel={showLabel}
         />
       </div>
       {showKeyword && <div className="filter-keyword-container">
-        <label style={{ marginRight: 12 }}>关键字</label>
+        {showLabel && <label style={{ marginRight: 12 }}>关键字</label>}
         <input
           type="text"
           value={filterScheme.keyword}
+          placeholder={showLabel ? "" : "输入关键字"}
           onChange={e => setFilterScheme({ ...filterScheme, keyword: e.target.value })}
           style={{ marginRight: 4, padding: '20px 16px', backgroundColor: 'var(--background-secondary)', border: 'none', outline: 'none' }}
         />

@@ -515,6 +515,9 @@ If your plugin does not need CSS, delete this file.
   pointer-events: none;
 } */
 
+.sidebar-container div {
+  scrollbar-width: none;
+}
 
 
 /* 移动设备 */

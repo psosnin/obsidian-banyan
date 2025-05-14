@@ -32,15 +32,15 @@ const Sidebar: React.FC<SidebarProps> = ({ visible, onClose, width = 320, childr
           top: 0,
           width: "100vw",
           height: "100vh",
-          background: "rgba(0,0,0,0.08)",
+          background: "rgba(0,0,0,0.38)",
           zIndex: 1000
         }} />
       )}
       <div
         className="sidebar-container"
         style={{
-          position: "fixed",
-          left: visible ? 0 : -width,
+          position: "absolute",
+          left: visible ? 0 : -(width + 20),
           top: 0,
           width,
           height: "100vh",
@@ -50,7 +50,8 @@ const Sidebar: React.FC<SidebarProps> = ({ visible, onClose, width = 320, childr
           zIndex: 1001,
           transition: "left 0.25s cubic-bezier(.4,0,.2,1)",
           display: "flex",
-          flexDirection: "column"
+          flexDirection: "column",
+          paddingBottom: 160,
         }}
       >
         <div style={{ flex: 1, overflowY: "auto" }}>{children}</div>

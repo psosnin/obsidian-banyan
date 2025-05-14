@@ -1,4 +1,4 @@
-import { App, Modal } from "obsidian";
+import { App, Modal, Platform } from "obsidian";
 import * as React from "react";
 import { createRoot, Root } from "react-dom/client";
 import { ViewScheme } from "src/models/ViewScheme";
@@ -43,13 +43,14 @@ const ViewEditContainer = ({ props, close }: { props: ViewEditModalProps, close:
     const handleCancel = () => {
         close();
     };
-    return <div className="view-modal-container" style={{ minWidth: 320 }}>
+    return <div className="view-modal-container" style={{ padding: '30px 20px 30px 20px' }}>
         <div style={{ marginBottom: 16, fontWeight: "bold" }}>{isNew ? "创建" : "更新"}视图</div>
         <div style={{ marginBottom: '0.5em', display: 'flex', gap: '1em', flexWrap: 'wrap', flexDirection: 'column' }}>
             <div className="view-name-container" >
-                <label style={{ marginRight: 12 }}>名称</label>
+                {!Platform.isMobile && <label style={{ marginRight: 12 }}>名称</label>}
                 <input
                     type="text"
+                    placeholder={Platform.isMobile ? "请输入名称" : ""}
                     value={scheme.name}
                     onChange={e => setScheme({ ...scheme, name: e.target.value })}
                     style={{ marginRight: 4, padding: '20px 16px', backgroundColor: 'var(--background-secondary)', border: 'none', outline: 'none' }}

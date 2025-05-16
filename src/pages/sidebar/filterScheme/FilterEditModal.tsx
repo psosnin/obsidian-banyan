@@ -3,6 +3,7 @@ import { FilterScheme } from "src/models/FilterScheme";
 import { FilterView } from "./FilterView";
 import * as React from "react";
 import { createRoot, Root } from "react-dom/client";
+import { i18n } from "src/utils/i18n";
 
 interface FilterEditModalProps {
     filterScheme: FilterScheme;
@@ -45,7 +46,7 @@ const FilterViewContainer = ({ props, close }: { props: FilterEditModalProps, cl
     };
     return <div className="filter-modal-container" style={{ padding: '30px 20px 30px 20px' }}>
         <div style={{}}>
-            <div style={{ marginBottom: 16, fontWeight: "bold" }}>{isNew ? "创建" : "更新"}过滤方案</div>
+            <div style={{ marginBottom: 16, fontWeight: "bold" }}>{isNew ? i18n.t('filter_scheme_title_create') : i18n.t('filter_scheme_title_update')}</div>
             <FilterView
                 allTags={allTags}
                 filterScheme={scheme}
@@ -53,8 +54,8 @@ const FilterViewContainer = ({ props, close }: { props: FilterEditModalProps, cl
                 showLabel={!Platform.isMobile}
             />
             <div style={{ display: "flex", justifyContent: "flex-end", gap: 8, marginTop: 16 }}>
-                <button onClick={handleCancel}>取消</button>
-                <button onClick={handleSave} style={{ background: "var(--interactive-accent)", color: "var(--text-on-accent)", border: "none", borderRadius: 4, padding: "4px 16px" }}>保存</button>
+                <button onClick={handleCancel}>{i18n.t('general_cancel')}</button>
+                <button onClick={handleSave} style={{ background: "var(--interactive-accent)", color: "var(--text-on-accent)", border: "none", borderRadius: 4, padding: "4px 16px" }}>{i18n.t('general_save')}</button>
             </div>
         </div>
     </div>;

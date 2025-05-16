@@ -3,6 +3,7 @@ import { BanyanPluginSettings, DEFAULT_SETTINGS, CUR_SETTINGS_VERSION } from './
 import { CARD_DASHBOARD_VIEW_TYPE, CardDashboard } from './pages/CardDashboard';
 import { BanyanSettingTab } from './BanyanSettingTab';
 import { FileUtils } from './utils/fileUtils';
+import { i18n } from './utils/i18n';
 
 export default class BanyanPlugin extends Plugin {
 	settings: BanyanPluginSettings;
@@ -22,12 +23,12 @@ export default class BanyanPlugin extends Plugin {
 		// 添加卡片笔记 命令和按钮
 		this.addCommand({
 			id: 'add-card-note',
-			name: '添加卡片笔记',
+			name: i18n.t('add_card_note'),
 			callback: async () => {
 				await this.fileUtils.addFile();
 			}
 		});
-		const AddCardIconEl = this.addRibbonIcon('lightbulb', '添加卡片笔记', async (evt: MouseEvent) => {
+		const AddCardIconEl = this.addRibbonIcon('lightbulb', i18n.t('add_card_note'), async (evt: MouseEvent) => {
 			await this.fileUtils.addFile();
 		});
 		AddCardIconEl.addClass('my-plugin-ribbon-class');
@@ -35,10 +36,10 @@ export default class BanyanPlugin extends Plugin {
 		// 打开笔记面板 命令和按钮
 		this.addCommand({
 			id: 'open-dashboard',
-			name: '打开笔记面板',
+			name:i18n.t('open_dashboard'),
 			callback: () => this.activateView(CARD_DASHBOARD_VIEW_TYPE),
 		});
-		const CardIconEl = this.addRibbonIcon('wallet-cards', '打开笔记面板', () => {
+		const CardIconEl = this.addRibbonIcon('wallet-cards', i18n.t('open_dashboard'), () => {
 			this.activateView(CARD_DASHBOARD_VIEW_TYPE);
 		});
 		CardIconEl.addClass('my-plugin-ribbon-class');
@@ -46,12 +47,12 @@ export default class BanyanPlugin extends Plugin {
 		// 打开随机笔记 命令和按钮
 		this.addCommand({
 			id: 'open-random-note',
-			name: '打开随机笔记',
+			name: i18n.t('open_random_note'),
 			callback: () => {
 				this.fileUtils.openRandomFile();
 			}
 		});
-		const RandomNoteIconEl = this.addRibbonIcon('dice', '打开随机笔记', () => {
+		const RandomNoteIconEl = this.addRibbonIcon('dice', i18n.t('open_random_note'), () => {
 			this.fileUtils.openRandomFile();
 		});
 		RandomNoteIconEl.addClass('my-plugin-ribbon-class');

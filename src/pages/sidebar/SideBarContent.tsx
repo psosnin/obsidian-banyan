@@ -5,6 +5,7 @@ import { ViewScheme } from 'src/models/ViewScheme';
 import { FilterSchemesInfo } from './filterScheme/FilterSchemesInfo';
 import { ViewSchemesInfo } from './viewScheme/ViewSchemesInfo';
 import { SidebarButton } from './SidebarButton';
+import { i18n } from 'src/utils/i18n';
 
 export interface SidebarContentProps {
     notesNum: number,
@@ -41,7 +42,7 @@ export const SidebarContent = ({
             <Heatmap values={heatmapValues} onCickDate={onClickDate} />
             <div style={{ display: 'flex', flexDirection: 'column', marginTop: 12 }}>
                 {/* <SidebarButton label='添加笔记' iconName='lightbulb' onClick={onClickAddNote} /> */}
-                <SidebarButton label='随机回顾' iconName='dice' onClick={onClickRandomNote} />
+                <SidebarButton label={i18n.t('random_review')} iconName='dice' onClick={onClickRandomNote} />
                 <FilterSchemesInfo
                     app={app}
                     allTags={allTags}
@@ -69,12 +70,12 @@ const StatisticsInfo = ({ notesNum, tagsNum }: { notesNum: number, tagsNum: numb
             <div>
                 <span style={{ fontSize: 'var(--font-ui-large)', fontWeight: 'var(--font-medium)', }}>{notesNum}</span>
                 <br />
-                <span style={{ fontSize: 9 }}>笔记</span>
+                <span style={{ fontSize: 9 }}>{i18n.t('note')}</span>
             </div>
             <div>
                 <span style={{ fontSize: 'var(--font-ui-large)', fontWeight: 'var(--font-medium)', }}>{tagsNum}</span>
                 <br />
-                <span style={{ fontSize: 9 }}>标签</span>
+                <span style={{ fontSize: 9 }}>{i18n.t('tag')}</span>
             </div>
         </div>
     );

@@ -4,6 +4,7 @@ import { ViewScheme } from "src/models/ViewScheme";
 import { SidebarButton } from "../SidebarButton";
 import { App, Menu } from "obsidian";
 import { ViewEditModal } from "./ViewEditModal";
+import { i18n } from "src/utils/i18n";
 
 export const ViewSchemesInfo = ({
     app, viewSchemes, curViewSchemeID,
@@ -55,7 +56,7 @@ export const ViewSchemesInfo = ({
             const newScheme = {
                 ...viewSchemes[index],
                 id: maxId + 1,
-                name: viewSchemes[index].name + ' 副本'
+                name: `${viewSchemes[index].name} ${i18n.t('general_copy')}`
             };
             setViewScheme(newScheme);
         } else if (action === 'delete') {
@@ -66,12 +67,12 @@ export const ViewSchemesInfo = ({
     const handleViewSchemeClickMore = (event: MouseEvent, index: number) => {
         const menu = new Menu();
         menu.addItem((item) => {
-            item.setTitle("更新");
+            item.setTitle(i18n.t('general_update'));
             item.onClick(() => handleMenuClick('update', index));
         });
         menu.addSeparator();
         menu.addItem((item) => {
-            item.setTitle("删除");
+            item.setTitle(i18n.t('general_delete'));
             item.onClick(() => handleMenuClick('delete', index));
         });
         menu.showAtMouseEvent(event);
@@ -103,7 +104,7 @@ export const ViewSchemesInfo = ({
         <div className='view-scheme-container' style={{ marginTop: 16 }}>
             <div className='view-scheme-header' style={{ marginLeft: 12, display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                 <div className='view-scheme-header-title' style={{ fontSize: 'var(--font-smaller)', color: 'var(--interactive-accent)' }}>
-                    <span>视图空间</span>
+                    <span>{i18n.t('view_schemes')}</span>
                 </div>
                 <div className='view-scheme-header-add' style={{ marginRight: 8 }}>
                     <button className='view-scheme-header-add-btn'

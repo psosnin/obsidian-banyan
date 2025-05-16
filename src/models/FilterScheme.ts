@@ -1,3 +1,5 @@
+import { i18n } from "src/utils/i18n";
+
 export type FilterScheme = {
     id: number,
     name: string,
@@ -16,7 +18,7 @@ export const getDefaultFilterScheme = (schemes: FilterScheme[]) => {
 
 const _DefaultFilterScheme: FilterScheme = {
     id: -1,
-    name: '所有笔记',
+    name: i18n.t('all_notes'),
     tagFilter: { or: [[]], not: [] },
     dateRange: { from: "", to: "" },
     keyword: "",

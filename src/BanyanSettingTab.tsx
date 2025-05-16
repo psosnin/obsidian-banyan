@@ -3,6 +3,7 @@ import BanyanPlugin from './main';
 import { createRoot } from 'react-dom/client';
 import { StrictMode, useState, } from 'react';
 import { TagFilterGroup } from './components/TagFilterGroup';
+import { i18n } from './utils/i18n';
 
 export class BanyanSettingTab extends PluginSettingTab {
 	plugin: BanyanPlugin;
@@ -24,8 +25,8 @@ export class BanyanSettingTab extends PluginSettingTab {
 
 	setupCardsDirectorySetting(containerEl: HTMLElement) {
 		new Setting(containerEl)
-			.setName('笔记目录')
-			.setDesc('「卡片面板」的笔记目录')
+			.setName(i18n.t('setting_note_directory_name'))
+			.setDesc(i18n.t('setting_note_directory_desc'))
 			.addText(async text => {
 				const folders = await this.plugin.fileUtils.getAllFolders();
 				this.createFolderSuggest(text.inputEl, folders, async (folder) => {
@@ -33,7 +34,7 @@ export class BanyanSettingTab extends PluginSettingTab {
 					this.plugin.settings.cardsDirectory = folder;
 					await this.plugin.saveSettings();
 				});
-				text.setPlaceholder('请输入目录路径')
+				text.setPlaceholder(i18n.t('setting_note_directory_placeholder'))
 					.setValue(this.plugin.settings.cardsDirectory || "")
 					.onChange(async (value) => {
 						this.plugin.settings.cardsDirectory = value;
@@ -44,8 +45,8 @@ export class BanyanSettingTab extends PluginSettingTab {
 
 	setupOpenWhenStartObsidianSetting(containerEl: HTMLElement) {
 		new Setting(containerEl)
-			.setName('启动时自动打开面板')
-			.setDesc('启用后，Obsidian 启动时会自动打开「卡片面板」')
+			.setName(i18n.t('setting_on_open_name'))
+			.setDesc(i18n.t('setting_on_open_desc'))
 			.addToggle(toggle => {
 				toggle.setValue(this.plugin.settings.openWhenStartObsidian)
 					.onChange(async (value) => {
@@ -57,8 +58,8 @@ export class BanyanSettingTab extends PluginSettingTab {
 
 	setupShowTitleSetting(containerEl: HTMLElement) {
 		new Setting(containerEl)
-			.setName('显示标题')
-			.setDesc('是否显示卡片视图的标题')
+			.setName(i18n.t('setting_show_title_name'))
+			.setDesc(i18n.t('setting_show_title_desc'))
 			.addToggle(toggle => {
 				toggle.setValue(this.plugin.settings.showTitle)
 					.onChange(async (value) => {
@@ -71,11 +72,11 @@ export class BanyanSettingTab extends PluginSettingTab {
 	setupCardsColumnsSetting(containerEl: HTMLElement) {
 		if (Platform.isMobile) return;
 		new Setting(containerEl)
-			.setName('笔记列数')
-			.setDesc('当面板足够宽时，最多显示多少列笔记')
+			.setName(i18n.t('setting_col_nums_name'))
+			.setDesc(i18n.t('setting_col_nums_desc'))
 			.addDropdown(dropdown => {
-				dropdown.addOption('1', '1 列')
-					.addOption('2', '2 列')
+				dropdown.addOption('1', i18n.t('setting_col_nums_1_col'))
+					.addOption('2', i18n.t('setting_col_nums_2_col'))
 					.setValue(this.plugin.settings.cardsColumns.toString())
 					.onChange(async (value) => {
 						this.plugin.settings.cardsColumns = parseInt(value);
@@ -86,8 +87,8 @@ export class BanyanSettingTab extends PluginSettingTab {
 
 	setupRandomNoteSetting(containerEl: HTMLElement) {
 		const randomSetting = new Setting(containerEl)
-			.setName('随机笔记的范围')
-			.setDesc('随机回顾「笔记目录」下的笔记）');
+			.setName(i18n.t('setting_random_review_name'))
+			.setDesc(i18n.t('setting_random_review_desc'));
 		const allTags = this.plugin.fileUtils.getAllFilesTags();
 		const root = createRoot(randomSetting.controlEl);
 		root.render(

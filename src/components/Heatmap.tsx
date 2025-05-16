@@ -1,6 +1,7 @@
 import { TFile } from 'obsidian';
 import CalendarHeatmap from 'react-calendar-heatmap';
 import { Tooltip } from 'react-tooltip'
+import { i18n } from 'src/utils/i18n';
 
 export type HeatmapData = {
     date: string,
@@ -34,10 +35,12 @@ export const Heatmap = ({ values, onCickDate }: {
                     };
                 }}
                 showWeekdayLabels={false}
-                monthLabels={['一月', '二月', '三月',
-                    '四月', '五月', '六月',
-                    '七月', '八月', '九月',
-                    '十月', '十一月', '十二月']}
+                monthLabels={[
+                    i18n.t('month1'), i18n.t('month2'), i18n.t('month3'), 
+                    i18n.t('month4'), i18n.t('month5'), i18n.t('month6'), 
+                    i18n.t('month7'), i18n.t('month8'), i18n.t('month9'), 
+                    i18n.t('month10'), i18n.t('month11'), i18n.t('month12'), 
+                ]}
                 showOutOfRangeDays={true}
             />
             <Tooltip id="my-tooltip" style={{ zIndex: 2001 }} />

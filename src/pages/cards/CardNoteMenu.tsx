@@ -1,4 +1,5 @@
 import { Menu, TFile, Notice } from "obsidian";
+import { i18n } from "src/utils/i18n";
 
 export interface CardNoteMenuParams {
   event: MouseEvent;
@@ -20,7 +21,7 @@ export const openCardNoteMoreMenu = ({
 
   const openNote = () => {
     menu.addItem((item) => {
-      item.setTitle("打开");
+      item.setTitle(i18n.t('general_open'));
       item.onClick(() => {
         onOpen(file);
       });
@@ -28,7 +29,7 @@ export const openCardNoteMoreMenu = ({
   };
   const removeFromView = () => {
     menu.addItem((item) => {
-      item.setTitle("从当前视图移除");
+      item.setTitle(i18n.t('remove_from_view'));
       item.onClick(() => {
         onRemoveFromView(file);
       });
@@ -36,7 +37,7 @@ export const openCardNoteMoreMenu = ({
   };
   const addToView = () => {
     menu.addItem((item) => {
-      item.setTitle("添加到视图");
+      item.setTitle(i18n.t('add_to_view'));
       item.onClick(() => {
         onImportToView(file);
       });
@@ -44,7 +45,7 @@ export const openCardNoteMoreMenu = ({
   };
   const pinNote = () => {
     menu.addItem((item) => {
-      item.setTitle(isPinned ? "取消置顶" : "置顶");
+      item.setTitle(i18n.t(isPinned ? 'general_unpin' : 'general_pin'));
       item.onClick(() => {
         setPin(file, !isPinned);
       });
@@ -52,17 +53,17 @@ export const openCardNoteMoreMenu = ({
   };
   const copyLink = () => {
     menu.addItem((item) => {
-      item.setTitle("复制链接");
+      item.setTitle(i18n.t('copy_link'));
       item.onClick(() => {
         const url = ` [[${file.path}|MEMO ▶]] `;
         navigator.clipboard.writeText(url);
-        new Notice("已复制链接");
+        new Notice(i18n.t('link_copied'));
       });
     });
   };
   const deleteNote = () => {
     menu.addItem((item) => {
-      item.setTitle("删除");
+      item.setTitle(i18n.t('general_delete'));
       item.onClick(() => {
         onDelete(file);
       });
@@ -70,13 +71,13 @@ export const openCardNoteMoreMenu = ({
   };
   const ctimeInfo = () => {
     menu.addItem((item) => {
-      item.setTitle(`创建: ${new Date(file.stat.ctime).toLocaleString()}`);
+      item.setTitle(`${i18n.t('general_create')}: ${new Date(file.stat.ctime).toLocaleString()}`);
       item.setDisabled(true);
     });
   };
   const mtimeInfo = () => {
     menu.addItem((item) => {
-      item.setTitle(`更新: ${new Date(file.stat.mtime).toLocaleString()}`);
+      item.setTitle(`${i18n.t('general_update')}: ${new Date(file.stat.mtime).toLocaleString()}`);
       item.setDisabled(true);
     });
   };

@@ -16,6 +16,7 @@ import { ViewSelectModal } from "./sidebar/viewScheme/ViewSelectModal";
 import { createFileWatcher } from 'src/utils/fileWatcher';
 import { openDeleteConfirmModal } from "src/components/ConfirmModal";
 import AddNoteView from "./header/AddNoteView";
+import { i18n } from "src/utils/i18n";
 
 export const CARD_DASHBOARD_VIEW_TYPE = "dashboard-view";
 
@@ -151,7 +152,7 @@ const CardDashboardView = ({ plugin, app }: { plugin: BanyanPlugin, app: App }) 
       })
       .catch(error => {
         console.error("Error loading notes content:", error);
-        new Notice('加载笔记内容时出错');
+        new Notice(i18n.t('notice_error_when_load_notes'));
         setIsLoading(false);
       });
   }, [sortType, curScheme, refreshFlag, plugin.fileUtils.getAllFiles().length, dir]); // Add dir dependency
@@ -266,10 +267,10 @@ const CardDashboardView = ({ plugin, app }: { plugin: BanyanPlugin, app: App }) 
   const handleDelete = async (file: TFile) => {
     openDeleteConfirmModal({
       app,
-      description: `确定要将此笔记移至系统回收站吗？`,
+      description: i18n.t('delete_note_confirm'),
       onConfirm: async () => {
         await plugin.fileUtils.trashFile(file);
-        new Notice('笔记已移至系统回收站');
+        new Notice(i18n.t('notice_note_to_trash'));
       }
     });
   };
@@ -298,7 +299,7 @@ const CardDashboardView = ({ plugin, app }: { plugin: BanyanPlugin, app: App }) 
       viewSchemes: viewSchemes,
       onSelect: (scheme) => {
         if (scheme.files.includes(file.getID())) {
-          new Notice('笔记已存在于该视图中');
+          new Notice(i18n.t('notice_note_already_in_view'));
           return;
         }
         const newFiles = [...scheme.files, file.getID()];
@@ -325,7 +326,7 @@ const CardDashboardView = ({ plugin, app }: { plugin: BanyanPlugin, app: App }) 
     // 使用文件的创建时间戳作为唯一标识符，而非文件路径
     const fileId = file.getID();
     const newPinned = [...curScheme.pinned.filter(p => p !== fileId)].concat(isPinned ? [fileId] : []);
-    const noticeStr = isPinned ? '已置顶' : '已取消置顶';
+    const noticeStr = isPinned ? i18n.t('notice_note_pinned') : i18n.t('notice_note_unpinned');
     const newScheme = { ...curScheme, pinned: newPinned };
     if (newScheme.type === 'ViewScheme') {
       const newSchemes = viewSchemes.map(scheme => scheme.id == newScheme.id ? newScheme : scheme);
@@ -390,7 +391,7 @@ const CardDashboardView = ({ plugin, app }: { plugin: BanyanPlugin, app: App }) 
     setSortType: (t: 'created' | 'modified') => void) => {
     const sortMenu = new Menu();
     sortMenu.addItem((item) => {
-      item.setTitle("最近创建");
+      item.setTitle(i18n.t('recently_created'));
       item.setChecked(sortType === 'created');
       item.onClick(() => {
         setSortType('created');
@@ -399,7 +400,7 @@ const CardDashboardView = ({ plugin, app }: { plugin: BanyanPlugin, app: App }) 
       });
     });
     sortMenu.addItem((item) => {
-      item.setTitle("最近更新");
+      item.setTitle(i18n.t('recently_updated'));
       item.setChecked(sortType === 'modified');
       item.onClick(() => {
         setSortType('modified');
@@ -507,7 +508,7 @@ const CardDashboardView = ({ plugin, app }: { plugin: BanyanPlugin, app: App }) 
         {!Platform.isMobile && <div style={{ marginTop: 16 }}><AddNoteView app={app} plugin={plugin} onAdd={() => setRefreshFlag(f => f + 1)} /></div>}
         <div className="main-subheader-container" style={{ marginBottom: 6, marginTop: 0, marginRight: 16, display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
           <div style={{ display: "flex", alignItems: 'center' }}>
-            <span style={{ padding: '12px 6px', color: 'var(--text-muted)', fontSize: 'var(--font-smaller)' }}>已加载 {displayedNotes.length} / {curSchemeNotesLength} 条笔记</span>
+            <span style={{ padding: '12px 6px', color: 'var(--text-muted)', fontSize: 'var(--font-smaller)' }}>{i18n.t('loaded_notes', {count: `${displayedNotes.length}`, total: `${curSchemeNotesLength}`})}</span>
             {cardNodes.length > 0 && <button style={{ marginLeft: '6px', padding: '0 6px', background: 'transparent' }}
               children={<Icon name="arrow-down-wide-narrow" />}
               onClick={(e) => sortMenu(e.nativeEvent, sortType, setSortType)}
@@ -529,7 +530,7 @@ const CardDashboardView = ({ plugin, app }: { plugin: BanyanPlugin, app: App }) 
         {/* Add loading and end-of-list indicators here */}
         <div style={{ textAlign: 'center', padding: '20px', color: 'var(--text-muted)' }}>
           {isLoading && <div>加载中...</div>}
-          {!isLoading && displayedNotes.length >= curSchemeNotesLength && cardNodes.length > 0 && <div>你已经到底部了</div>}
+          {!isLoading && displayedNotes.length >= curSchemeNotesLength && cardNodes.length > 0 && <div>i18n.t('reached_bottom')</div>}
         </div>
       </div>
     </div>

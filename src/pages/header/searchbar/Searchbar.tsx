@@ -4,6 +4,7 @@ import { useState } from "react";
 import { FilterScheme, SearchFilterScheme } from "src/models/FilterScheme";
 import React from "react";
 import { Platform } from "obsidian";
+import { i18n } from "src/utils/i18n";
 
 interface SearchbarProps {
     allTags: string[];
@@ -34,10 +35,10 @@ export const Searchbar: React.FC<SearchbarProps> = ({ allTags, setCurFilterSchem
                 <div onClick={() => setShowFilterBox(v => !v)} style={{ cursor: 'pointer', marginLeft: 4, marginRight: 16 }}><Icon name="search" /></div>
                 {showFilterBox && (
                     <div style={{ position: 'absolute', top: '100%', marginTop: 6, right: 0, zIndex: 10, background: 'var(--background-primary)', boxShadow: '0 2px 8px 8px rgba(0,0,0,0.15)', borderRadius: 8, padding: 16, width: '90vw' }}>
-                        <div style={{ marginBottom: 12, fontSize: 'var(--font-text-size)', fontWeight: 'var(--font-semibold)' }}>搜索</div>
+                        <div style={{ marginBottom: 12, fontSize: 'var(--font-text-size)', fontWeight: 'var(--font-semibold)' }}>i18n.t('search_view_title')</div>
                         <input
                             type="text"
-                            placeholder="关键字"
+                            placeholder={i18n.t('search_input_placeholder')}
                             value={tempFilterScheme.keyword}
                             onChange={e => {
                                 const newKeyword = e.target.value;
@@ -56,10 +57,10 @@ export const Searchbar: React.FC<SearchbarProps> = ({ allTags, setCurFilterSchem
                             setFilterScheme={setTempFilterScheme}
                         />
                         <div style={{ display: 'flex', justifyContent: 'flex-start', gap: 8, marginTop: 16 }}>
-                            <button onClick={handleSearch} style={{ padding: '4px 16px', background: 'var(--interactive-accent)' }}>搜索</button>
-                            <button onClick={handleReset} style={{ padding: '4px 16px', backgroundColor: 'transparent' }}>重置</button>
+                            <button onClick={handleSearch} style={{ padding: '4px 16px', background: 'var(--interactive-accent)' }}>{i18n.t('general_search')}</button>
+                            <button onClick={handleReset} style={{ padding: '4px 16px', backgroundColor: 'transparent' }}>{i18n.t('general_reset')}</button>
                             <div style={{ flex: 1 }}></div>
-                            <button onClick={handleCancel} style={{ padding: '4px 16px' }}>取消</button>
+                            <button onClick={handleCancel} style={{ padding: '4px 16px' }}>{i18n.t('general_cancel')}</button>
                         </div>
                     </div>
                 )}
@@ -72,7 +73,7 @@ export const Searchbar: React.FC<SearchbarProps> = ({ allTags, setCurFilterSchem
             <Icon name="search" />
             <input
                 type="text"
-                placeholder="搜索"
+                placeholder={i18n.t('search_bar_placeholder')}
                 value={tempFilterScheme.keyword}
                 onChange={e => {
                     const newKeyword = e.target.value;
@@ -88,17 +89,17 @@ export const Searchbar: React.FC<SearchbarProps> = ({ allTags, setCurFilterSchem
             <div onClick={() => setShowFilterBox(v => !v)} style={{ cursor: 'pointer', marginLeft: 4 }}><Icon name="sliders-horizontal" /></div>
             {showFilterBox && (
                 <div style={{ position: 'absolute', top: '100%', marginTop: 6, right: 0, zIndex: 10, background: 'var(--background-primary)', boxShadow: '0 2px 8px 4px rgba(0,0,0,0.15)', borderRadius: 8, padding: 16, minWidth: 360 }}>
-                    <div style={{ marginBottom: 12, fontSize: 'var(--font-text-size)' }}>搜索条件</div>
+                    <div style={{ marginBottom: 12, fontSize: 'var(--font-text-size)' }}>{i18n.t('search_view_title')}</div>
                     <SearchView
                         allTags={allTags}
                         filterScheme={tempFilterScheme}
                         setFilterScheme={setTempFilterScheme}
                     />
                     <div style={{ display: 'flex', justifyContent: 'flex-start', gap: 8, marginTop: 16 }}>
-                        <button onClick={handleSearch} style={{ padding: '4px 16px', background: 'var(--interactive-accent)' }}>搜索</button>
-                        <button onClick={handleReset} style={{ padding: '4px 16px', backgroundColor: 'transparent' }}>重置</button>
+                        <button onClick={handleSearch} style={{ padding: '4px 16px', background: 'var(--interactive-accent)' }}>{i18n.t('general_search')}</button>
+                        <button onClick={handleReset} style={{ padding: '4px 16px', backgroundColor: 'transparent' }}>{i18n.t('general_reset')}</button>
                         <div style={{ flex: 1 }}></div>
-                        <button onClick={handleCancel} style={{ padding: '4px 16px' }}>取消</button>
+                        <button onClick={handleCancel} style={{ padding: '4px 16px' }}>{i18n.t('general_cancel')}</button>
                     </div>
                 </div>
             )}

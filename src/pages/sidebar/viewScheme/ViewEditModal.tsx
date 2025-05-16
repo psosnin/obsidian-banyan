@@ -2,6 +2,7 @@ import { App, Modal, Platform } from "obsidian";
 import * as React from "react";
 import { createRoot, Root } from "react-dom/client";
 import { ViewScheme } from "src/models/ViewScheme";
+import { i18n } from "src/utils/i18n";
 
 interface ViewEditModalProps {
     viewScheme: ViewScheme;
@@ -44,13 +45,13 @@ const ViewEditContainer = ({ props, close }: { props: ViewEditModalProps, close:
         close();
     };
     return <div className="view-modal-container" style={{ padding: '30px 20px 30px 20px' }}>
-        <div style={{ marginBottom: 16, fontWeight: "bold" }}>{isNew ? "创建" : "更新"}视图</div>
+        <div style={{ marginBottom: 16, fontWeight: "bold" }}>{isNew ? i18n.t('view_scheme_title_create') : i18n.t('view_scheme_title_update')}</div>
         <div style={{ marginBottom: '0.5em', display: 'flex', gap: '1em', flexWrap: 'wrap', flexDirection: 'column' }}>
             <div className="view-name-container" >
-                {!Platform.isMobile && <label style={{ marginRight: 12 }}>名称</label>}
+                {!Platform.isMobile && <label style={{ marginRight: 12 }}>{i18n.t('view_scheme_name_label')}</label>}
                 <input
                     type="text"
-                    placeholder={Platform.isMobile ? "请输入名称" : ""}
+                    placeholder={Platform.isMobile ? i18n.t('view_scheme_name_placeholder') : ""}
                     value={scheme.name}
                     onChange={e => setScheme({ ...scheme, name: e.target.value })}
                     style={{ marginRight: 4, padding: '20px 16px', backgroundColor: 'var(--background-secondary)', border: 'none', outline: 'none' }}
@@ -58,8 +59,8 @@ const ViewEditContainer = ({ props, close }: { props: ViewEditModalProps, close:
             </div>
         </div>
         <div style={{ display: "flex", justifyContent: "flex-end", gap: 8, marginTop: 16 }}>
-            <button onClick={handleCancel}>取消</button>
-            <button onClick={handleSave} style={{ background: "var(--interactive-accent)", color: "var(--text-on-accent)", border: "none", borderRadius: 4, padding: "4px 16px" }}>保存</button>
+            <button onClick={handleCancel}>{i18n.t('general_cancel')}</button>
+            <button onClick={handleSave} style={{ background: "var(--interactive-accent)", color: "var(--text-on-accent)", border: "none", borderRadius: 4, padding: "4px 16px" }}>{i18n.t('general_save')}</button>
         </div>
     </div>;
 };

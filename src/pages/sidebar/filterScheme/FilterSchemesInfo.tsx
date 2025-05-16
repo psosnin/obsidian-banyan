@@ -4,6 +4,7 @@ import { FilterEditModal } from "./FilterEditModal";
 import { Icon } from "src/components/Icon";
 import { SidebarButton } from "../SidebarButton";
 import { App, Menu } from "obsidian";
+import { i18n } from "src/utils/i18n";
 
 export const FilterSchemesInfo = ({
     app, allTags, filterSchemes, curFilterSchemeID,
@@ -59,7 +60,7 @@ export const FilterSchemesInfo = ({
             const newScheme = {
                 ...filterSchemes[index],
                 id: maxId + 1,
-                name: filterSchemes[index].name + ' 副本'
+                name: `${filterSchemes[index].name} ${i18n.t('general_copy')}`
             };
             setFilterScheme(newScheme);
         } else if (action === 'delete') {
@@ -71,16 +72,16 @@ export const FilterSchemesInfo = ({
     const handleClickMore = (event: MouseEvent, index: number) => {
         const menu = new Menu();
         menu.addItem((item) => {
-            item.setTitle("更新");
+            item.setTitle(i18n.t('general_update'));
             item.onClick(() => handleMenuClick('update', index));
         });
         menu.addItem((item) => {
-            item.setTitle("创建副本");
+            item.setTitle(i18n.t('create_copy'));
             item.onClick(() => handleMenuClick('duplicate', index));
         });
         menu.addSeparator();
         menu.addItem((item) => {
-            item.setTitle("删除");
+            item.setTitle(i18n.t('general_delete'));
             item.onClick(() => handleMenuClick('delete', index));
         });
         menu.showAtMouseEvent(event);
@@ -119,7 +120,7 @@ export const FilterSchemesInfo = ({
                 flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'
             }}>
                 <div className='filter-scheme-header-title' style={{ fontSize: 'var(--font-smaller)', color: 'var(--interactive-accent)' }}>
-                    <span>常用过滤</span>
+                    <span>{i18n.t('filter_schemes')}</span>
                 </div>
                 <div className='filter-scheme-header-add' style={{ marginRight: 8 }}>
                     <button className='filter-scheme-header-add-btn'

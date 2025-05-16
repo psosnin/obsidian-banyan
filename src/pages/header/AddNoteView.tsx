@@ -3,6 +3,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Icon } from "src/components/Icon";
 import TagInput from "src/components/TagInput";
 import BanyanPlugin from "src/main";
+import { i18n } from "src/utils/i18n";
 
 interface AddNoteViewProps {
   app: App;
@@ -81,10 +82,10 @@ const AddNoteView: React.FC<AddNoteViewProps> = ({ app, plugin, onAdd }) => {
 
   return (
     <div className={"add-note-container" + (focused ? " add-note-container--focusd" : "")} >
-      {showPlaceholder && <div style={{ position: 'absolute', left: 32, top: 26, color: 'var(--text-faint)' }}>此刻的想法是...</div>}
+      {showPlaceholder && <div style={{ position: 'absolute', left: 32, top: 26, color: 'var(--text-faint)' }}>{i18n.t('editor_content_placeholder')}</div>}
       <div ref={ref} className={"add-note-content"} />
       <div className="add-note-footer" style={{ display: "flex", justifyContent: "space-between", alignItems: 'end' }}>
-        <div style={{ width: '100%', maxWidth: '460px' }}><TagInput tags={tags} onChange={setTags} allTags={allTags} placeholder="在这里输入标签" allowCreate={true}
+        <div style={{ width: '100%', maxWidth: '460px' }}><TagInput tags={tags} onChange={setTags} allTags={allTags} placeholder={i18n.t('editor_tags_placeholder')} allowCreate={true}
         /></div>
         <button style={{ padding: "12px 20px", background: focused ? "var(--interactive-accent)" : "var(--background-modifier-hover)" }}
           onClick={async () => {

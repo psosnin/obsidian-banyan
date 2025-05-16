@@ -2,6 +2,7 @@ import { TFile, App, WorkspaceLeaf, MarkdownView } from "obsidian";
 import * as React from "react";
 import { openCardNoteMoreMenu } from "./CardNoteMenu";
 import { Icon } from "src/components/Icon";
+import { i18n } from "src/utils/i18n";
 
 interface CardNoteProps {
   file: TFile;
@@ -75,7 +76,7 @@ const CardNote: React.FC<CardNoteProps> = ({
       e.preventDefault();
     }}>
       <div className="card-note-header">
-        <div className="card-note-time">{isPinned ? "置顶 · " : ""}{isCreated ? "创建于" : "更新于"} {new Date(isCreated ? file.stat.ctime : file.stat.mtime).toLocaleString()}</div>
+        <div className="card-note-time">{isPinned ? `${i18n.t('general_pin')} · ` : ""}{isCreated ? i18n.t('created_at') : i18n.t('updated_at')} {new Date(isCreated ? file.stat.ctime : file.stat.mtime).toLocaleString()}</div>
         {showTitle && <div className="card-note-title"><h3>{file.basename}</h3></div>}
         {tags.length > 0 && <div className="card-note-tags"> {tags.map((tag) =>
           <div className="card-note-tag" key={tag}>

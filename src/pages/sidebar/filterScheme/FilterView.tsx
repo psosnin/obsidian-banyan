@@ -2,6 +2,7 @@ import * as React from "react";
 import { TagFilterGroup } from "../../../components/TagFilterGroup";
 import { FilterScheme } from "src/models/FilterScheme";
 import { Platform } from "obsidian";
+import { i18n } from "src/utils/i18n";
 
 export interface FilterViewProps {
   allTags: string[];
@@ -17,17 +18,17 @@ export const FilterView: React.FC<FilterViewProps> = ({ allTags, filterScheme, s
   return (
     <div style={{ marginBottom: '0.5em', display: 'flex', gap: Platform.isMobile ? '1.2em' : '1em', flexWrap: 'wrap', flexDirection: 'column' }}>
       {showName && <div className="filter-name-container" >
-        {showLabel && <label style={{ marginRight: 12 }}>方案名称</label>}
+        {showLabel && <label style={{ marginRight: 12 }}>{i18n.t('filter_scheme_name_label')}</label>}
         <input
           type="text"
           value={filterScheme.name}
-          placeholder={showLabel ? "" : "输入方案名称"}
+          placeholder={showLabel ? "" : i18n.t('filter_scheme_name_placeholder')}
           onChange={e => setFilterScheme({ ...filterScheme, name: e.target.value })}
           style={{ marginRight: 4, padding: '20px 16px', backgroundColor: 'var(--background-secondary)', border: 'none', outline: 'none' }}
         />
       </div>}
       <div className="filter-date-container">
-        {showLabel && <label style={{ marginRight: 12 }}>日期</label>}
+        {showLabel && <label style={{ marginRight: 12 }}>{i18n.t('filter_scheme_date_label')}</label>}
         <input
           type="date"
           value={filterScheme.dateRange.from}
@@ -51,11 +52,11 @@ export const FilterView: React.FC<FilterViewProps> = ({ allTags, filterScheme, s
         />
       </div>
       {showKeyword && <div className="filter-keyword-container">
-        {showLabel && <label style={{ marginRight: 12 }}>关键字</label>}
+        {showLabel && <label style={{ marginRight: 12 }}>{i18n.t('filter_scheme_keyword_label')}</label>}
         <input
           type="text"
           value={filterScheme.keyword}
-          placeholder={showLabel ? "" : "输入关键字"}
+          placeholder={showLabel ? "" : i18n.t('filter_scheme_keyword_placeholder')}
           onChange={e => setFilterScheme({ ...filterScheme, keyword: e.target.value })}
           style={{ marginRight: 4, padding: '20px 16px', backgroundColor: 'var(--background-secondary)', border: 'none', outline: 'none' }}
         />

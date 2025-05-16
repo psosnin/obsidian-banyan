@@ -3,8 +3,6 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Icon } from "src/components/Icon";
 import TagInput from "src/components/TagInput";
 import BanyanPlugin from "src/main";
-import { getAddCardFile, getAllCardFiles } from "src/utils/fileUtils";
-import { getFilesTags } from "src/utils/tagUtils";
 
 interface AddNoteViewProps {
   app: App;
@@ -29,7 +27,7 @@ const AddNoteView: React.FC<AddNoteViewProps> = ({ app, plugin, onAdd }) => {
     const setupView = async () => {
       if (!ref.current) return;
       try {
-        const file = await getAddCardFile(plugin);
+        const file = await plugin.fileUtils.getPlaceholderFile();
         await (leaf as WorkspaceLeaf).openFile(file);
         updateHasContent();
         if (!(leaf.view instanceof MarkdownView)) {
@@ -73,7 +71,7 @@ const AddNoteView: React.FC<AddNoteViewProps> = ({ app, plugin, onAdd }) => {
 
   const [tags, setTags] = useState<string[]>([]);
   const allTags = useMemo(() => {
-    const tags = getFilesTags(app, getAllCardFiles(plugin));
+    const tags = plugin.fileUtils.getAllFilesTags();
     return tags;
   }, [app, plugin]);
 
@@ -90,13 +88,13 @@ const AddNoteView: React.FC<AddNoteViewProps> = ({ app, plugin, onAdd }) => {
         /></div>
         <button style={{ padding: "12px 20px", background: focused ? "var(--interactive-accent)" : "var(--background-modifier-hover)" }}
           onClick={async () => {
-            const file = await getAddCardFile(plugin);
-            const body = await plugin.app.vault.read(file);
+            const file = await plugin.fileUtils.getPlaceholderFile();
+            const body = await plugin.fileUtils.readFileContent(file);
             if (body.trim().length === 0 && tags.length === 0) return;
             const meta = tags.length === 0 ? "" : `---\ntags:\n${tags.map(t => `- ${t}\n`).join('')}---\n`;
             const content = meta + body;
-            await plugin.addNote({ content: content, open: false });
-            await plugin.app.vault.modify(file, '');
+            await plugin.fileUtils.addFile(content, false);
+            await plugin.fileUtils.modifyFileContent(file, '');
             setTags([]);
             onAdd();
           }}><Icon name="send-horizontal" size="l" color="white" /></button>

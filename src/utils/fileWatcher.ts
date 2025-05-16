@@ -1,6 +1,5 @@
-import { App, TFile, Vault, MetadataCache } from 'obsidian';
+import { TFile, Vault, MetadataCache } from 'obsidian';
 import BanyanPlugin from 'src/main';
-import { getAllCardFiles } from './fileUtils';
 
 export type FileChangeType = 'create' | 'delete' | 'modify' | 'rename' | 'meta-change';
 export interface FileChange {
@@ -30,7 +29,7 @@ export class FileWatcher {
   }
 
   private initFileCache() {
-    getAllCardFiles(this.plugin).forEach(file => {
+    this.plugin.fileUtils.getAllFiles().forEach(file => {
       this.fileCache.set(file.path, file.stat.mtime);
     });
   }

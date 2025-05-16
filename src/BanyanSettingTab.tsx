@@ -1,7 +1,5 @@
 import { App, Platform, PluginSettingTab, Setting } from 'obsidian';
 import BanyanPlugin from './main';
-import { getAllFolders, createFolderSuggest, getAllCardFiles } from './utils/fileUtils';
-import { getFilesTags } from './utils/tagUtils';
 import { createRoot } from 'react-dom/client';
 import { StrictMode, useState, } from 'react';
 import { TagFilterGroup } from './components/TagFilterGroup';
@@ -17,12 +15,20 @@ export class BanyanSettingTab extends PluginSettingTab {
 		const { containerEl } = this;
 		containerEl.empty();
 
+		this.setupCardsDirectorySetting(containerEl);
+		this.setupOpenWhenStartObsidianSetting(containerEl);
+		this.setupShowTitleSetting(containerEl);
+		this.setupCardsColumnsSetting(containerEl);
+		this.setupRandomNoteSetting(containerEl);
+	}
+
+	setupCardsDirectorySetting(containerEl: HTMLElement) {
 		new Setting(containerEl)
 			.setName('笔记目录')
 			.setDesc('「卡片面板」的笔记目录')
 			.addText(async text => {
-				const folders = await getAllFolders(this.app);
-				createFolderSuggest(text.inputEl, folders, async (folder) => {
+				const folders = await this.plugin.fileUtils.getAllFolders();
+				this.createFolderSuggest(text.inputEl, folders, async (folder) => {
 					text.setValue(folder);
 					this.plugin.settings.cardsDirectory = folder;
 					await this.plugin.saveSettings();
@@ -34,7 +40,9 @@ export class BanyanSettingTab extends PluginSettingTab {
 						await this.plugin.saveSettings();
 					});
 			});
+	}
 
+	setupOpenWhenStartObsidianSetting(containerEl: HTMLElement) {
 		new Setting(containerEl)
 			.setName('启动时自动打开面板')
 			.setDesc('启用后，Obsidian 启动时会自动打开「卡片面板」')
@@ -45,7 +53,9 @@ export class BanyanSettingTab extends PluginSettingTab {
 						await this.plugin.saveSettings();
 					});
 			});
+	}
 
+	setupShowTitleSetting(containerEl: HTMLElement) {
 		new Setting(containerEl)
 			.setName('显示标题')
 			.setDesc('是否显示卡片视图的标题')
@@ -56,30 +66,29 @@ export class BanyanSettingTab extends PluginSettingTab {
 						await this.plugin.saveSettings();
 					});
 			});
+	}
 
+	setupCardsColumnsSetting(containerEl: HTMLElement) {
+		if (Platform.isMobile) return;
+		new Setting(containerEl)
+			.setName('笔记列数')
+			.setDesc('当面板足够宽时，最多显示多少列笔记')
+			.addDropdown(dropdown => {
+				dropdown.addOption('1', '1 列')
+					.addOption('2', '2 列')
+					.setValue(this.plugin.settings.cardsColumns.toString())
+					.onChange(async (value) => {
+						this.plugin.settings.cardsColumns = parseInt(value);
+						await this.plugin.saveSettings();
+					});
+			});
+	}
 
-		if (!Platform.isMobile) {
-			new Setting(containerEl)
-				.setName('笔记列数')
-				.setDesc('当面板足够宽时，最多显示多少列笔记')
-				.addDropdown(dropdown => {
-					dropdown.addOption('1', '1 列')
-						.addOption('2', '2 列')
-						.setValue(this.plugin.settings.cardsColumns.toString())
-						.onChange(async (value) => {
-							this.plugin.settings.cardsColumns = parseInt(value);
-							await this.plugin.saveSettings();
-						});
-				});
-		}
-
-		// 随机笔记设置
+	setupRandomNoteSetting(containerEl: HTMLElement) {
 		const randomSetting = new Setting(containerEl)
 			.setName('随机笔记的范围')
 			.setDesc('随机回顾「笔记目录」下的笔记）');
-		const files = getAllCardFiles(this.plugin);
-		const allTags = getFilesTags(this.app, files);
-
+		const allTags = this.plugin.fileUtils.getAllFilesTags();
 		const root = createRoot(randomSetting.controlEl);
 		root.render(
 			<StrictMode>
@@ -95,5 +104,41 @@ export class BanyanSettingTab extends PluginSettingTab {
 			this.plugin.settings.randomNoteTagFilter = value;
 			this.plugin.saveSettings().then(() => { });
 		}} />;
+	}
+
+	createFolderSuggest(
+		inputEl: HTMLInputElement,
+		folders: string[],
+		onSelect: (folder: string) => void
+	) {
+		let suggestEl: HTMLDivElement | null = null;
+		const showSuggestions = (value: string) => {
+			if (suggestEl) suggestEl.remove();
+			const filtered = folders.filter(f => f.includes(value));
+			if (filtered.length === 0) return;
+			suggestEl = document.createElement('div');
+			suggestEl.className = 'folder-suggest-dropdown';
+			filtered.forEach(folder => {
+				const item = document.createElement('div');
+				item.textContent = folder;
+				item.className = 'folder-suggest-item';
+				item.onmousedown = (e) => {
+					e.preventDefault();
+					onSelect(folder);
+					if (suggestEl) suggestEl.remove();
+				};
+				suggestEl?.appendChild(item);
+			});
+			inputEl.parentElement?.appendChild(suggestEl);
+		};
+		inputEl.addEventListener('focus', () => {
+			showSuggestions(inputEl.value);
+		});
+		inputEl.addEventListener('input', () => {
+			showSuggestions(inputEl.value);
+		});
+		inputEl.addEventListener('blur', () => {
+			setTimeout(() => { if (suggestEl) suggestEl.remove(); }, 100);
+		});
 	}
 }

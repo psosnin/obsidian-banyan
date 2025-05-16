@@ -1,14 +1,17 @@
-import { normalizePath, Plugin, WorkspaceLeaf, Notice, TFile } from 'obsidian';
+import { Plugin, WorkspaceLeaf } from 'obsidian';
 import { BanyanPluginSettings, DEFAULT_SETTINGS, CUR_SETTINGS_VERSION } from './BanyanPluginSettings';
 import { CARD_DASHBOARD_VIEW_TYPE, CardDashboard } from './pages/CardDashboard';
 import { BanyanSettingTab } from './BanyanSettingTab';
-import { getAllCardFiles } from './utils/fileUtils';
+import { FileUtils } from './utils/fileUtils';
 
 export default class BanyanPlugin extends Plugin {
 	settings: BanyanPluginSettings;
+	fileUtils: FileUtils;
 
 	async onload() {
 		await this.loadSettings();
+
+		this.fileUtils = new FileUtils(this.app, this);
 
 		// 注册自定义 view
 		this.registerView(
@@ -21,11 +24,11 @@ export default class BanyanPlugin extends Plugin {
 			id: 'add-card-note',
 			name: '添加卡片笔记',
 			callback: async () => {
-				await this.addCardNote();
+				await this.fileUtils.addFile();
 			}
 		});
 		const AddCardIconEl = this.addRibbonIcon('lightbulb', '添加卡片笔记', async (evt: MouseEvent) => {
-			await this.addCardNote();
+			await this.fileUtils.addFile();
 		});
 		AddCardIconEl.addClass('my-plugin-ribbon-class');
 
@@ -45,11 +48,11 @@ export default class BanyanPlugin extends Plugin {
 			id: 'open-random-note',
 			name: '打开随机笔记',
 			callback: () => {
-				this.openRandomNote();
+				this.fileUtils.openRandomFile();
 			}
 		});
 		const RandomNoteIconEl = this.addRibbonIcon('dice', '打开随机笔记', () => {
-			this.openRandomNote();
+			this.fileUtils.openRandomFile();
 		});
 		RandomNoteIconEl.addClass('my-plugin-ribbon-class');
 
@@ -63,90 +66,6 @@ export default class BanyanPlugin extends Plugin {
 				this.activateView(CARD_DASHBOARD_VIEW_TYPE);
 			}
 		});
-	}
-
-	async addCardNote() {
-		await this.addNote({});
-	}
-
-	// 打开随机笔记
-	openRandomNote() {
-		const files = getAllCardFiles(this);
-		const filteredFiles = this.filterFilesByTags(files);
-		if (!files || filteredFiles.length === 0) {
-			new Notice('没有找到任何笔记');
-			return;
-		}
-
-		// 随机选择一个笔记
-		const randomIndex = Math.floor(Math.random() * filteredFiles.length);
-		const randomFile = filteredFiles[randomIndex];
-
-		// 打开笔记
-		const leaf = this.app.workspace.getLeaf(false);
-		leaf.openFile(randomFile, { active: true }).then(() => this.app.workspace.setActiveLeaf(leaf, { focus: true }));
-		// this.app.workspace.openLinkText(randomFile.path, '', false);
-	}
-
-	// 根据标签筛选文件
-	filterFilesByTags(files: TFile[]) {
-		const { or, not } = this.settings.randomNoteTagFilter;
-
-		return files.filter(file => {
-			const fileTags = file.getTags(this.app);
-
-			// 检查排除标签
-			if (not.length > 0 && not.some(tag => fileTags.includes(tag))) {
-				return false;
-			}
-
-			// 如果没有设置包含标签，则返回所有不包含排除标签的文件
-			if (or.every(row => row.length === 0)) {
-				return true;
-			}
-
-			// 检查包含标签（OR 关系）
-			return or.some(row => {
-				// 如果行为空，则跳过
-				if (row.length === 0) return false;
-				// 行内标签是 AND 关系
-				return row.every(tag => fileTags.includes(tag));
-			});
-		});
-	}
-
-	async addNote({content, open = true}:{content?: string, open?: boolean}) {
-		const filePath = await this.getCardFilePath();
-		const _content = content ?? `---\ntags: \n---\n`;
-		const file = await this.app.vault.create(filePath, _content);
-		if (!open) return;
-		const leaf = this.app.workspace.getLeaf(true);
-		await leaf.openFile(file, { active: true, state: { mode: 'source' }, });
-		this.app.workspace.setActiveLeaf(leaf, { focus: true });
-	}
-
-	async getCardFilePath() {
-		const dir = this.settings.cardsDirectory;
-		const now = new Date();
-		const year = now.getFullYear();
-		const quarter = Math.floor((now.getMonth() + 3) / 3);
-		const month = (now.getMonth() + 1).toString().padStart(2, '0');
-		const day = now.getDate().toString().padStart(2, '0');
-		const hour = now.getHours().toString().padStart(2, '0');
-		const minute = now.getMinutes().toString().padStart(2, '0');
-		const second = now.getSeconds().toString().padStart(2, '0');
-		const folderPath = `${dir}/${year}年/${quarter}季度/${month}月/${day}日`;
-		await this.ensureDirectoryExists(folderPath);
-		const fileName = `${year}-${month}-${day} ${hour}-${minute}-${second}.md`;
-		const filePath = normalizePath(`${folderPath}/${fileName}`);
-		return filePath;
-	}
-
-	async ensureDirectoryExists(dir: string) {
-		const normalizedPath = normalizePath(dir);
-		if (!this.app.vault.getAbstractFileByPath(normalizedPath)) {
-			await this.app.vault.createFolder(normalizedPath);
-		}
 	}
 
 	onunload() {
@@ -163,7 +82,7 @@ export default class BanyanPlugin extends Plugin {
 	}
 
 	updateSavedFile = () => {
-		const _allFiles = getAllCardFiles(this).map((file) => file.getID());
+		const _allFiles = this.fileUtils.getAllFiles().map((file) => file.getID());
 		const allFiles = new Set(_allFiles);
 		this.settings.viewSchemes = [...this.settings.viewSchemes.map((scheme) => {
 			const newFiles = [...scheme.files.filter((file) => allFiles.has(file))];

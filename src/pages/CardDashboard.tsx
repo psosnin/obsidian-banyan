@@ -11,13 +11,11 @@ import { SidebarContent } from "./sidebar/SideBarContent";
 import { getHeatmapValues, HeatmapData } from "src/components/Heatmap";
 import { Searchbar } from "./header/searchbar/Searchbar";
 import EmptyStateCard from "./cards/EmptyStateCard";
-import { getFilesTags } from "src/utils/tagUtils";
 import { ViewScheme } from "src/models/ViewScheme";
 import { ViewSelectModal } from "./sidebar/viewScheme/ViewSelectModal";
 import { createFileWatcher } from 'src/utils/fileWatcher';
 import { openDeleteConfirmModal } from "src/components/ConfirmModal";
 import AddNoteView from "./header/AddNoteView";
-import { getAllCardFiles } from "src/utils/fileUtils";
 
 export const CARD_DASHBOARD_VIEW_TYPE = "dashboard-view";
 
@@ -121,10 +119,10 @@ const CardDashboardView = ({ plugin, app }: { plugin: BanyanPlugin, app: App }) 
     setIsLoading(true);
 
     // 获取所有符合目录条件的文件
-    const files = getAllCardFiles(plugin);
+    const files = plugin.fileUtils.getAllFiles();
 
     setTotalNotesNum(files.length);
-    setTotalTagsNum(getFilesTags(app, files).length);
+    setTotalTagsNum(plugin.fileUtils.getAllFilesTags().length);
     setHeatmapValues(getHeatmapValues(files));
 
     // 应用日期范围和视图筛选
@@ -139,11 +137,11 @@ const CardDashboardView = ({ plugin, app }: { plugin: BanyanPlugin, app: App }) 
     // 排序
     filtered.sort((a, b) => sortType === 'created' ? b.stat.ctime - a.stat.ctime : b.stat.mtime - a.stat.mtime);
 
-    setAllTags(getFilesTags(app, filtered));
+    setAllTags(plugin.fileUtils.getFilesTags(filtered));
 
     // 加载所有文件内容
     Promise.all(filtered.map(async (file: TFile) => {
-      const content = await app.vault.cachedRead(file);
+      const content = await plugin.fileUtils.readCachedFileContent(file);
       return { file, content };
     }))
       .then(allLoadedContents => {
@@ -156,7 +154,7 @@ const CardDashboardView = ({ plugin, app }: { plugin: BanyanPlugin, app: App }) 
         new Notice('加载笔记内容时出错');
         setIsLoading(false);
       });
-  }, [sortType, curScheme, refreshFlag, getAllCardFiles(plugin).length, dir]); // Add dir dependency
+  }, [sortType, curScheme, refreshFlag, plugin.fileUtils.getAllFiles().length, dir]); // Add dir dependency
 
   // 根据筛选条件和分页设置显示的笔记
   useEffect(() => {
@@ -270,7 +268,7 @@ const CardDashboardView = ({ plugin, app }: { plugin: BanyanPlugin, app: App }) 
       app,
       description: `确定要将此笔记移至系统回收站吗？`,
       onConfirm: async () => {
-        await app.vault.trash(file, true);
+        await plugin.fileUtils.trashFile(file);
         new Notice('笔记已移至系统回收站');
       }
     });
@@ -278,7 +276,7 @@ const CardDashboardView = ({ plugin, app }: { plugin: BanyanPlugin, app: App }) 
 
   // 卡片双击打开
   const handleOpen = (file: TFile) => {
-    app.workspace.openLinkText(file.path, '', false);
+    plugin.fileUtils.openFile(file);
   };
 
   const handleBatchImportToView = () => {
@@ -422,8 +420,8 @@ const CardDashboardView = ({ plugin, app }: { plugin: BanyanPlugin, app: App }) 
       onClickDate={(date) => {
         setCurScheme({ ...SearchFilterScheme, name: date, dateRange: { from: date, to: date } });
       }}
-      onClickAddNote={() => plugin.addCardNote()}
-      onClickRandomNote={() => plugin.openRandomNote()}
+      onClickAddNote={() => plugin.fileUtils.addFile()}
+      onClickRandomNote={() => plugin.fileUtils.openRandomFile()}
 
       curFilterSchemeID={curScheme.type == 'FilterScheme' ? curScheme.id : undefined}
       onClickFilterScheme={(index) => {

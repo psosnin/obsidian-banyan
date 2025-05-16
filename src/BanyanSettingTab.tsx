@@ -4,7 +4,7 @@ import { getAllFolders, createFolderSuggest, getAllCardFiles } from './utils/fil
 import { getFilesTags } from './utils/tagUtils';
 import { createRoot } from 'react-dom/client';
 import { StrictMode, useState, } from 'react';
-import { TagFilterGroup } from './sidebar/filterScheme/TagFilterGroup';
+import { TagFilterGroup } from './components/TagFilterGroup';
 
 export class BanyanSettingTab extends PluginSettingTab {
 	plugin: BanyanPlugin;

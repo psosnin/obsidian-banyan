@@ -1,7 +1,7 @@
 import { TFile, App, WorkspaceLeaf, MarkdownView } from "obsidian";
 import * as React from "react";
 import { openCardNoteMoreMenu } from "./CardNoteMenu";
-import { Icon } from "../components/Icon";
+import { Icon } from "src/components/Icon";
 
 interface CardNoteProps {
   file: TFile;

@@ -1,6 +1,6 @@
 import { normalizePath, Plugin, WorkspaceLeaf, Notice, TFile } from 'obsidian';
 import { BanyanPluginSettings, DEFAULT_SETTINGS, CUR_SETTINGS_VERSION } from './BanyanPluginSettings';
-import { CARD_DASHBOARD_VIEW_TYPE, CardDashboard } from './CardDashboard';
+import { CARD_DASHBOARD_VIEW_TYPE, CardDashboard } from './pages/CardDashboard';
 import { BanyanSettingTab } from './BanyanSettingTab';
 import { getAllCardFiles } from './utils/fileUtils';
 

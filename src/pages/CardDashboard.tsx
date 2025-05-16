@@ -1,23 +1,23 @@
 import { App, ItemView, WorkspaceLeaf, TFile, Notice, Menu, Platform } from "obsidian";
-import BanyanPlugin from "./main";
+import BanyanPlugin from "src/main";
 import { StrictMode, useEffect, useState, useRef, useCallback } from 'react';
 import { Root, createRoot } from 'react-dom/client';
 import * as React from "react";
 import CardNote from "./cards/CardNote";
-import { Icon } from "./components/Icon";
+import { Icon } from "src/components/Icon";
 import Sidebar from "./sidebar/Sidebar";
-import { DefaultFilterSchemeID, FilterScheme, getDefaultFilterScheme, SearchFilterScheme, SearchFilterSchemeID } from "./models/FilterScheme";
+import { DefaultFilterSchemeID, FilterScheme, getDefaultFilterScheme, SearchFilterScheme, SearchFilterSchemeID } from "src/models/FilterScheme";
 import { SidebarContent } from "./sidebar/SideBarContent";
-import { getHeatmapValues, HeatmapData } from "./components/Heatmap";
-import { Searchbar } from "./searchbar/Searchbar";
+import { getHeatmapValues, HeatmapData } from "src/components/Heatmap";
+import { Searchbar } from "./header/searchbar/Searchbar";
 import EmptyStateCard from "./cards/EmptyStateCard";
-import { getFilesTags } from "./utils/tagUtils";
-import { ViewScheme } from "./models/ViewScheme";
+import { getFilesTags } from "src/utils/tagUtils";
+import { ViewScheme } from "src/models/ViewScheme";
 import { ViewSelectModal } from "./sidebar/viewScheme/ViewSelectModal";
-import { createFileWatcher } from './utils/fileWatcher';
-import { openDeleteConfirmModal } from "./components/ConfirmModal";
-import AddNoteView from "./cards/AddNoteView";
-import { getAllCardFiles } from "./utils/fileUtils";
+import { createFileWatcher } from 'src/utils/fileWatcher';
+import { openDeleteConfirmModal } from "src/components/ConfirmModal";
+import AddNoteView from "./header/AddNoteView";
+import { getAllCardFiles } from "src/utils/fileUtils";
 
 export const CARD_DASHBOARD_VIEW_TYPE = "dashboard-view";
 

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { TagFilterGroup } from "./TagFilterGroup";
+import { TagFilterGroup } from "../../../components/TagFilterGroup";
 import { FilterScheme } from "src/models/FilterScheme";
 import { Platform } from "obsidian";
 

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { TagFilterGroup } from "src/sidebar/filterScheme/TagFilterGroup";
+import { TagFilterGroup } from "src/components/TagFilterGroup";
 import { FilterScheme } from "src/models/FilterScheme";
 
 export interface SearchViewProps {

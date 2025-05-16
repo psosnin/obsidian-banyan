@@ -1,4 +1,4 @@
-import { Heatmap, HeatmapData } from '../components/Heatmap';
+import { Heatmap, HeatmapData } from 'src/components/Heatmap';
 import { App } from 'obsidian';
 import { FilterScheme } from 'src/models/FilterScheme';
 import { ViewScheme } from 'src/models/ViewScheme';

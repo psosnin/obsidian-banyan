@@ -1,6 +1,6 @@
 import { FilterScheme, getDefaultFilterScheme } from "./models/FilterScheme";
 import { ViewScheme } from "./models/ViewScheme";
-import { TagFilterGroupValue } from "./sidebar/filterScheme/TagFilterGroup";
+import { TagFilterGroupValue } from "./components/TagFilterGroup";
 
 export interface BanyanPluginSettings {
 	settingsVersion: number;

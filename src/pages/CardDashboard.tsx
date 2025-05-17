@@ -17,6 +17,7 @@ import { createFileWatcher } from 'src/utils/fileWatcher';
 import { openDeleteConfirmModal } from "src/components/ConfirmModal";
 import AddNoteView from "./header/AddNoteView";
 import { i18n } from "src/utils/i18n";
+import { withinDateRange } from "src/models/DateRange";
 
 export const CARD_DASHBOARD_VIEW_TYPE = "dashboard-view";
 
@@ -536,18 +537,3 @@ const CardDashboardView = ({ plugin, app }: { plugin: BanyanPlugin, app: App }) 
     </div>
   );
 }
-
-const withinDateRange = (time: number, dateRange: { from: string; to: string }) => {
-  const fromDate = dateRange.from.length > 0 ? (new Date(dateRange.from)) : undefined;
-  const toDate = dateRange.to.length > 0 ? (new Date(dateRange.to)) : undefined;
-  if (toDate) toDate.setDate(toDate.getDate() + 1); // 要加一天，因为 toDate 是包含的
-
-  const from = fromDate ? fromDate.setHours(0, 0, 0, 0) : undefined;
-  const to = toDate ? toDate.setHours(0, 0, 0, 0) : undefined;
-
-  if (!from && !to) return true;
-  if (from && !to) return time >= from;
-  if (!from && to) return time <= to;
-  return time >= from! && time <= to!;
-}
-

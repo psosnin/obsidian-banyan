@@ -1,20 +1,16 @@
 import * as React from "react";
 import TagInput from "src/components/TagInput";
+import { TagFilter } from "src/models/TagFilter";
 import { i18n } from "src/utils/i18n";
 
-export type TagFilterGroupValue = {
-  or: string[][]; // 多行，每行多个标签，行内为且
-  not: string[];   // 非关系标签
-};
-
-export interface TagFilterGroupProps {
+export interface TagFilterViewProps {
   allTags: string[];
-  value: TagFilterGroupValue;
-  onChange: (value: TagFilterGroupValue) => void;
+  value: TagFilter;
+  onChange: (value: TagFilter) => void;
   showLabel?: boolean;
 }
 
-export const TagFilterGroup: React.FC<TagFilterGroupProps> = ({ allTags, value, onChange, showLabel = true }) => {
+export const TagFilterView: React.FC<TagFilterViewProps> = ({ allTags, value, onChange, showLabel = true }) => {
   // and: 多行，每行是标签数组
   // not: 最后一行，非关系
   const handleAndTagChange = (rowIdx: number, tags: string[]) => {
@@ -53,6 +49,30 @@ export const TagFilterGroup: React.FC<TagFilterGroupProps> = ({ allTags, value, 
           )}
         </div>
       ))}
+      {/* <div>
+        <label style={{ marginRight: 4 }}>{i18n.t('tag_group_label_notag')}</label>
+        <div>
+          <label style={{ marginRight: 4 }}>{i18n.t('tag_group_label_notag_unlimited')}</label>
+          <input type="checkbox" checked={value.noTag == 'unlimited'} onChange={(e) => {
+            if (!e.target.checked || value.noTag == 'unlimited') return;
+            onChange({ ...value, noTag: 'unlimited' });
+          }} />
+        </div>
+        <div>
+          <label style={{ marginRight: 4 }}>{i18n.t('tag_group_label_notag_include')}</label>
+          <input type="checkbox" checked={value.noTag == 'include'} onChange={(e) => {
+            if (!e.target.checked || value.noTag == 'include') return;
+            onChange({ ...value, noTag: 'include' });
+          }} />
+        </div>
+        <div>
+          <label style={{ marginRight: 4 }}>{i18n.t('tag_group_label_notag_exclude')}</label>
+          <input type="checkbox" checked={value.noTag == 'exclude'} onChange={(e) => {
+            if (!e.target.checked || value.noTag == 'exclude') return;
+            onChange({ ...value, noTag: 'exclude' });
+          }} />
+        </div>
+      </div> */}
       <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
         {showLabel && <label style={{ marginRight: 4 }}>{i18n.t('tag_group_label_exclude')}</label>}
         <TagInput

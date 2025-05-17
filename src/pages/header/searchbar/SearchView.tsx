@@ -1,5 +1,5 @@
 import * as React from "react";
-import { TagFilterGroup } from "src/components/TagFilterGroup";
+import { TagFilterView } from "src/components/TagFilterView";
 import { FilterScheme } from "src/models/FilterScheme";
 
 export interface SearchViewProps {
@@ -28,7 +28,7 @@ export const SearchView: React.FC<SearchViewProps> = ({ allTags, filterScheme, s
         />
       </div>
       <div className="filter-tags-container" style={{ display: "flex", flexDirection: 'row' }}>
-        <TagFilterGroup
+        <TagFilterView
           allTags={allTags}
           value={filterScheme.tagFilter}
           onChange={v => setFilterScheme({...filterScheme, tagFilter: v})}

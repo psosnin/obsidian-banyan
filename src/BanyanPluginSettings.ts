@@ -1,6 +1,6 @@
 import { FilterScheme, getDefaultFilterScheme } from "./models/FilterScheme";
 import { ViewScheme } from "./models/ViewScheme";
-import { TagFilterGroupValue } from "./components/TagFilterGroup";
+import { emptyTagFilter, TagFilter } from "./models/TagFilter";
 
 export interface BanyanPluginSettings {
 	settingsVersion: number;
@@ -9,7 +9,7 @@ export interface BanyanPluginSettings {
 	openWhenStartObsidian: boolean;
 	filterSchemes: FilterScheme[];
 	viewSchemes: ViewScheme[];
-	randomNoteTagFilter: TagFilterGroupValue;
+	randomNoteTagFilter: TagFilter;
 	cardsColumns: number;
 	showTitle: boolean;
 }
@@ -24,9 +24,6 @@ export const DEFAULT_SETTINGS: BanyanPluginSettings = {
 	showTitle: true,
 	filterSchemes: [getDefaultFilterScheme([])],
 	viewSchemes: [],
-	randomNoteTagFilter: {
-		or: [[]],
-		not: [],
-	},
+	randomNoteTagFilter: emptyTagFilter(),
 	cardsColumns: 1,
 }

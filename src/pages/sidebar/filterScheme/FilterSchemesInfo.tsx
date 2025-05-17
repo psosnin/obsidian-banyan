@@ -5,6 +5,7 @@ import { Icon } from "src/components/Icon";
 import { SidebarButton } from "../SidebarButton";
 import { App, Menu } from "obsidian";
 import { i18n } from "src/utils/i18n";
+import { emptyTagFilter } from "src/models/TagFilter";
 import { emptyDateRange } from "src/models/DateRange";
 
 export const FilterSchemesInfo = ({
@@ -28,7 +29,7 @@ export const FilterSchemesInfo = ({
         const newScheme = {
             id: maxId + 1,
             name: '',
-            tagFilter: { or: [[]], not: [] },
+            tagFilter: emptyTagFilter(),
             dateRange: emptyDateRange(),
             keyword: '',
             pinned: [],

@@ -2,7 +2,7 @@ import { App, Platform, PluginSettingTab, Setting } from 'obsidian';
 import BanyanPlugin from './main';
 import { createRoot } from 'react-dom/client';
 import { StrictMode, useState, } from 'react';
-import { TagFilterGroup } from './components/TagFilterGroup';
+import { TagFilterView } from './components/TagFilterView';
 import { i18n } from './utils/i18n';
 
 export class BanyanSettingTab extends PluginSettingTab {
@@ -100,7 +100,7 @@ export class BanyanSettingTab extends PluginSettingTab {
 
 	TagFilterGroupView = ({ allTags }: { allTags: string[] }) => {
 		const [value, setValue] = useState(this.plugin.settings.randomNoteTagFilter);
-		return <TagFilterGroup allTags={allTags} value={value} showLabel={false} onChange={(value) => {
+		return <TagFilterView allTags={allTags} value={value} showLabel={false} onChange={(value) => {
 			setValue(value);
 			this.plugin.settings.randomNoteTagFilter = value;
 			this.plugin.saveSettings().then(() => { });

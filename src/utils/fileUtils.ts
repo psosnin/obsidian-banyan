@@ -1,6 +1,6 @@
 import { TFolder, App, TFile, normalizePath, Notice, getAllTags } from "obsidian";
 import BanyanPlugin from "src/main";
-import { TagFilterGroupValue } from "src/components/TagFilterGroup";
+import { TagFilter } from "src/models/TagFilter";
 
 const PlaceholderFileName = "banyan_editor_placeholder.md";
 
@@ -169,7 +169,7 @@ export class FileUtils {
     return this.getFilesTags(files);
   }
   
-  private getTagsFilterdFiles(files: TFile[], filter: TagFilterGroupValue) {
+  private getTagsFilterdFiles(files: TFile[], filter: TagFilter) {
     const { or, not } = filter;
   
     return files.filter(file => {

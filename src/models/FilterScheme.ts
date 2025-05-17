@@ -1,10 +1,11 @@
 import { i18n } from "src/utils/i18n";
+import { emptyTagFilter, TagFilter } from "./TagFilter";
 import { DateRange, emptyDateRange } from "./DateRange";
 
 export type FilterScheme = {
     id: number,
     name: string,
-    tagFilter: { or: string[][]; not: string[] },
+    tagFilter: TagFilter,
     dateRange: DateRange,
     keyword: string,
     pinned: number[], // 存储文件的创建时间戳，而非路径，以便在文件移动或重命名时保持置顶状态
@@ -20,7 +21,7 @@ export const getDefaultFilterScheme = (schemes: FilterScheme[]) => {
 const _DefaultFilterScheme: FilterScheme = {
     id: -1,
     name: i18n.t('all_notes'),
-    tagFilter: { or: [[]], not: [] },
+    tagFilter: emptyTagFilter(),
     dateRange: emptyDateRange(),
     keyword: "",
     pinned: [],
@@ -32,7 +33,7 @@ export const SearchFilterSchemeID = -2;
 export const SearchFilterScheme: FilterScheme = {
     id: -2,
     name: '搜索结果',
-    tagFilter: { or: [[]], not: [] },
+    tagFilter: emptyTagFilter(),
     dateRange: emptyDateRange(),
     keyword: "",
     pinned: [],

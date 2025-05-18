@@ -82,7 +82,7 @@ export const Searchbar: React.FC<SearchbarProps> = ({ allTags, setCurFilterSchem
                 <div ref={filterButtonRef} onClick={() => setShowFilterBox(v => !v)} style={{ cursor: 'pointer', marginLeft: 4, marginRight: 16 }}><Icon name="search" /></div>
                 {showFilterBox && (
                     <div ref={filterBoxRef} style={{ position: 'absolute', top: '100%', marginTop: 6, right: 0, zIndex: 10, background: 'var(--background-primary)', boxShadow: '0 2px 8px 8px rgba(0,0,0,0.15)', borderRadius: 8, padding: 16, width: '90vw' }}>
-                        <div style={{ marginBottom: 12, fontSize: 'var(--font-text-size)', fontWeight: 'var(--font-semibold)' }}>i18n.t('search_view_title')</div>
+                        <div style={{ marginBottom: 12, fontSize: 'var(--font-text-size)', fontWeight: 'var(--font-semibold)' }}>{i18n.t('search_view_title')}</div>
                         <input
                             type="text"
                             placeholder={i18n.t('search_input_placeholder')}
@@ -107,7 +107,6 @@ export const Searchbar: React.FC<SearchbarProps> = ({ allTags, setCurFilterSchem
                             <button onClick={handleReset} style={{ padding: '4px 16px', backgroundColor: 'transparent' }}>{i18n.t('general_reset')}</button>
                             <div style={{ flex: 1 }}></div>
                             <button onClick={handleSearch} style={{ padding: '4px 16px', background: 'var(--interactive-accent)' }}>{i18n.t('general_search')}</button>
-                            {/* <button onClick={handleCancel} style={{ padding: '4px 16px' }}>{i18n.t('general_cancel')}</button> */}
                         </div>
                     </div>
                 )}
@@ -146,7 +145,6 @@ export const Searchbar: React.FC<SearchbarProps> = ({ allTags, setCurFilterSchem
                         <button onClick={handleReset} style={{ padding: '4px 16px', backgroundColor: 'transparent' }}>{i18n.t('general_reset')}</button>
                         <div style={{ flex: 1 }}></div>
                         <button onClick={handleSearch} style={{ padding: '4px 16px', background: 'var(--interactive-accent)' }}>{i18n.t('general_search')}</button>
-                        {/* <button onClick={handleCancel} style={{ padding: '4px 16px' }}>{i18n.t('general_cancel')}</button> */}
                     </div>
                 </div>
             )}

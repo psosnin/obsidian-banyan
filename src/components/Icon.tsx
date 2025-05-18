@@ -18,8 +18,7 @@ export const Icon = ({ name, size = 's', color = 'var(--icon-color)', className 
   const value = typeof size === 'string' ? `var(--icon-${size}` : `${size}px`;
 
   return <div ref={ref} className={`${className ?? ""}`} style={{
-    height: value,
-    width: value,
+    '--icon-size': value,
     color: color,
-  }} />;
+  } as React.CSSProperties } />;
 }

@@ -84,6 +84,7 @@ export default class BanyanPlugin extends Plugin {
 
 	updateSavedFile = () => {
 		const _allFiles = this.fileUtils.getAllFiles().map((file) => file.getID());
+		if (_allFiles.length === 0) return; // 防止获取不到文件，却清空数据的情况
 		const allFiles = new Set(_allFiles);
 		this.settings.viewSchemes = [...this.settings.viewSchemes.map((scheme) => {
 			const newFiles = [...scheme.files.filter((file) => allFiles.has(file))];

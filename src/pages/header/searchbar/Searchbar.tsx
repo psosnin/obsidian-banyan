@@ -104,9 +104,9 @@ export const Searchbar: React.FC<SearchbarProps> = ({ allTags, setCurFilterSchem
                             setFilterScheme={setTempFilterScheme}
                         />
                         <div style={{ display: 'flex', justifyContent: 'flex-start', gap: 8, marginTop: 16 }}>                            
-                            <button onClick={handleReset} style={{ padding: '4px 16px', backgroundColor: 'transparent' }}>{i18n.t('general_reset')}</button>
+                            <button onClick={handleReset}>{i18n.t('general_reset')}</button>
                             <div style={{ flex: 1 }}></div>
-                            <button onClick={handleSearch} style={{ padding: '4px 16px', background: 'var(--interactive-accent)' }}>{i18n.t('general_search')}</button>
+                            <button onClick={handleSearch} className="mod-cta">{i18n.t('general_search')}</button>
                         </div>
                     </div>
                 )}
@@ -142,9 +142,9 @@ export const Searchbar: React.FC<SearchbarProps> = ({ allTags, setCurFilterSchem
                         setFilterScheme={setTempFilterScheme}
                     />
                     <div style={{ display: 'flex', justifyContent: 'flex-start', gap: 8, marginTop: 16 }}>                        
-                        <button onClick={handleReset} style={{ padding: '4px 16px', backgroundColor: 'transparent' }}>{i18n.t('general_reset')}</button>
+                        <button onClick={handleReset}>{i18n.t('general_reset')}</button>
                         <div style={{ flex: 1 }}></div>
-                        <button onClick={handleSearch} style={{ padding: '4px 16px', background: 'var(--interactive-accent)' }}>{i18n.t('general_search')}</button>
+                        <button onClick={handleSearch} className="mod-cta">{i18n.t('general_search')}</button>
                     </div>
                 </div>
             )}

@@ -80,8 +80,8 @@ const TagInput: React.FC<TagInputProps> = ({ tags, onChange, allTags, placeholde
   };
 
   return (
-    <div style={{ backgroundColor: backgroundColor ?? 'var(--background-secondary)', padding: '6px 12px', borderRadius: 8, position: "relative" }}>
-      <div style={{ display: "flex", flexWrap: "wrap", overflowX: "hidden", alignItems: "center", gap: 4, rowGap: 6 }}>
+    <div className="tag-input-container" style={{ backgroundColor: backgroundColor ?? 'var(--background-secondary)', padding: '6px 12px', borderRadius: 8, position: "relative" }}>
+      <div className="tag-input-inputarea" style={{ display: "flex", flexWrap: "wrap", overflowX: "hidden", alignItems: "center", gap: 4, rowGap: 6 }}>
         {tags.map((tag, idx) => (
           <span key={tag} className="card-note-tag">
             {tag}
@@ -102,6 +102,7 @@ const TagInput: React.FC<TagInputProps> = ({ tags, onChange, allTags, placeholde
       </div>
       {showSuggest && filtered.length > 0 && (
         <div
+          className="tag-input-suggest"
           ref={suggestRef}
           style={{
             position: 'absolute',

@@ -14,7 +14,7 @@ export interface BanyanPluginSettings {
 	showTitle: boolean;
 }
 
-export const CUR_SETTINGS_VERSION = 1;
+export const CUR_SETTINGS_VERSION = 2;
 
 export const DEFAULT_SETTINGS: BanyanPluginSettings = {
 	settingsVersion: CUR_SETTINGS_VERSION,

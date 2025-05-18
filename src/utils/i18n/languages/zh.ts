@@ -26,6 +26,10 @@ export default {
     tag_group_label_exclude: "不含",
     tag_group_placeholder_exclude: "排除标签",
     tag_group_btn_or: "或",
+    tag_group_label_notag: "无标签",
+    tag_group_label_notag_unlimited: "不论",
+    tag_group_label_notag_include: "包含",
+    tag_group_label_notag_exclude: "排除",
 
     // filter scheme编辑区
     filter_scheme_title_update: "更新过滤方案",

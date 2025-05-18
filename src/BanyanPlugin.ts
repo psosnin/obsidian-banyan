@@ -4,6 +4,7 @@ import { CARD_DASHBOARD_VIEW_TYPE, CardDashboard } from './pages/CardDashboard';
 import { BanyanSettingTab } from './BanyanSettingTab';
 import { FileUtils } from './utils/fileUtils';
 import { i18n } from './utils/i18n';
+import { TagFilter } from './models/TagFilter';
 
 export default class BanyanPlugin extends Plugin {
 	settings: BanyanPluginSettings;
@@ -74,10 +75,18 @@ export default class BanyanPlugin extends Plugin {
 	}
 
 	updateSettingIfNeeded = () => {
-		if (!this.settings.settingsVersion) {
-			this.settings.settingsVersion = CUR_SETTINGS_VERSION;
-		}
-		// 以后版本更新时，在此处添加更新逻辑
+		// *** 版本更新时，在此处添加更新逻辑
+		if (this.settings.settingsVersion < CUR_SETTINGS_VERSION) {
+			const getNewFilterIfNeeded = (tf: TagFilter) => {
+				return tf.noTag !== undefined ? tf : { ...tf, notag: 'unlimited' };
+			};
+			this.settings.filterSchemes = [...this.settings.filterSchemes.map((scheme) => {
+				return { ...scheme, tagFilter:  getNewFilterIfNeeded(scheme.tagFilter)};
+			})];
+			this.settings.randomNoteTagFilter = getNewFilterIfNeeded(this.settings.randomNoteTagFilter);			
+		};
+		// ***
+		this.settings.settingsVersion = CUR_SETTINGS_VERSION;
 		this.updateSavedFile();
 		this.saveSettings();
 	}

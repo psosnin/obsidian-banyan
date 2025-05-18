@@ -168,24 +168,13 @@ const CardDashboardView = ({ plugin, app }: { plugin: BanyanPlugin, app: App }) 
     // 应用关键词和标签筛选
     let filtered = allContents;
     if (curScheme.type === 'FilterScheme') {
-      if (curScheme.keyword.trim()) {
+      if (curScheme.keyword.trim().length > 0) {
         const keyword = curScheme.keyword.trim().toLowerCase();
         filtered = filtered.filter(({ content }) => content.toLowerCase().includes(keyword));
       }
-      if (curScheme.tagFilter.or.length > 0) {
-        filtered = filtered.filter(({ file }) => {
-          const fileTags: string[] = file.getTags(app);
-          return curScheme.tagFilter.or.some((andTags) => andTags.every((andTag) => {
-            return fileTags.some((fileTag) => fileTag.startsWith(andTag));
-          }));
-        });
-      }
-      if (curScheme.tagFilter.not.length > 0) {
-        filtered = filtered.filter(({ file }) => {
-          const fileTags = file.getTags(app);
-          return !curScheme.tagFilter.not.some((tag) => fileTags.some((fileTag: string) => fileTag.startsWith(tag)));
-        });
-      }
+      filtered = filtered.filter(({ file }) => {
+        return file.isOKWithTagFilter(app, curScheme.tagFilter);
+      });
     }
 
     setCurSchemeNotesLength(filtered.length);
@@ -504,12 +493,12 @@ const CardDashboardView = ({ plugin, app }: { plugin: BanyanPlugin, app: App }) 
                 <div className="main-header-title-content">{curScheme.name}</div>
               </div>}
           </div>
-          <Searchbar allTags={allTags} setCurFilterScheme={setCurScheme} />
+          <Searchbar allTags={allTags} setCurFilterScheme={setCurScheme} curSchemeIsSearch={curScheme.type == 'FilterScheme' && curScheme.id == SearchFilterSchemeID} />
         </div>
         {!Platform.isMobile && <div style={{ marginTop: 16 }}><AddNoteView app={app} plugin={plugin} onAdd={() => setRefreshFlag(f => f + 1)} /></div>}
         <div className="main-subheader-container" style={{ marginBottom: 6, marginTop: 0, marginRight: 16, display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
           <div style={{ display: "flex", alignItems: 'center' }}>
-            <span style={{ padding: '12px 6px', color: 'var(--text-muted)', fontSize: 'var(--font-smaller)' }}>{i18n.t('loaded_notes', {count: `${displayedNotes.length}`, total: `${curSchemeNotesLength}`})}</span>
+            <span style={{ padding: '12px 6px', color: 'var(--text-muted)', fontSize: 'var(--font-smaller)' }}>{i18n.t('loaded_notes', { count: `${displayedNotes.length}`, total: `${curSchemeNotesLength}` })}</span>
             {cardNodes.length > 0 && <button style={{ marginLeft: '6px', padding: '0 6px', background: 'transparent' }}
               children={<Icon name="arrow-down-wide-narrow" />}
               onClick={(e) => sortMenu(e.nativeEvent, sortType, setSortType)}

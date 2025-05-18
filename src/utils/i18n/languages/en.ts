@@ -26,6 +26,10 @@ export default {
     tag_group_label_exclude: "exclude",
     tag_group_placeholder_exclude: "exclude tags",
     tag_group_btn_or: "or",
+    tag_group_label_notag: "no tag",
+    tag_group_label_notag_unlimited: "unlimited",
+    tag_group_label_notag_include: "include",
+    tag_group_label_notag_exclude: "exclude",
 
     // filter scheme编辑区
     filter_scheme_title_update: "update filter scheme",

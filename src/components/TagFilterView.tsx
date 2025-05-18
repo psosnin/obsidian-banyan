@@ -49,30 +49,6 @@ export const TagFilterView: React.FC<TagFilterViewProps> = ({ allTags, value, on
           )}
         </div>
       ))}
-      {/* <div>
-        <label style={{ marginRight: 4 }}>{i18n.t('tag_group_label_notag')}</label>
-        <div>
-          <label style={{ marginRight: 4 }}>{i18n.t('tag_group_label_notag_unlimited')}</label>
-          <input type="checkbox" checked={value.noTag == 'unlimited'} onChange={(e) => {
-            if (!e.target.checked || value.noTag == 'unlimited') return;
-            onChange({ ...value, noTag: 'unlimited' });
-          }} />
-        </div>
-        <div>
-          <label style={{ marginRight: 4 }}>{i18n.t('tag_group_label_notag_include')}</label>
-          <input type="checkbox" checked={value.noTag == 'include'} onChange={(e) => {
-            if (!e.target.checked || value.noTag == 'include') return;
-            onChange({ ...value, noTag: 'include' });
-          }} />
-        </div>
-        <div>
-          <label style={{ marginRight: 4 }}>{i18n.t('tag_group_label_notag_exclude')}</label>
-          <input type="checkbox" checked={value.noTag == 'exclude'} onChange={(e) => {
-            if (!e.target.checked || value.noTag == 'exclude') return;
-            onChange({ ...value, noTag: 'exclude' });
-          }} />
-        </div>
-      </div> */}
       <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
         {showLabel && <label style={{ marginRight: 4 }}>{i18n.t('tag_group_label_exclude')}</label>}
         <TagInput
@@ -81,6 +57,30 @@ export const TagFilterView: React.FC<TagFilterViewProps> = ({ allTags, value, on
           allTags={allTags}
           placeholder={i18n.t('tag_group_placeholder_exclude')}
         />
+      </div>
+      <div style={{ display: "flex", alignItems: "baseline", gap: 12, paddingTop: 6 }}>
+        <label>{i18n.t('tag_group_label_notag')}</label>
+        <label>
+          <input type="checkbox" style={{ verticalAlign: 'middle' }} checked={value.noTag == 'unlimited'} onChange={(e) => {
+            if (!e.target.checked || value.noTag == 'unlimited') return;
+            onChange({ ...value, noTag: 'unlimited' });
+          }} />
+          <span style={{ marginLeft: 4 }}>{i18n.t('tag_group_label_notag_unlimited')}</span>
+        </label>
+        <label>
+          <input type="checkbox" style={{ verticalAlign: 'middle' }} checked={value.noTag == 'include'} onChange={(e) => {
+            if (!e.target.checked || value.noTag == 'include') return;
+            onChange({ ...value, noTag: 'include' });
+          }} />
+          <span style={{ marginLeft: 4 }}>{i18n.t('tag_group_label_notag_include')}</span>
+        </label>
+        <label>
+          <input type="checkbox" style={{ verticalAlign: 'middle' }} checked={value.noTag == 'exclude'} onChange={(e) => {
+            if (!e.target.checked || value.noTag == 'exclude') return;
+            onChange({ ...value, noTag: 'exclude' });
+          }} />
+          <span style={{ marginLeft: 4 }}>{i18n.t('tag_group_label_notag_exclude')}</span>
+        </label>
       </div>
     </div>
   );

@@ -8,18 +8,48 @@ declare module 'obsidian' {
   interface TFile {
     getID(): number;
     getTags(app: App): string[];
+    isOKWithTagFilter(app: App, filter: TagFilter): boolean;
   }
 }
 
-TFile.prototype.getID = function () {
+TFile.prototype.getID = function (): number {
   return this.stat.ctime;
 };
 
-TFile.prototype.getTags = function (app: App) {
+TFile.prototype.getTags = function (app: App): string[] {
   const cache = app.metadataCache.getFileCache(this);
   if (!cache) return [];
   const fileTags = getAllTags(cache)?.map((tag) => tag.slice(1)) ?? [];
   return Array.from(new Set(fileTags));
+};
+
+TFile.prototype.isOKWithTagFilter = function (app: App, filter: TagFilter): boolean {
+  const { or, not } = filter;
+  const file = this;
+  const fileTags: string[] = file.getTags(app);
+
+  if (fileTags.length === 0 && filter.noTag == 'include') return true;
+  if (fileTags.length === 0 && filter.noTag == 'exclude') return false;
+
+  // 检查排除标签
+  if (not.length > 0
+    && not.some((tag) => fileTags.some(fileTag => fileTag.startsWith(tag)))) {
+    return false;
+  }
+
+  // 如果没有设置包含标签，则返回所有不包含排除标签的文件
+  if (or.every(row => row.length === 0)) {
+    if (filter.noTag == 'include' && fileTags.length > 0) return false;
+    return true;
+  }
+
+  // 检查包含标签（OR 关系）
+  return or.some(andTags => {
+    // 如果行为空，则跳过
+    if (andTags.length === 0) return false;
+    // 行内标签是 AND 关系
+    return andTags.every(andTag => fileTags.some(fileTag => fileTag.startsWith(andTag)));
+  });
 };
 
 export class FileUtils {
@@ -168,31 +198,9 @@ export class FileUtils {
     const files = this.getAllFiles();
     return this.getFilesTags(files);
   }
-  
-  private getTagsFilterdFiles(files: TFile[], filter: TagFilter) {
-    const { or, not } = filter;
-  
-    return files.filter(file => {
-      const fileTags = file.getTags(this.app);
-  
-      // 检查排除标签
-      if (not.length > 0 && not.some(tag => fileTags.includes(tag))) {
-        return false;
-      }
-  
-      // 如果没有设置包含标签，则返回所有不包含排除标签的文件
-      if (or.every(row => row.length === 0)) {
-        return true;
-      }
-  
-      // 检查包含标签（OR 关系）
-      return or.some(row => {
-        // 如果行为空，则跳过
-        if (row.length === 0) return false;
-        // 行内标签是 AND 关系
-        return row.every(tag => fileTags.includes(tag));
-      });
-    });
+
+  getTagsFilterdFiles(files: TFile[], filter: TagFilter) {
+    return files.filter(file => file.isOKWithTagFilter(this.app, filter));
   }
 
   //#endregion

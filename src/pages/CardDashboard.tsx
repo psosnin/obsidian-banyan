@@ -531,7 +531,7 @@ const CardDashboardView = ({ plugin, app }: { plugin: BanyanPlugin, app: App }) 
         {/* Add loading and end-of-list indicators here */}
         <div style={{ textAlign: 'center', padding: '20px', color: 'var(--text-muted)' }}>
           {isLoading && <div>加载中...</div>}
-          {!isLoading && displayedNotes.length >= curSchemeNotesLength && cardNodes.length > 0 && <div>i18n.t('reached_bottom')</div>}
+          {!isLoading && displayedNotes.length >= curSchemeNotesLength && cardNodes.length > 0 && <div>{i18n.t('reached_bottom')}</div>}
         </div>
       </div>
     </div>

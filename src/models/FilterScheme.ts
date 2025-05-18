@@ -12,30 +12,25 @@ export type FilterScheme = {
     type: 'FilterScheme'
 };
 
-export const DefaultFilterSchemeID = -1;
-
 export const getDefaultFilterScheme = (schemes: FilterScheme[]) => {
     return schemes.find(s => s.id === DefaultFilterSchemeID) ?? _DefaultFilterScheme;
 }
 
-const _DefaultFilterScheme: FilterScheme = {
-    id: -1,
-    name: i18n.t('all_notes'),
-    tagFilter: emptyTagFilter(),
-    dateRange: emptyDateRange(),
-    keyword: "",
-    pinned: [],
-    type: 'FilterScheme'
+export const createEmptyFilterScheme = (id: number = -3, name: string = ''): FilterScheme => {
+    return {
+        id: id,
+        name: name,
+        tagFilter: emptyTagFilter(),
+        dateRange: emptyDateRange(),
+        keyword: "",
+        pinned: [],
+        type: 'FilterScheme'
+    }
 }
 
+export const DefaultFilterSchemeID = -1;
 export const SearchFilterSchemeID = -2;
 
-export const SearchFilterScheme: FilterScheme = {
-    id: -2,
-    name: '搜索结果',
-    tagFilter: emptyTagFilter(),
-    dateRange: emptyDateRange(),
-    keyword: "",
-    pinned: [],
-    type: 'FilterScheme'
-}
+const _DefaultFilterScheme = createEmptyFilterScheme(DefaultFilterSchemeID, i18n.t('all_notes'));
+export const createEmptySearchFilterScheme = () => createEmptyFilterScheme(SearchFilterSchemeID, '搜索结果');
+export const SearchFilterScheme: FilterScheme = createEmptySearchFilterScheme();

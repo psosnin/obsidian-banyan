@@ -399,6 +399,10 @@ If your plugin does not need CSS, delete this file.
   margin: 0;
 }
 
+.card-note-content .inline-title {
+  display: none;
+}
+
 /* 
  * 添加笔记视图
  */

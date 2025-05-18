@@ -496,7 +496,7 @@ const CardDashboardView = ({ plugin, app }: { plugin: BanyanPlugin, app: App }) 
           <Searchbar allTags={allTags} setCurFilterScheme={setCurScheme} curSchemeIsSearch={curScheme.type == 'FilterScheme' && curScheme.id == SearchFilterSchemeID} />
         </div>
         {!Platform.isMobile && <div style={{ marginTop: 16 }}><AddNoteView app={app} plugin={plugin} onAdd={() => setRefreshFlag(f => f + 1)} /></div>}
-        <div className="main-subheader-container" style={{ marginBottom: 6, marginTop: 0, marginRight: 16, display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
+        <div className="main-subheader-container" style={{ marginBottom: 6, marginTop: 0, display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
           <div style={{ display: "flex", alignItems: 'center' }}>
             <span style={{ padding: '12px 6px', color: 'var(--text-muted)', fontSize: 'var(--font-smaller)' }}>{i18n.t('loaded_notes', { count: `${displayedNotes.length}`, total: `${curSchemeNotesLength}` })}</span>
             {cardNodes.length > 0 && <button style={{ marginLeft: '6px', padding: '0 6px', background: 'transparent' }}
@@ -505,15 +505,15 @@ const CardDashboardView = ({ plugin, app }: { plugin: BanyanPlugin, app: App }) 
             />}
           </div>
           <div className="main-subheader-btn-section" style={{ display: "flex", gap: 8 }}>
-            {curScheme.type != 'ViewScheme' && curScheme.id != DefaultFilterSchemeID && cardNodes.length > 0 && <button onClick={handleBatchImportToView} style={{ padding: '4px 0', backgroundColor: 'transparent', color: 'var(--interactive-accent)' }}>批量添加到视图</button>}
+            {curScheme.type != 'ViewScheme' && curScheme.id != DefaultFilterSchemeID && cardNodes.length > 0 && <button onClick={handleBatchImportToView} style={{ padding: '4px 12px', backgroundColor: 'transparent', color: 'var(--interactive-accent)' }}>批量添加到视图</button>}
           </div>
         </div>
-        <div className="main-cards" style={{ display: 'flex', gap: 16, }}>
+        <div className="main-cards" style={{ display: 'flex', gap: 16, flex: 1 }}>
           {cardNodes.length === 0 ? (
             <EmptyStateCard isSearch={curScheme.type == 'FilterScheme' && curScheme.id !== DefaultFilterSchemeID} />
           ) : (
             columns.map((col, idx) => (
-              <div className="main-cards-column" key={idx}>{col}</div>
+              <div className="main-cards-column" style={{ width: '100%' }} key={idx}>{col}</div>
             ))
           )}
         </div>

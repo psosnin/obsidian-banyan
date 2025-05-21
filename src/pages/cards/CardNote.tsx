@@ -1,23 +1,8 @@
 import { TFile, App, WorkspaceLeaf, MarkdownView } from "obsidian";
 import * as React from "react";
-import { openCardNoteMoreMenu } from "./CardNoteMenu";
-import { Icon } from "src/components/Icon";
+import { CardNoteMenuButton } from "./CardNoteMenu";
 import { i18n } from "src/utils/i18n";
-
-interface CardNoteProps {
-  file: TFile;
-  sortType: 'created' | 'modified';
-  tags: string[];
-  app: App;
-  showTitle: boolean;
-  onDelete: (file: TFile) => void;
-  onOpen: (file: TFile) => void;
-  setPin: (file: TFile, isPinned: boolean) => void;
-  isPinned: boolean;
-  onImportToView: (file: TFile) => void;
-  isInView: boolean;
-  onRemoveFromView: (file: TFile) => void;
-}
+import { useCombineStore } from "src/store";
 
 const NoteContentView = ({ app, file }: { app: App, file: TFile }) => {
   const ref = React.useRef<HTMLDivElement>(null);
@@ -64,33 +49,29 @@ const NoteContentView = ({ app, file }: { app: App, file: TFile }) => {
   return <div ref={ref} className={"card-note-content" + (overflow ? " card-note-content--overflow" : "")} />;
 };
 
-const CardNote: React.FC<CardNoteProps> = ({
-  file, tags, sortType, app, isPinned, isInView, showTitle,
-  onDelete, onOpen, setPin, onImportToView, onRemoveFromView
-}) => {
-  const isCreated = sortType === 'created';
+const CardNote = ({ file }: { file: TFile }) => {
+
+  const plugin = useCombineStore((state) => state.plugin);
+  const isPinned = useCombineStore((state) => state.curScheme.pinned.includes(file.getID()));
+  const app = plugin.app;
+  const isCreated = plugin.settings.sortType === 'created';
+  const tags = file.getTags(app);
 
   return (
     <div className="card-note-container" onDoubleClick={(e) => {
-      onOpen(file);
+      plugin.fileUtils.openFile(file);
       e.preventDefault();
     }}>
       <div className="card-note-header">
         <div className="card-note-time">{isPinned ? `${i18n.t('general_pin')} · ` : ""}{isCreated ? i18n.t('created_at') : i18n.t('updated_at')} {new Date(isCreated ? file.stat.ctime : file.stat.mtime).toLocaleString()}</div>
-        {showTitle && <div className="card-note-title"><h3>{file.basename}</h3></div>}
+        {plugin.settings.showTitle && <div className="card-note-title"><h3>{file.basename}</h3></div>}
         {tags.length > 0 && <div className="card-note-tags"> {tags.map((tag) =>
           <div className="card-note-tag" key={tag}>
             <div className="card-note-tag-content">{tag}</div>
           </div>
         )}</div>}
         <div className="card-note-more">
-          <button className="clickable-icon"
-            children={<Icon name='ellipsis' />}
-            onClick={(e) => openCardNoteMoreMenu({
-              event: e.nativeEvent, file, isInView, isPinned,
-              onOpen, onDelete, setPin, onImportToView, onRemoveFromView
-            })}
-          />
+          <CardNoteMenuButton file={file} isPinned={isPinned} />
         </div>
       </div>
       <NoteContentView app={app} file={file} />

@@ -5,13 +5,14 @@ import { emptyTagFilter, TagFilter } from "./models/TagFilter";
 export interface BanyanPluginSettings {
 	settingsVersion: number;
 	cardsDirectory: string;
-	sortType: 'created' | 'modified';
 	openWhenStartObsidian: boolean;
-	filterSchemes: FilterScheme[];
-	viewSchemes: ViewScheme[];
-	randomNoteTagFilter: TagFilter;
 	cardsColumns: number;
 	showTitle: boolean;
+	randomNoteTagFilter: TagFilter;
+
+	sortType: 'created' | 'modified';
+	filterSchemes: FilterScheme[];
+	viewSchemes: ViewScheme[];
 }
 
 export const CUR_SETTINGS_VERSION = 2;

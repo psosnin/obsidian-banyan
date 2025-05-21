@@ -1,79 +1,50 @@
-import { Heatmap, HeatmapData } from 'src/components/Heatmap';
-import { App } from 'obsidian';
-import { FilterScheme } from 'src/models/FilterScheme';
-import { ViewScheme } from 'src/models/ViewScheme';
+import { getHeatmapValues, Heatmap } from 'src/components/Heatmap';
 import { FilterSchemesInfo } from './filterScheme/FilterSchemesInfo';
 import { ViewSchemesInfo } from './viewScheme/ViewSchemesInfo';
 import { SidebarButton } from './SidebarButton';
 import { i18n } from 'src/utils/i18n';
+import { useCombineStore } from 'src/store';
+import { SearchFilterScheme } from 'src/models/FilterScheme';
+import { useMemo } from 'react';
 
-export interface SidebarContentProps {
-    notesNum: number,
-    tagsNum: number,
-    heatmapValues: HeatmapData[],
-    onClickFilterScheme: (index: number) => void,
-    filterSchemes: FilterScheme[],
-    curFilterSchemeID?: number,
-    setFilterScheme: (scheme: FilterScheme) => void,
-    onFilterDragEnd: (fs: FilterScheme[]) => void,
-    deleteFilterScheme: (schemeID: number) => void,
-    app: App,
-    allTags: string[],
-    viewSchemes: ViewScheme[],
-    curViewSchemeID?: number,
-    setViewScheme: (scheme: ViewScheme) => void,
-    onViewDragEnd: (vs: ViewScheme[]) => void,
-    deleteViewScheme: (schemeID: number) => void,
-    onClickViewScheme: (index: number) => void,
-    onClickDate: (date: string) => void,
-    onClickAddNote: () => void,
-    onClickRandomNote: () => void,
-}
+export const SidebarContent = () => {
+    const allFiles = useCombineStore((state) => state.allFiles);
+    const heatmapValues = useMemo(() => getHeatmapValues(allFiles), [allFiles]);
+    const setCurScheme = useCombineStore((state) => state.setCurScheme);
+    const plugin = useCombineStore((state) => state.plugin);
+    
+    const handleClickDate = (date: string) => {
+        setCurScheme({ ...SearchFilterScheme, name: date, dateRange: { from: date, to: date } });
+    }
 
-export const SidebarContent = ({
-    app, allTags, notesNum, tagsNum, heatmapValues, curFilterSchemeID, filterSchemes, viewSchemes, curViewSchemeID,
-    onClickFilterScheme, setFilterScheme, deleteFilterScheme, onFilterDragEnd,
-    onClickViewScheme, setViewScheme, onViewDragEnd, deleteViewScheme, onClickDate, onClickAddNote, onClickRandomNote
-}: SidebarContentProps) => {
-
+    const handleClickRandomNote = () => {
+        plugin.fileUtils.openRandomFile();
+    }
+    
     return (
         <div id='sidebar' style={{ display: 'flex', flexDirection: 'column', padding: '0 16px', width: 320, marginRight: 16 }}>
-            <StatisticsInfo notesNum={notesNum} tagsNum={tagsNum} />
-            <Heatmap values={heatmapValues} onCickDate={onClickDate} />
+            <StatisticsInfo />
+            <Heatmap values={heatmapValues} onCickDate={handleClickDate} />
             <div style={{ display: 'flex', flexDirection: 'column', marginTop: 12 }}>
-                {/* <SidebarButton label='添加笔记' iconName='lightbulb' onClick={onClickAddNote} /> */}
-                <SidebarButton label={i18n.t('random_review')} iconName='dice' onClick={onClickRandomNote} />
-                <FilterSchemesInfo
-                    app={app}
-                    allTags={allTags}
-                    filterSchemes={filterSchemes}
-                    curFilterSchemeID={curFilterSchemeID}
-                    onClick={onClickFilterScheme}
-                    setFilterScheme={setFilterScheme}
-                    deleteFilterScheme={deleteFilterScheme}
-                    onDragEnd={onFilterDragEnd} />
-                <ViewSchemesInfo
-                    app={app}
-                    viewSchemes={viewSchemes}
-                    curViewSchemeID={curViewSchemeID}
-                    onClick={onClickViewScheme}
-                    setViewScheme={setViewScheme}
-                    deleteViewScheme={deleteViewScheme}
-                    onDragEnd={onViewDragEnd} />
+                <SidebarButton label={i18n.t('random_review')} iconName='dice' onClick={handleClickRandomNote} />
+                <FilterSchemesInfo />
+                <ViewSchemesInfo />
             </div>
         </div>);
 }
 
-const StatisticsInfo = ({ notesNum, tagsNum }: { notesNum: number, tagsNum: number }) => {
+const StatisticsInfo = () => {
+    const allFiles = useCombineStore((state) => state.allFiles);
+    const allTags = useCombineStore((state) => state.allTags);
     return (
         <div style={{ padding: 8, display: 'flex', flexDirection: 'row', justifyContent: 'space-evenly', width: 280, marginLeft: 16, marginTop: 56 }}>
             <div>
-                <span style={{ fontSize: 'var(--font-ui-large)', fontWeight: 'var(--font-medium)', }}>{notesNum}</span>
+                <span style={{ fontSize: 'var(--font-ui-large)', fontWeight: 'var(--font-medium)', }}>{allFiles.length}</span>
                 <br />
                 <span style={{ fontSize: 9 }}>{i18n.t('note')}</span>
             </div>
             <div>
-                <span style={{ fontSize: 'var(--font-ui-large)', fontWeight: 'var(--font-medium)', }}>{tagsNum}</span>
+                <span style={{ fontSize: 'var(--font-ui-large)', fontWeight: 'var(--font-medium)', }}>{allTags.length}</span>
                 <br />
                 <span style={{ fontSize: 9 }}>{i18n.t('tag')}</span>
             </div>

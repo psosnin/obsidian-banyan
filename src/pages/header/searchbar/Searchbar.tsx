@@ -1,25 +1,24 @@
 import { Icon } from "src/components/Icon";
 import { SearchView } from "./SearchView";
 import { useState, useEffect, useRef } from "react";
-import { createEmptySearchFilterScheme, FilterScheme, SearchFilterScheme } from "src/models/FilterScheme";
-import React from "react";
+import { createEmptySearchFilterScheme, SearchFilterScheme, SearchFilterSchemeID } from "src/models/FilterScheme";
 import { Platform } from "obsidian";
 import { i18n } from "src/utils/i18n";
+import { useCombineStore } from "src/store";
 
-interface SearchbarProps {
-    allTags: string[];
-    setCurFilterScheme: (scheme: FilterScheme) => void;
-    curSchemeIsSearch: boolean;
-}
+export const Searchbar = () => {
 
-export const Searchbar: React.FC<SearchbarProps> = ({ allTags, setCurFilterScheme, curSchemeIsSearch }) => {
+    const allTags = useCombineStore((state) => state.allTags);
+    const setCurScheme = useCombineStore((state) => state.setCurScheme);
+    const curSchemeIsSearch = useCombineStore((state) => state.curScheme.type === 'ViewScheme' && state.curScheme.id === SearchFilterSchemeID);
+
     const [tempFilterScheme, setTempFilterScheme] = useState(curSchemeIsSearch ? { ...SearchFilterScheme } : createEmptySearchFilterScheme());
     const [showFilterBox, setShowFilterBox] = useState(false);
     const filterBoxRef = useRef<HTMLDivElement>(null);
     const filterButtonRef = useRef<HTMLDivElement>(null);
 
     const handleSearch = () => {
-        setCurFilterScheme(tempFilterScheme);
+        setCurScheme(tempFilterScheme);
         setShowFilterBox(false);
     };
 

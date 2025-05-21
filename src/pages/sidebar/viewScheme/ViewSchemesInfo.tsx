@@ -2,27 +2,26 @@ import React from "react";
 import { Icon } from "src/components/Icon";
 import { ViewScheme } from "src/models/ViewScheme";
 import { SidebarButton } from "../SidebarButton";
-import { App, Menu } from "obsidian";
+import { Menu } from "obsidian";
 import { ViewEditModal } from "./ViewEditModal";
 import { i18n } from "src/utils/i18n";
+import { useCombineStore } from "src/store";
 
-export const ViewSchemesInfo = ({
-    app, viewSchemes, curViewSchemeID,
-    onClick, onDragEnd, setViewScheme, deleteViewScheme
-}: {
-    app: App,
-    viewSchemes: ViewScheme[],
-    curViewSchemeID?: number,
-    onClick: (index: number) => void,
-    onDragEnd: (newOrder: ViewScheme[]) => void,
-    setViewScheme: (scheme: ViewScheme) => void,
-    deleteViewScheme: (schemeID: number) => void
-}) => {
+export const ViewSchemesInfo = () => {
 
+    const app = useCombineStore((state) => state.plugin.app);
+    const viewSchemes = useCombineStore((state) => state.viewSchemes);
+    const curScheme = useCombineStore((state) => state.curScheme);
+    const curViewSchemeID = curScheme.type === 'ViewScheme' ? curScheme.id : undefined;
+    const setCurScheme = useCombineStore((state) => state.setCurScheme);
+    const reorderViewSchemes = useCombineStore((state) => state.reorderViewSchemes);
+    const updateViewScheme = useCombineStore((state) => state.updateViewScheme);
+    const createViewScheme = useCombineStore((state) => state.createViewScheme);
+    const deleteViewScheme = useCombineStore((state) => state.deleteViewScheme);
     const [draggedIndex, setDraggedIndex] = React.useState<number | null>(null);
     const [dragOverIndex, setDragOverIndex] = React.useState<number | null>(null);
 
-    const handleNewViewScheme = () => {
+    const handleCreateViewScheme = () => {
         const maxId = viewSchemes.length > 0 ? Math.max(...viewSchemes.map(s => s.id)) : 0;
         const newScheme = {
             id: maxId + 1,
@@ -35,7 +34,7 @@ export const ViewSchemesInfo = ({
             viewScheme: newScheme,
             isNew: true,
             onSave: (updatedScheme: ViewScheme) => {
-                setViewScheme(updatedScheme);
+                createViewScheme(updatedScheme);
             }
         });
         modal.open();
@@ -47,7 +46,7 @@ export const ViewSchemesInfo = ({
                 viewScheme: { ...viewSchemes[index] },
                 isNew: false,
                 onSave: (updatedScheme: ViewScheme) => {
-                    setViewScheme(updatedScheme);
+                    updateViewScheme(updatedScheme);
                 }
             });
             modal.open();
@@ -58,7 +57,7 @@ export const ViewSchemesInfo = ({
                 id: maxId + 1,
                 name: `${viewSchemes[index].name} ${i18n.t('general_copy')}`
             };
-            setViewScheme(newScheme);
+            createViewScheme(newScheme);
         } else if (action === 'delete') {
             deleteViewScheme(viewSchemes[index].id);
         }
@@ -92,7 +91,7 @@ export const ViewSchemesInfo = ({
         const newSchemes = [...viewSchemes];
         const [removed] = newSchemes.splice(draggedIndex, 1);
         newSchemes.splice(index, 0, removed);
-        onDragEnd(newSchemes);
+        reorderViewSchemes(newSchemes);
     };
 
     const handleDragEnd = () => {
@@ -109,7 +108,7 @@ export const ViewSchemesInfo = ({
                 <div className='view-scheme-header-add' style={{ marginRight: 8 }}>
                     <button className='view-scheme-header-add-btn'
                         style={{ padding: '0 4px', background: 'transparent' }}
-                        onClick={handleNewViewScheme}>
+                        onClick={handleCreateViewScheme}>
                         <Icon name='plus' size='m' color='var(--interactive-accent)' />
                     </button>
                 </div>
@@ -131,7 +130,7 @@ export const ViewSchemesInfo = ({
                         <SidebarButton
                             label={scheme.name}
                             selected={curViewSchemeID === scheme.id}
-                            onClick={() => onClick(index)}
+                            onClick={() => setCurScheme(scheme)}
                             rightIconName='ellipsis'
                             rightLabel={`${scheme.files.length}`}
                             onClickRightIcon={(e) => handleViewSchemeClickMore(e, index)}

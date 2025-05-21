@@ -1,4 +1,4 @@
-import { App, ItemView, WorkspaceLeaf, TFile, Notice, Menu, Platform } from "obsidian";
+import { ItemView, WorkspaceLeaf, Menu, Platform } from "obsidian";
 import BanyanPlugin from "src/main";
 import { StrictMode, useEffect, useState, useRef, useCallback } from 'react';
 import { Root, createRoot } from 'react-dom/client';
@@ -6,18 +6,15 @@ import * as React from "react";
 import CardNote from "./cards/CardNote";
 import { Icon } from "src/components/Icon";
 import Sidebar from "./sidebar/Sidebar";
-import { DefaultFilterSchemeID, FilterScheme, getDefaultFilterScheme, SearchFilterScheme, SearchFilterSchemeID } from "src/models/FilterScheme";
+import { DefaultFilterSchemeID, getDefaultFilterScheme } from "src/models/FilterScheme";
 import { SidebarContent } from "./sidebar/SideBarContent";
-import { getHeatmapValues, HeatmapData } from "src/components/Heatmap";
 import { Searchbar } from "./header/searchbar/Searchbar";
 import EmptyStateCard from "./cards/EmptyStateCard";
-import { ViewScheme } from "src/models/ViewScheme";
 import { ViewSelectModal } from "./sidebar/viewScheme/ViewSelectModal";
 import { createFileWatcher } from 'src/utils/fileWatcher';
-import { openDeleteConfirmModal } from "src/components/ConfirmModal";
 import AddNoteView from "./header/AddNoteView";
 import { i18n } from "src/utils/i18n";
-import { withinDateRange } from "src/models/DateRange";
+import { useCombineStore } from "src/store";
 
 export const CARD_DASHBOARD_VIEW_TYPE = "dashboard-view";
 
@@ -46,7 +43,7 @@ export class CardDashboard extends ItemView {
     this.root = createRoot(this.containerEl.children[1]);
     this.root.render(
       <StrictMode>
-        <CardDashboardView plugin={this.plugin} app={this.app} />
+        <CardDashboardView plugin={this.plugin} />
       </StrictMode>
     );
     return;
@@ -57,56 +54,41 @@ export class CardDashboard extends ItemView {
   }
 }
 
-const CardDashboardView = ({ plugin, app }: { plugin: BanyanPlugin, app: App }) => {
+const CardDashboardView = ({ plugin }: { plugin: BanyanPlugin }) => {
+
+  const setupPlugin = useCombineStore((state) => state.setupPlugin);
+
+  useEffect(() => setupPlugin(plugin), []);
+
+  const requestData = useCombineStore((state) => state.requestData);
+  const updateDisplayFiles = useCombineStore((state) => state.updateDisplayFiles);
+  const curSchemeFiles = useCombineStore((state) => state.curSchemeFiles);
+  const displayFiles = useCombineStore((state) => state.displayFiles);
+  const curScheme = useCombineStore((state) => state.curScheme);
+  const filterSchemes = useCombineStore((state) => state.filterSchemes);
+  const viewSchemes = useCombineStore((state) => state.viewSchemes);
+  const setCurScheme = useCombineStore((state) => state.setCurScheme);  
+  const updateViewScheme = useCombineStore((state) => state.updateViewScheme);  
+  const curSchemeNotesLength = useCombineStore((state) => state.curSchemeFiles.length);
+  const updateWhendeleteFile = useCombineStore((state) => state.updateWhendeleteFile);
+
+  const app = plugin.app;
 
   const [showSidebar, setShowSidebar] = useState<'normal' | 'hide' | 'show'>(Platform.isMobile ? 'hide' : 'normal');
-
-  const dir = plugin.settings.cardsDirectory;
-
   const [sortType, setSortType] = useState<'created' | 'modified'>(plugin.settings.sortType || 'created');
-
-  const [allTags, setAllTags] = useState<string[]>([]);
-
-  const [filterSchemes, setFilterSchemes] = useState<FilterScheme[]>(plugin.settings.filterSchemes);
-  const [viewSchemes, setViewSchemes] = useState<ViewScheme[]>(plugin.settings.viewSchemes);
-  const [curScheme, setCurScheme] = useState<FilterScheme | ViewScheme>(getDefaultFilterScheme(plugin.settings.filterSchemes));
-
-  const [allContents, setAllContents] = useState<{ file: TFile, content: string }[]>([]);
-  const [displayedNotes, setDisplayedNotes] = useState<{ file: TFile, content: string }[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const notesPerPage = 10; // 每页显示的笔记数量
-  const [curSchemeNotesLength, setCurSchemeNotesLength] = useState(0);
-
   const [colCount, setColCount] = useState(1);
-
   const dashboardRef = React.useRef<HTMLDivElement>(null);
-
-  const [totalNotesNum, setTotalNotesNum] = useState(0);
-  const [totalTagsNum, setTotalTagsNum] = useState(0);
-  const [heatmapValues, setHeatmapValues] = useState<HeatmapData[]>([]);
-
   const [refreshFlag, setRefreshFlag] = useState(0);
-  // const [panelSize, setPanelSize] = useState({ width: 0, height: 0 });
 
   // 文件监听逻辑
   useEffect(() => {
     const watcher = createFileWatcher(plugin);
     const unsubscribe = watcher.onChange(({ type, file }) => {
       if (type === 'delete') {
-        // 当文件被删除时，从视图中移除该文件
-        const newSchemes = viewSchemes.map(scheme => {
-          const newFiles = scheme.files.filter((fileID) => fileID !== file.getID());
-          const newPinned = scheme.pinned.filter((fileID) => fileID !== file.getID());
-          return { ...scheme, files: newFiles, pinned: newPinned };
-        });
-        setViewSchemes(newSchemes);
-        if (curScheme.type == 'ViewScheme') {
-          const newScheme = newSchemes.filter(scheme => scheme.id == curScheme.id).first();
-          if (newScheme) {
-            setCurScheme(newScheme);
-          }
-        }
+        updateWhendeleteFile(file.getID());
       }
     });
     return () => {
@@ -115,91 +97,25 @@ const CardDashboardView = ({ plugin, app }: { plugin: BanyanPlugin, app: App }) 
     };
   }, [app]);
 
-  // 加载所有文件并获取内容
   useEffect(() => {
-    if (!dir) return;
-    setIsLoading(true);
-
-    // 获取所有符合目录条件的文件
-    const files = plugin.fileUtils.getAllFiles();
-
-    setTotalNotesNum(files.length);
-    setTotalTagsNum(plugin.fileUtils.getAllFilesTags().length);
-    setHeatmapValues(getHeatmapValues(files));
-
-    // 应用日期范围和视图筛选
-    let filtered = files;
-    if (curScheme.type == 'FilterScheme') {
-      filtered = filtered.filter((file: TFile) => withinDateRange(sortType == 'created' ? file.stat.ctime : file.stat.mtime, curScheme.dateRange));
+    const requestFiles = async () => {
+      setIsLoading(true);
+      await requestData();
+      setCurrentPage(1);
+      setIsLoading(false);
     }
-    if (curScheme.type == 'ViewScheme') {
-      filtered = filtered.filter((file: TFile) => curScheme.files.includes(file.getID()));
-    }
-
-    // 排序
-    filtered.sort((a, b) => sortType === 'created' ? b.stat.ctime - a.stat.ctime : b.stat.mtime - a.stat.mtime);
-
-    setAllTags(plugin.fileUtils.getFilesTags(filtered));
-
-    // 加载所有文件内容
-    Promise.all(filtered.map(async (file: TFile) => {
-      const content = await plugin.fileUtils.readCachedFileContent(file);
-      return { file, content };
-    }))
-      .then(allLoadedContents => {
-        setAllContents(allLoadedContents);
-        setCurrentPage(1);
-        setIsLoading(false);
-      })
-      .catch(error => {
-        console.error("Error loading notes content:", error);
-        new Notice(i18n.t('notice_error_when_load_notes'));
-        setIsLoading(false);
-      });
-  }, [sortType, curScheme, refreshFlag, plugin.fileUtils.getAllFiles().length, dir]); // Add dir dependency
-
-  // 根据筛选条件和分页设置显示的笔记
-  useEffect(() => {
-    if (allContents.length === 0) {
-      setDisplayedNotes([]);
-      return;
-    }
-
-    // 应用关键词和标签筛选
-    let filtered = allContents;
-    if (curScheme.type === 'FilterScheme') {
-      if (curScheme.keyword.trim().length > 0) {
-        const keyword = curScheme.keyword.trim().toLowerCase();
-        filtered = filtered.filter(({ content }) => content.toLowerCase().includes(keyword));
-      }
-      filtered = filtered.filter(({ file }) => {
-        return file.isOKWithTagFilter(app, curScheme.tagFilter);
-      });
-    }
-
-    setCurSchemeNotesLength(filtered.length);
-    // 应用分页
-    const endIndex = currentPage * notesPerPage;
-    setDisplayedNotes(filtered.slice(0, endIndex));
-  }, [allContents, currentPage, curScheme, app.metadataCache]);
+    requestFiles();
+  }, [sortType, curScheme, refreshFlag, plugin.fileUtils.getAllFiles().length, plugin.settings.cardsDirectory]);
 
   useEffect(() => {
-    plugin.settings.viewSchemes = viewSchemes;
-    plugin.saveSettings();
-  }, [viewSchemes]);
+    updateDisplayFiles(currentPage * notesPerPage);
+  }, [currentPage, curSchemeFiles]);
 
-  useEffect(() => {
-    plugin.settings.filterSchemes = filterSchemes;
-    plugin.saveSettings();
-  }, [filterSchemes]);
-
-  // 加载更多笔记（增加页码）
   const loadMoreNotes = useCallback(() => {
     if (isLoading) return;
     setCurrentPage(prevPage => prevPage + 1);
   }, [isLoading]);
 
-  // Infinite scroll effect
   const observer = useRef<IntersectionObserver>(null);
   const lastCardElementRef = useCallback((node: HTMLElement | null) => {
     if (isLoading) return;
@@ -212,7 +128,7 @@ const CardDashboardView = ({ plugin, app }: { plugin: BanyanPlugin, app: App }) 
     if (node) observer.current.observe(node);
   }, [isLoading, loadMoreNotes]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const updateCol = () => {
       if (Platform.isMobile) {
         setShowSidebar('hide');
@@ -221,11 +137,6 @@ const CardDashboardView = ({ plugin, app }: { plugin: BanyanPlugin, app: App }) 
       }
       if (!dashboardRef.current) return;
       const containerWidth = dashboardRef.current.clientWidth;
-      // const containerHeight = dashboardRef.current.clientHeight;
-      // // 获取可视区域的宽高
-      // const viewportWidth = window.visualViewport?.width || window.innerWidth;
-      // const viewportHeight = window.visualViewport?.height || window.innerHeight;
-      // setPanelSize({ width: Math.floor(viewportWidth), height: Math.floor(viewportHeight) });
       const _showSidebar = containerWidth >= 900 ? 'normal' : 'hide';
       setShowSidebar(_showSidebar);
       const cardsColumns = plugin.settings.cardsColumns;
@@ -253,114 +164,24 @@ const CardDashboardView = ({ plugin, app }: { plugin: BanyanPlugin, app: App }) 
     return () => resizeObserver.disconnect();
   }, []);
 
-  // 卡片删除
-  const handleDelete = async (file: TFile) => {
-    openDeleteConfirmModal({
-      app,
-      description: i18n.t('delete_note_confirm'),
-      onConfirm: async () => {
-        await plugin.fileUtils.trashFile(file);
-        new Notice(i18n.t('notice_note_to_trash'));
-      }
-    });
-  };
-
-  // 卡片双击打开
-  const handleOpen = (file: TFile) => {
-    plugin.fileUtils.openFile(file);
-  };
-
   const handleBatchImportToView = () => {
     const modal = new ViewSelectModal(app, {
       viewSchemes: viewSchemes,
       onSelect: (scheme) => {
-        const temp = new Set<number>([...scheme.files, ...displayedNotes.map(({ file }) => file.getID())]);
+        const temp = new Set<number>([...scheme.files, ...displayFiles.map((file) => file.getID())]);
         const newFiles = Array.from(temp);
         const newScheme = { ...scheme, files: newFiles };
-        const newSchemes = viewSchemes.map(scheme => scheme.id == newScheme.id ? newScheme : scheme);
-        setViewSchemes(newSchemes);
+        updateViewScheme(newScheme);
       }
     });
     modal.open();
   };
 
-  const handleImportToView = (file: TFile) => {
-    const modal = new ViewSelectModal(app, {
-      viewSchemes: viewSchemes,
-      onSelect: (scheme) => {
-        if (scheme.files.includes(file.getID())) {
-          new Notice(i18n.t('notice_note_already_in_view'));
-          return;
-        }
-        const newFiles = [...scheme.files, file.getID()];
-        const newScheme = { ...scheme, files: newFiles };
-        const newSchemes = viewSchemes.map(s => s.id == newScheme.id ? newScheme : s);
-        setViewSchemes(newSchemes);
-      }
-    });
-    modal.open();
-  }
-
-  const handleRemoveFromView = (file: TFile) => {
-    if (curScheme.type !== 'ViewScheme') return; // 按理说UI层已经保障了只有ViewScheme时才会有这个按钮
-    const newFiles = [...curScheme.files.filter((fileID) => fileID !== file.getID())];
-    const newPinned = [...curScheme.pinned.filter((fileID) => fileID !== file.getID())];
-    const newScheme = { ...curScheme, files: newFiles, pinned: newPinned };
-    const newSchemes = viewSchemes.map(scheme => scheme.id == newScheme.id ? newScheme : scheme);
-    setViewSchemes(newSchemes);
-    setCurScheme(newScheme);
-  }
-
-  // 卡片置顶
-  const handlePin = (file: TFile, isPinned: boolean) => {
-    // 使用文件的创建时间戳作为唯一标识符，而非文件路径
-    const fileId = file.getID();
-    const newPinned = [...curScheme.pinned.filter(p => p !== fileId)].concat(isPinned ? [fileId] : []);
-    const noticeStr = isPinned ? i18n.t('notice_note_pinned') : i18n.t('notice_note_unpinned');
-    const newScheme = { ...curScheme, pinned: newPinned };
-    if (newScheme.type === 'ViewScheme') {
-      const newSchemes = viewSchemes.map(scheme => scheme.id == newScheme.id ? newScheme : scheme);
-      setViewSchemes(newSchemes);
-    } else {
-      const newSchemes = filterSchemes.map(scheme => {
-        if (scheme.id == newScheme.id) {
-          return newScheme;
-        }
-        if (newScheme.id == SearchFilterSchemeID && scheme.id == DefaultFilterSchemeID) { // 「搜索」的置顶其实要给到「默认」
-          return { ...getDefaultFilterScheme(filterSchemes), pinned: newPinned };
-        }
-        return scheme;
-      });
-      setFilterSchemes(newSchemes);
-    }
-    setCurScheme(newScheme)
-    new Notice(noticeStr);
-  };
-
-  // 渲染卡片时优先显示置顶
-  const pinnedNotes = displayedNotes
-    .filter(({ file }) => curScheme.pinned.includes(file.getID()))
-    .concat(displayedNotes.filter(({ file }) => !curScheme.pinned.includes(file.getID())));
-
-  const cardNodes = pinnedNotes.map(({ file }, index) => {
-    // Attach ref to the last card for intersection observer
-    const isLastCard = index === pinnedNotes.length - 1;
+  const cardNodes = displayFiles.map((file, index) => {
+    const isLastCard = index === displayFiles.length - 1;
     return (
       <div ref={isLastCard ? lastCardElementRef : null} key={file.getID()}>
-        <CardNote
-          sortType={sortType}
-          file={file}
-          tags={file.getTags(app)}
-          app={app}
-          showTitle={plugin.settings.showTitle}
-          onDelete={handleDelete}
-          onOpen={handleOpen}
-          setPin={handlePin}
-          isPinned={curScheme.pinned.includes(file.getID())}
-          isInView={curScheme.type === 'ViewScheme'}
-          onImportToView={handleImportToView}
-          onRemoveFromView={handleRemoveFromView}
-        />
+        <CardNote file={file} />
       </div>
     );
   });
@@ -375,10 +196,64 @@ const CardDashboardView = ({ plugin, app }: { plugin: BanyanPlugin, app: App }) 
   };
   const columns = getColumns(cardNodes, colCount);
 
-  const sortMenu = (
-    event: MouseEvent,
-    sortType: 'created' | 'modified',
-    setSortType: (t: 'created' | 'modified') => void) => {
+  return (
+    <div className="dashboard-container" ref={dashboardRef} style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', width: '100%' }}>
+      {showSidebar != 'normal' && <Sidebar visible={showSidebar == 'show'} onClose={() => setShowSidebar('hide')}><SidebarContent /></Sidebar>}
+      {showSidebar == 'normal' && <SidebarContent />}
+      <div className="main-container">
+        <div className="main-header-container" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', fontSize: 'var(--font-small)' }}>
+          <div className="main-header-title" style={{ display: "flex", alignItems: "center" }}>
+            <button style={{
+              background: 'none', border: 'none', color: 'inherit', cursor: 'pointer',
+              display: showSidebar == 'normal' ? 'none' : 'inline-flex', alignItems: 'center'
+            }}
+              onClick={() => setShowSidebar('show')}
+              title="展开侧边栏"
+            ><Icon name="menu" /></button>
+            {curScheme.id === DefaultFilterSchemeID && <div className="main-header-title-content">{curScheme.name}</div>}
+            {curScheme.id !== DefaultFilterSchemeID &&
+              <div style={{ display: "flex" }}>
+                <div className="main-header-title-content main-header-title-content-clickable" onClick={() => {
+                  setCurScheme(getDefaultFilterScheme(filterSchemes));
+                }}>{getDefaultFilterScheme(filterSchemes).name}</div>
+                <div className="main-header-title-separator">{'/'}</div>
+                <div className="main-header-title-content">{curScheme.name}</div>
+              </div>}
+          </div>
+          <Searchbar />
+        </div>
+        {!Platform.isMobile && <div style={{ marginTop: 16 }}><AddNoteView app={app} plugin={plugin} onAdd={() => setRefreshFlag(f => f + 1)} /></div>}
+        <div className="main-subheader-container" style={{ marginBottom: 6, marginTop: 0, display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
+          <div style={{ display: "flex", alignItems: 'center' }}>
+            <span style={{ padding: '12px 6px', color: 'var(--text-muted)', fontSize: 'var(--font-smaller)' }}>{i18n.t('loaded_notes', { count: `${displayFiles.length}`, total: `${curSchemeNotesLength}` })}</span>
+            {cardNodes.length > 0 && <SortFilesButton plugin={plugin} sortType={sortType} setSortType={setSortType} />}
+          </div>
+          <div className="main-subheader-btn-section" style={{ display: "flex", gap: 8 }}>
+            {curScheme.type != 'ViewScheme' && curScheme.id != DefaultFilterSchemeID && cardNodes.length > 0 && <button onClick={handleBatchImportToView} style={{ padding: '4px 12px', backgroundColor: 'transparent', color: 'var(--interactive-accent)' }}>批量添加到视图</button>}
+          </div>
+        </div>
+        <div className="main-cards" style={{ display: 'flex', gap: 16, flex: 1 }}>
+          {cardNodes.length === 0 ? (
+            <EmptyStateCard isSearch={curScheme.type == 'FilterScheme' && curScheme.id !== DefaultFilterSchemeID} />
+          ) : (
+            columns.map((col, idx) => (
+              <div className="main-cards-column" style={{ width: '100%' }} key={idx}>{col}</div>
+            ))
+          )}
+        </div>
+        {/* Add loading and end-of-list indicators here */}
+        <div style={{ textAlign: 'center', padding: '20px', color: 'var(--text-muted)' }}>
+          {isLoading && <div>加载中...</div>}
+          {!isLoading && displayFiles.length >= curSchemeNotesLength && cardNodes.length > 0 && <div>{i18n.t('reached_bottom')}</div>}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const SortFilesButton = ({ plugin, sortType, setSortType }: { plugin: BanyanPlugin, sortType: 'created' | 'modified', setSortType: (st: 'created' | 'modified') => void }) => {
+
+  const sortMenu = (event: MouseEvent) => {
     const sortMenu = new Menu();
     sortMenu.addItem((item) => {
       item.setTitle(i18n.t('recently_created'));
@@ -401,128 +276,10 @@ const CardDashboardView = ({ plugin, app }: { plugin: BanyanPlugin, app: App }) 
     sortMenu.showAtMouseEvent(event);
   };
 
-  const sidebarContent = (() => {
-    return <SidebarContent
-      allTags={allTags}
-      app={app}
-      notesNum={totalNotesNum}
-      tagsNum={totalTagsNum}
-      heatmapValues={heatmapValues}
-      onClickDate={(date) => {
-        setCurScheme({ ...SearchFilterScheme, name: date, dateRange: { from: date, to: date } });
-      }}
-      onClickAddNote={() => plugin.fileUtils.addFile()}
-      onClickRandomNote={() => plugin.fileUtils.openRandomFile()}
-
-      curFilterSchemeID={curScheme.type == 'FilterScheme' ? curScheme.id : undefined}
-      onClickFilterScheme={(index) => {
-        if (curScheme === filterSchemes[index]) return;
-        setCurScheme(filterSchemes[index]);
-      }}
-      filterSchemes={filterSchemes}
-      onFilterDragEnd={(newSchemes) => {
-        setFilterSchemes(newSchemes);
-      }}
-      setFilterScheme={(fs) => {
-        if (filterSchemes.filter(f => f.id == fs.id).length == 0) {
-          setFilterSchemes([...filterSchemes, fs]);
-        } else {
-          const updatedFilterSchemes = filterSchemes.map((s) => s.id == fs.id ? fs : s);
-          setFilterSchemes(updatedFilterSchemes);
-        }
-        if (curScheme.type === 'FilterScheme' && curScheme.id == fs.id) {
-          setCurScheme(fs);
-        }
-      }}
-      deleteFilterScheme={(id) => {
-        const updatedFilterSchemes = filterSchemes.filter((s) => s.id != id);
-        setFilterSchemes(updatedFilterSchemes);
-      }}
-
-      viewSchemes={viewSchemes}
-      curViewSchemeID={curScheme.type === 'ViewScheme' ? curScheme.id : undefined}
-      onClickViewScheme={(index) => {
-        if (curScheme === viewSchemes[index]) return;
-        setCurScheme(viewSchemes[index]);
-      }}
-      setViewScheme={(vs) => {
-        if (viewSchemes.filter(v => v.id == vs.id).length == 0) {
-          setViewSchemes([...viewSchemes, vs]);
-        } else {
-          const updated = viewSchemes.map((v) => v.id == vs.id ? vs : v);
-          setViewSchemes(updated);
-        }
-        if (curScheme.type === 'ViewScheme' && curScheme.id == vs.id) {
-          setCurScheme(vs);
-        }
-      }}
-      onViewDragEnd={(newSchemes) => {
-        setViewSchemes(newSchemes);
-      }}
-      deleteViewScheme={(id) => {
-        const updatedViewSchemes = viewSchemes.filter((s) => s.id != id);
-        setViewSchemes(updatedViewSchemes);
-      }}
-    />;
-  })();
-
   return (
-    <div className="dashboard-container" ref={dashboardRef} style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', width: '100%' }}>
-      {showSidebar != 'normal' && <Sidebar visible={showSidebar == 'show'} onClose={() => setShowSidebar('hide')}>{sidebarContent}</Sidebar>}
-      {showSidebar == 'normal' && sidebarContent}
-      {/* <div className="dashboard-size-display">
-        {panelSize.width} x {panelSize.height}
-      </div> */}
-      <div className="main-container">
-        <div className="main-header-container" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', fontSize: 'var(--font-small)' }}>
-          <div className="main-header-title" style={{ display: "flex", alignItems: "center" }}>
-            <button style={{
-              background: 'none', border: 'none', color: 'inherit', cursor: 'pointer',
-              display: showSidebar == 'normal' ? 'none' : 'inline-flex', alignItems: 'center'
-            }}
-              onClick={() => setShowSidebar('show')}
-              title="展开侧边栏"
-            ><Icon name="menu" /></button>
-            {curScheme.id === DefaultFilterSchemeID && <div className="main-header-title-content">{curScheme.name}</div>}
-            {curScheme.id !== DefaultFilterSchemeID &&
-              <div style={{ display: "flex" }}>
-                <div className="main-header-title-content main-header-title-content-clickable" onClick={() => {
-                  setCurScheme(getDefaultFilterScheme(filterSchemes));
-                }}>{getDefaultFilterScheme(filterSchemes).name}</div>
-                <div className="main-header-title-separator">{'/'}</div>
-                <div className="main-header-title-content">{curScheme.name}</div>
-              </div>}
-          </div>
-          <Searchbar allTags={allTags} setCurFilterScheme={setCurScheme} curSchemeIsSearch={curScheme.type == 'FilterScheme' && curScheme.id == SearchFilterSchemeID} />
-        </div>
-        {!Platform.isMobile && <div style={{ marginTop: 16 }}><AddNoteView app={app} plugin={plugin} onAdd={() => setRefreshFlag(f => f + 1)} /></div>}
-        <div className="main-subheader-container" style={{ marginBottom: 6, marginTop: 0, display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
-          <div style={{ display: "flex", alignItems: 'center' }}>
-            <span style={{ padding: '12px 6px', color: 'var(--text-muted)', fontSize: 'var(--font-smaller)' }}>{i18n.t('loaded_notes', { count: `${displayedNotes.length}`, total: `${curSchemeNotesLength}` })}</span>
-            {cardNodes.length > 0 && <button style={{ marginLeft: '6px', padding: '0 6px', background: 'transparent' }}
-              children={<Icon name="arrow-down-wide-narrow" />}
-              onClick={(e) => sortMenu(e.nativeEvent, sortType, setSortType)}
-            />}
-          </div>
-          <div className="main-subheader-btn-section" style={{ display: "flex", gap: 8 }}>
-            {curScheme.type != 'ViewScheme' && curScheme.id != DefaultFilterSchemeID && cardNodes.length > 0 && <button onClick={handleBatchImportToView} style={{ padding: '4px 12px', backgroundColor: 'transparent', color: 'var(--interactive-accent)' }}>批量添加到视图</button>}
-          </div>
-        </div>
-        <div className="main-cards" style={{ display: 'flex', gap: 16, flex: 1 }}>
-          {cardNodes.length === 0 ? (
-            <EmptyStateCard isSearch={curScheme.type == 'FilterScheme' && curScheme.id !== DefaultFilterSchemeID} />
-          ) : (
-            columns.map((col, idx) => (
-              <div className="main-cards-column" style={{ width: '100%' }} key={idx}>{col}</div>
-            ))
-          )}
-        </div>
-        {/* Add loading and end-of-list indicators here */}
-        <div style={{ textAlign: 'center', padding: '20px', color: 'var(--text-muted)' }}>
-          {isLoading && <div>加载中...</div>}
-          {!isLoading && displayedNotes.length >= curSchemeNotesLength && cardNodes.length > 0 && <div>{i18n.t('reached_bottom')}</div>}
-        </div>
-      </div>
-    </div>
+    <button style={{ marginLeft: '6px', padding: '0 6px', background: 'transparent' }}
+      children={<Icon name="arrow-down-wide-narrow" />}
+      onClick={(e) => sortMenu(e.nativeEvent)}
+    />
   );
 }

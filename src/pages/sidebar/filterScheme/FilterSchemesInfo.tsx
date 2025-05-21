@@ -3,26 +3,27 @@ import { createEmptyFilterScheme, DefaultFilterSchemeID, FilterScheme } from "sr
 import { FilterEditModal } from "./FilterEditModal";
 import { Icon } from "src/components/Icon";
 import { SidebarButton } from "../SidebarButton";
-import { App, Menu } from "obsidian";
+import { Menu } from "obsidian";
 import { i18n } from "src/utils/i18n";
+import { useCombineStore } from "src/store";
 
-export const FilterSchemesInfo = ({
-    app, allTags, filterSchemes, curFilterSchemeID,
-    onClick, onDragEnd, setFilterScheme, deleteFilterScheme
-}: {
-    app: App,
-    allTags: string[],
-    filterSchemes: FilterScheme[],
-    curFilterSchemeID?: number,
-    onClick: (index: number) => void,
-    onDragEnd: (newOrder: FilterScheme[]) => void,
-    setFilterScheme: (scheme: FilterScheme) => void,
-    deleteFilterScheme: (schemeID: number) => void
-}) => {
+export const FilterSchemesInfo = () => {
+
+    const app = useCombineStore((state) => state.plugin.app);
+    const allTags = useCombineStore((state) => state.allTags);
+    const filterSchemes = useCombineStore((state) => state.filterSchemes);
+    const curScheme = useCombineStore((state) => state.curScheme);
+    const curFilterSchemeID = curScheme.type === 'FilterScheme' ? curScheme.id : undefined;
+    const setCurScheme = useCombineStore((state) => state.setCurScheme);
+    const reorderFilterSchemes = useCombineStore((state) => state.reorderFilterSchemes);
+    const updateFilterScheme = useCombineStore((state) => state.updateFilterScheme);
+    const createFilterScheme = useCombineStore((state) => state.createFilterScheme);
+    const deleteFilterScheme = useCombineStore((state) => state.deleteFilterScheme);
+
     const [draggedIndex, setDraggedIndex] = React.useState<number | null>(null);
     const [dragOverIndex, setDragOverIndex] = React.useState<number | null>(null);
 
-    const handleNewFilterScheme = () => {
+    const handleCreateFilterScheme = () => {
         const maxId = filterSchemes.length > 0 ? Math.max(...filterSchemes.map(s => s.id)) : 0;
         const newScheme = createEmptyFilterScheme(maxId + 1);
         const modal = new FilterEditModal(app, {
@@ -30,7 +31,7 @@ export const FilterSchemesInfo = ({
             allTags,
             isNew: true,
             onSave: (updatedScheme: FilterScheme) => {
-                setFilterScheme(updatedScheme);
+                createFilterScheme(updatedScheme);
             }
         });
         modal.open();
@@ -43,7 +44,7 @@ export const FilterSchemesInfo = ({
                 allTags,
                 isNew: false,
                 onSave: (updatedScheme: FilterScheme) => {
-                    setFilterScheme(updatedScheme);
+                    updateFilterScheme(updatedScheme);
                 }
             });
             modal.open();
@@ -54,7 +55,7 @@ export const FilterSchemesInfo = ({
                 id: maxId + 1,
                 name: `${filterSchemes[index].name} ${i18n.t('general_copy')}`
             };
-            setFilterScheme(newScheme);
+            createFilterScheme(newScheme);
         } else if (action === 'delete') {
             deleteFilterScheme(filterSchemes[index].id);
         }
@@ -89,11 +90,11 @@ export const FilterSchemesInfo = ({
     };
 
     const handleDrop = (index: number) => {
-        if (draggedIndex === null) return ;
+        if (draggedIndex === null) return;
         const newSchemes = [...filterSchemes];
         const [removed] = newSchemes.splice(draggedIndex, 1);
         newSchemes.splice(index, 0, removed);
-        onDragEnd(newSchemes);
+        reorderFilterSchemes(newSchemes);
     };
 
     const handleDragEnd = () => {
@@ -117,7 +118,7 @@ export const FilterSchemesInfo = ({
                 <div className='filter-scheme-header-add' style={{ marginRight: 8 }}>
                     <button className='filter-scheme-header-add-btn'
                         style={{ padding: '0 4px', background: 'transparent' }}
-                        onClick={handleNewFilterScheme}>
+                        onClick={handleCreateFilterScheme}>
                         <Icon name='plus' size='m' color='var(--interactive-accent)' />
                     </button>
                 </div>
@@ -140,7 +141,7 @@ export const FilterSchemesInfo = ({
                         <SidebarButton
                             label={scheme.name}
                             selected={curFilterSchemeID === scheme.id}
-                            onClick={() => onClick(index)}
+                            onClick={() => setCurScheme(scheme)}
                             rightIconName={isDefault(scheme) ? undefined : 'ellipsis'}
                             onClickRightIcon={isDefault(scheme) ? undefined : (e) => handleClickMore(e, index)}
                         />

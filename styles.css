@@ -297,57 +297,6 @@ If your plugin does not need CSS, delete this file.
  * 卡片笔记视图 笔记内容的渲染，需要调整obsidian原生样式
  */
 
-
-.card-note-content p {
-  font-size: 0.85rem;
-  line-height: 1.2;
-}
-
-.card-note-content code {
-  font-size: 0.85rem;
-  line-height: 1.2;
-}
-
-.card-note-content div {
-  font-size: 0.85rem;
-}
-
-.card-note-content li {
-  font-size: 0.85rem;
-  line-height: 1.2;
-}
-
-
-.card-note-content h1 {
-  font-size: 1rem;
-  line-height: 1.2;
-}
-
-.card-note-content h2 {
-  font-size: 1rem;
-  line-height: 1.2;
-}
-
-.card-note-content h3 {
-  font-size: 1rem;
-  line-height: 1.2;
-}
-
-.card-note-content h4 {
-  font-size: 1rem;
-  line-height: 1.2;
-}
-
-.card-note-content h5 {
-  font-size: 1rem;
-  line-height: 1.2;
-}
-
-.card-note-content h6 {
-  font-size: 1rem;
-  line-height: 1.2;
-}
-
 /* .card-note-content a {
   pointer-events: none;
 } */
@@ -555,12 +504,56 @@ If your plugin does not need CSS, delete this file.
   }
 }
 
-/* 平板设备 */
-@media (min-width: 768px) and (max-width: 1023px) {
-  /* 平板样式 */
-}
+/* 宽屏设备 */
+@media (min-width: 768px) {
 
-/* 桌面设备 */
-@media (min-width: 1024px) {
-  /* 桌面样式 */
+  .card-note-content p {
+    font-size: 0.85rem;
+    line-height: 1.2;
+  }
+  
+  .card-note-content code {
+    font-size: 0.85rem;
+    line-height: 1.2;
+  }
+  
+  .card-note-content div {
+    font-size: 0.85rem;
+  }
+  
+  .card-note-content li {
+    font-size: 0.85rem;
+    line-height: 1.2;
+  }
+  
+  .card-note-content h1 {
+    font-size: 1rem;
+    line-height: 1.2;
+  }
+  
+  .card-note-content h2 {
+    font-size: 1rem;
+    line-height: 1.2;
+  }
+  
+  .card-note-content h3 {
+    font-size: 1rem;
+    line-height: 1.2;
+  }
+  
+  .card-note-content h4 {
+    font-size: 1rem;
+    line-height: 1.2;
+  }
+  
+  .card-note-content h5 {
+    font-size: 1rem;
+    line-height: 1.2;
+  }
+  
+  .card-note-content h6 {
+    font-size: 1rem;
+    line-height: 1.2;
+  }
+
 }

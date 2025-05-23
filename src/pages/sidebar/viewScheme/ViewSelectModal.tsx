@@ -1,4 +1,4 @@
-import { App, Modal } from "obsidian";
+import { App, Modal, Platform } from "obsidian";
 import * as React from "react";
 import { createRoot, Root } from "react-dom/client";
 import { ViewScheme } from "src/models/ViewScheme";
@@ -55,7 +55,7 @@ const ViewSelectContainer = ({ props, close }: {
         close();
     };
 
-    return <div className="view-select-container" style={{ minWidth: 320 }}>
+    return <div className="view-select-container" style={ Platform.isMobile ? { padding: '30px 20px 30px 20px' } : {} }>
         <div style={{ marginBottom: 16, fontWeight: "bold" }}>选择要导入的视图</div>
         <div style={{ marginBottom: '0.5em', display: 'flex', gap: '1em', flexWrap: 'wrap', flexDirection: 'column' }}>
             {viewSchemes.map((scheme, index) => {

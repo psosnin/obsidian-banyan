@@ -15,7 +15,7 @@ export interface BanyanPluginSettings {
 	viewSchemes: ViewScheme[];
 }
 
-export const CUR_SETTINGS_VERSION = 2;
+export const CUR_SETTINGS_VERSION = 3;
 
 export const DEFAULT_SETTINGS: BanyanPluginSettings = {
 	settingsVersion: CUR_SETTINGS_VERSION,

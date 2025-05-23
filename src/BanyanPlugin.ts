@@ -75,8 +75,8 @@ export default class BanyanPlugin extends Plugin {
 	}
 
 	updateSettingIfNeeded = () => {
-		// *** 版本更新时，在此处添加更新逻辑
-		if (this.settings.settingsVersion < CUR_SETTINGS_VERSION) {
+		// *** 版本更新时，在以下添加更新逻辑 ***
+		if (this.settings.settingsVersion < 2) {
 			const getNewFilterIfNeeded = (tf: TagFilter) => {
 				return tf.noTag !== undefined ? tf : { ...tf, notag: 'unlimited' };
 			};
@@ -85,7 +85,12 @@ export default class BanyanPlugin extends Plugin {
 			})];
 			this.settings.randomNoteTagFilter = getNewFilterIfNeeded(this.settings.randomNoteTagFilter);			
 		};
-		// ***
+		if (this.settings.settingsVersion < CUR_SETTINGS_VERSION) { // CUR_SETTINGS_VERSION is 3
+			this.settings.filterSchemes = [...this.settings.filterSchemes.map((scheme) => {
+				return scheme.parentId === undefined ? { ...scheme, parentId: null } : scheme;
+			})];
+		};
+		// *** 版本更新时，在以上添加更新逻辑 ***
 		this.settings.settingsVersion = CUR_SETTINGS_VERSION;
 		this.updateSavedFile();
 		this.saveSettings();

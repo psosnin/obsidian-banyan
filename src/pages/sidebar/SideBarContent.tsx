@@ -26,7 +26,7 @@ export const SidebarContent = () => {
             <StatisticsInfo />
             <Heatmap values={heatmapValues} onCickDate={handleClickDate} />
             <div style={{ display: 'flex', flexDirection: 'column', marginTop: 12 }}>
-                <SidebarButton label={i18n.t('random_review')} iconName='dice' onClick={handleClickRandomNote} />
+                <SidebarButton label={i18n.t('random_review')} leftIconName='dice' onClick={handleClickRandomNote} />
                 <FilterSchemesInfo />
                 <ViewSchemesInfo />
             </div>

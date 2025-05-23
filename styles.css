@@ -212,28 +212,20 @@ If your plugin does not need CSS, delete this file.
  * Default color scale
  */
 
-/* .react-calendar-heatmap .color-empty {
-  fill: #eeeeee;
-} */
-
 .react-calendar-heatmap .color-scale-0 {
   fill: var(--background-primary-alt);
 }
 
 .react-calendar-heatmap .color-scale-1 {
-  fill: #495949;
+  fill: color-mix(in srgb, var(--theme-color) 33%, var(--background-primary-alt) 66%);
 }
 
 .react-calendar-heatmap .color-scale-2 {
-  fill: #5d6e5d;
+  fill: color-mix(in srgb, var(--theme-color) 66%, var(--background-primary-alt) 33%);
 }
 
 .react-calendar-heatmap .color-scale-3 {
-  fill: #6e8b6e;
-}
-
-.react-calendar-heatmap .color-scale-4 {
-  fill: #3f893f;
+  fill: color-mix(in srgb, var(--theme-color) 100%, var(--background-primary-alt) 00%);
 }
 
 .react-calendar-heatmap text {
@@ -242,55 +234,7 @@ If your plugin does not need CSS, delete this file.
 }
 
 .react-calendar-heatmap .color-filled {
-  fill: #8cc665;
-}
-
-/*
- * Github color scale
- */
-
-.react-calendar-heatmap .color-github-0 {
-  fill: #eeeeee;
-}
-
-.react-calendar-heatmap .color-github-1 {
-  fill: #d6e685;
-}
-
-.react-calendar-heatmap .color-github-2 {
-  fill: #8cc665;
-}
-
-.react-calendar-heatmap .color-github-3 {
-  fill: #44a340;
-}
-
-.react-calendar-heatmap .color-github-4 {
-  fill: #1e6823;
-}
-
-/*
- * Gitlab color scale
- */
-
-.react-calendar-heatmap .color-gitlab-0 {
-  fill: #ededed;
-}
-
-.react-calendar-heatmap .color-gitlab-1 {
-  fill: #acd5f2;
-}
-
-.react-calendar-heatmap .color-gitlab-2 {
-  fill: #7fa8d1;
-}
-
-.react-calendar-heatmap .color-gitlab-3 {
-  fill: #49729b;
-}
-
-.react-calendar-heatmap .color-gitlab-4 {
-  fill: #254e77;
+  fill: var(--theme-color);
 }
 
 /*

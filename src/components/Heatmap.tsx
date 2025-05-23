@@ -24,7 +24,8 @@ export const Heatmap = ({ values, onCickDate }: {
                     if (!value || value.count === 0) {
                         return 'color-scale-0';
                     }
-                    const cnt = Math.min(4, Math.ceil(value.count / 4));
+                    const numPerLevel = 4, numOflevels = 3;
+                    const cnt = Math.min(numOflevels, Math.ceil(value.count / numPerLevel));
                     return `color-scale-${cnt}`;
                 }}
                 tooltipDataAttrs={(value: HeatmapData): { [key: string]: string } => {

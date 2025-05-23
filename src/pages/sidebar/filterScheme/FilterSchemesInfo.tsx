@@ -116,8 +116,7 @@ export const FilterSchemesInfo = () => {
                     <span>{i18n.t('filter_schemes')}</span>
                 </div>
                 <div className='filter-scheme-header-add' style={{ marginRight: 8 }}>
-                    <button className='filter-scheme-header-add-btn'
-                        style={{ padding: '0 4px', background: 'transparent' }}
+                    <button className='filter-scheme-header-add-btn clickable-icon'
                         onClick={handleCreateFilterScheme}>
                         <Icon name='plus' size='m' color='var(--interactive-accent)' />
                     </button>

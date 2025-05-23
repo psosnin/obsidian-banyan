@@ -106,8 +106,7 @@ export const ViewSchemesInfo = () => {
                     <span>{i18n.t('view_schemes')}</span>
                 </div>
                 <div className='view-scheme-header-add' style={{ marginRight: 8 }}>
-                    <button className='view-scheme-header-add-btn'
-                        style={{ padding: '0 4px', background: 'transparent' }}
+                    <button className='view-scheme-header-add-btn clickable-icon'
                         onClick={handleCreateViewScheme}>
                         <Icon name='plus' size='m' color='var(--interactive-accent)' />
                     </button>

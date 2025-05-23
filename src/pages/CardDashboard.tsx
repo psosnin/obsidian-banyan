@@ -67,8 +67,8 @@ const CardDashboardView = ({ plugin }: { plugin: BanyanPlugin }) => {
   const curScheme = useCombineStore((state) => state.curScheme);
   const filterSchemes = useCombineStore((state) => state.filterSchemes);
   const viewSchemes = useCombineStore((state) => state.viewSchemes);
-  const setCurScheme = useCombineStore((state) => state.setCurScheme);  
-  const updateViewScheme = useCombineStore((state) => state.updateViewScheme);  
+  const setCurScheme = useCombineStore((state) => state.setCurScheme);
+  const updateViewScheme = useCombineStore((state) => state.updateViewScheme);
   const curSchemeNotesLength = useCombineStore((state) => state.curSchemeFiles.length);
   const updateWhendeleteFile = useCombineStore((state) => state.updateWhendeleteFile);
 
@@ -203,10 +203,7 @@ const CardDashboardView = ({ plugin }: { plugin: BanyanPlugin }) => {
       <div className="main-container">
         <div className="main-header-container" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', fontSize: 'var(--font-small)' }}>
           <div className="main-header-title" style={{ display: "flex", alignItems: "center" }}>
-            <button style={{
-              background: 'none', border: 'none', color: 'inherit', cursor: 'pointer',
-              display: showSidebar == 'normal' ? 'none' : 'inline-flex', alignItems: 'center'
-            }}
+            <button className="clickable-icon" style={{ display: showSidebar == 'normal' ? 'none' : 'inline-flex' }}
               onClick={() => setShowSidebar('show')}
               title="展开侧边栏"
             ><Icon name="menu" /></button>
@@ -229,7 +226,7 @@ const CardDashboardView = ({ plugin }: { plugin: BanyanPlugin }) => {
             {cardNodes.length > 0 && <SortFilesButton plugin={plugin} sortType={sortType} setSortType={setSortType} />}
           </div>
           <div className="main-subheader-btn-section" style={{ display: "flex", gap: 8 }}>
-            {curScheme.type != 'ViewScheme' && curScheme.id != DefaultFilterSchemeID && cardNodes.length > 0 && <button onClick={handleBatchImportToView} style={{ padding: '4px 12px', backgroundColor: 'transparent', color: 'var(--interactive-accent)' }}>批量添加到视图</button>}
+            {curScheme.type != 'ViewScheme' && curScheme.id != DefaultFilterSchemeID && cardNodes.length > 0 && <button className="clickable-icon" onClick={handleBatchImportToView} style={{ padding: '4px 12px', color: 'var(--interactive-accent)' }}>批量添加到视图</button>}
           </div>
         </div>
         <div className="main-cards" style={{ display: 'flex', gap: 16, flex: 1 }}>
@@ -277,7 +274,7 @@ const SortFilesButton = ({ plugin, sortType, setSortType }: { plugin: BanyanPlug
   };
 
   return (
-    <button style={{ marginLeft: '6px', padding: '0 6px', background: 'transparent' }}
+    <button className="clickable-icon" style={{ marginLeft: '6px' }}
       children={<Icon name="arrow-down-wide-narrow" />}
       onClick={(e) => sortMenu(e.nativeEvent)}
     />

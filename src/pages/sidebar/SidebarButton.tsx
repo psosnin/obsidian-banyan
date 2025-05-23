@@ -43,10 +43,10 @@ export const SidebarButton: React.FC<SidebarButtonProps> = ({ iconName, label, s
             }}>{label}</span>
             <div className="sidebar-btn-right" style={{ display: "flex", gap: 12, alignItems: 'center' }}>
                 {rightLabel && <span style={{ fontSize: 'var(--font-smaller)' }}>{rightLabel}</span>}
-                {rightIconName && <button onClick={(e) => {
+                {rightIconName && <button className="clickable-icon" onClick={(e) => {
                     e.stopPropagation();
                     onClickRightIcon && onClickRightIcon(e.nativeEvent);
-                }} style={{ paddingLeft: 4, paddingRight: 4, background: 'transparent', marginRight: 4 }}>
+                }} style={{ marginRight: 4 }}>
                     <Icon name={rightIconName} size="s" color={selected ? 'var(--text-normal)' : 'var(--text-muted)'} />
                 </button>}
             </div>

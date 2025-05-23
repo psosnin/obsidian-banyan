@@ -41,12 +41,12 @@ const StatisticsInfo = () => {
             <div>
                 <span style={{ fontSize: 'var(--font-ui-large)', fontWeight: 'var(--font-medium)', }}>{allFiles.length}</span>
                 <br />
-                <span style={{ fontSize: 9 }}>{i18n.t('note')}</span>
+                <span style={{ fontSize: 'var(--font-smallest)' }}>{i18n.t('note')}</span>
             </div>
             <div>
                 <span style={{ fontSize: 'var(--font-ui-large)', fontWeight: 'var(--font-medium)', }}>{allTags.length}</span>
                 <br />
-                <span style={{ fontSize: 9 }}>{i18n.t('tag')}</span>
+                <span style={{ fontSize: 'var(--font-smallest)' }}>{i18n.t('tag')}</span>
             </div>
         </div>
     );

@@ -24,32 +24,33 @@ TFile.prototype.getTags = function (app: App): string[] {
 };
 
 TFile.prototype.isOKWithTagFilter = function (app: App, filter: TagFilter): boolean {
-  const { or, not } = filter;
-  const file = this;
-  const fileTags: string[] = file.getTags(app);
+  const fileTags: string[] = this.getTags(app);
+  const notTags = filter.not;
+  const orTags = filter.or.filter(row => row.length > 0); // 优化 或标签组
 
-  if (fileTags.length === 0 && filter.noTag == 'include') return true;
-  if (fileTags.length === 0 && filter.noTag == 'exclude') return false;
-
-  // 检查排除标签
-  if (not.length > 0
-    && not.some((tag) => fileTags.some(fileTag => fileTag.startsWith(tag)))) {
-    return false;
+  // *** 排除 ***
+  // 要排除的标签
+  for (const noTag of notTags) {
+    if (fileTags.some(fileTag => fileTag.startsWith(noTag))) {
+      return false;
+    }
   }
+  // 排除无标签
+  if (filter.noTag == 'exclude' && fileTags.length === 0) return false;
 
-  // 如果没有设置包含标签，则返回所有不包含排除标签的文件
-  if (or.every(row => row.length === 0)) {
-    if (filter.noTag == 'include' && fileTags.length > 0) return false;
-    return true;
+  // *** 包含 ***
+  // 包含无标签
+  if (filter.noTag == 'include' && fileTags.length === 0) return true;
+  // 没有「或标签组」，则不过滤
+  if (orTags.length === 0) return true;
+  
+  // 有「或标签组」，则只保留符合的文件，排除其他
+  for (const andTags of orTags) {
+    if (andTags.every(tag => fileTags.some(fileTag => fileTag.startsWith(tag)))) {
+      return true;
+    }
   }
-
-  // 检查包含标签（OR 关系）
-  return or.some(andTags => {
-    // 如果行为空，则跳过
-    if (andTags.length === 0) return false;
-    // 行内标签是 AND 关系
-    return andTags.every(andTag => fileTags.some(fileTag => fileTag.startsWith(andTag)));
-  });
+  return false;
 };
 
 export class FileUtils {

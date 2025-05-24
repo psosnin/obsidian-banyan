@@ -208,6 +208,7 @@ export const FilterSchemesInfo = () => {
             const curSchems = getChildSchemes(parentId);
             for (const scheme of curSchems) {
                 res.push({ scheme, indentLevel });
+                if (getChildSchemes(scheme.id).length === 0 || !expandedSchemeIds.includes(scheme.id)) continue;                
                 dfs(indentLevel + 1, scheme.id);
             }
         };

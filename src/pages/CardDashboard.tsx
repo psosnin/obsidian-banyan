@@ -90,6 +90,9 @@ const CardDashboardView = ({ plugin }: { plugin: BanyanPlugin }) => {
       if (type === 'delete') {
         updateWhendeleteFile(file.getID());
       }
+      if (type === 'create' ||  type === 'modify' || type === 'meta-change') {
+        setRefreshFlag(f => f + 1);
+      }
     });
     return () => {
       unsubscribe();
@@ -105,7 +108,7 @@ const CardDashboardView = ({ plugin }: { plugin: BanyanPlugin }) => {
       setIsLoading(false);
     }
     requestFiles();
-  }, [sortType, curScheme, refreshFlag, plugin.fileUtils.getAllFiles().length, plugin.settings.cardsDirectory]);
+  }, [sortType, curScheme, refreshFlag, plugin.settings.cardsDirectory]);
 
   useEffect(() => {
     updateDisplayFiles(currentPage * notesPerPage);

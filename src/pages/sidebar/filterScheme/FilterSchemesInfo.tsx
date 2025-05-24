@@ -22,8 +22,8 @@ export const FilterSchemesInfo = () => {
     const getChildSchemes = useCombineStore((state) => state.getChildSchemes);
     const moveScheme = useCombineStore((state) => state.moveScheme);
 
-    const [draggedItem, setDraggedItem] = React.useState<{scheme: FilterScheme} | null>(null);
-    const [dragOverItem, setDragOverItem] = React.useState<{scheme: FilterScheme, position: 'before' | 'inside' | 'after'} | null>(null);
+    const [draggedItem, setDraggedItem] = React.useState<{ scheme: FilterScheme } | null>(null);
+    const [dragOverItem, setDragOverItem] = React.useState<{ scheme: FilterScheme, position: 'before' | 'inside' | 'after' } | null>(null);
     // 存储展开状态的方案ID
     const [expandedSchemeIds, setExpandedSchemeIds] = React.useState<number[]>([]);
 
@@ -91,40 +91,40 @@ export const FilterSchemesInfo = () => {
     };
 
     const handleDragStart = (scheme: FilterScheme) => {
-        setDraggedItem({scheme});
+        setDraggedItem({ scheme });
     };
 
     const handleDragOver = (scheme: FilterScheme, e: React.DragEvent) => {
         e.preventDefault();
-        if (!draggedItem) return;    
-        
+        if (!draggedItem) return;
+
         // 计算拖拽位置（上方、内部或下方）
         const rect = e.currentTarget.getBoundingClientRect();
         const mouseY = e.clientY;
         const thirdHeight = rect.height / 3;
-        
+
         let position: 'before' | 'inside' | 'after' = 'inside';
-        
+
         if (mouseY < rect.top + thirdHeight) {
             position = 'before';
         } else if (mouseY > rect.bottom - thirdHeight) {
             position = 'after';
         }
-        
-        setDragOverItem({scheme, position});
+
+        setDragOverItem({ scheme, position });
     };
 
     const reorder = () => {
         if (!draggedItem || !dragOverItem) {
             return;
         };
-        
+
         const { scheme: draggedScheme } = draggedItem;
         const { scheme: targetScheme, position } = dragOverItem;
-        
+
         // 防止拖拽到自己或自己的子方案
         if (draggedScheme.id === targetScheme.id) return;
-        
+
         // 检查是否拖拽到自己的子方案（防止循环引用）
         const isChildOf = (childId: number, parentId: number): boolean => {
             const child = getSchemeById(childId);
@@ -134,7 +134,7 @@ export const FilterSchemesInfo = () => {
             return isChildOf(child.parentId, parentId);
         };
         if (isChildOf(targetScheme.id, draggedScheme.id)) return;
-        
+
         moveScheme(draggedScheme, targetScheme, position);
 
         setDraggedItem(null);
@@ -162,55 +162,55 @@ export const FilterSchemesInfo = () => {
         }
     };
 
+    const filterSchemeBtn = (scheme: FilterScheme, indentLevel: number) => {
+        const hasChildren = getChildSchemes(scheme.id).length > 0;
+        const isExpanded = expandedSchemeIds.includes(scheme.id);
+        const isDragging = draggedItem && draggedItem.scheme.id === scheme.id;
+        const isDragOver = dragOverItem && dragOverItem.scheme.id === scheme.id;
+        const dragPosition = isDragOver ? dragOverItem?.position : null;
+        return (
+            <div
+                key={scheme.id}
+                className="filter-scheme-item"
+                draggable={!isDefault(scheme)}
+                onDragStart={isDefault(scheme) ? undefined : () => handleDragStart(scheme)}
+                onDragOver={isDefault(scheme) ? undefined : (e) => handleDragOver(scheme, e)}
+                onDrop={() => handleDrop()}
+                onDragEnd={handleDragEnd}
+                style={{
+                    opacity: isDragging ? 0.5 : 1,
+                    borderTop: dragPosition === 'before' ? '2px solid var(--interactive-accent)' : undefined,
+                    borderBottom: dragPosition === 'after' ? '2px solid var(--interactive-accent)' : undefined,
+                    background: dragPosition === 'inside' ? 'var(--background-modifier-hover)' : undefined,
+                    borderRadius: 4,
+                    marginLeft: indentLevel * 12,
+                }}
+            >
+                <SidebarButton
+                    leftIconName={!hasChildren ? undefined : (isExpanded ? "chevron-down" : "chevron-right")}
+                    label={scheme.name}
+                    selected={curFilterSchemeID === scheme.id}
+                    onClick={() => setCurScheme(scheme)}
+                    rightIconName={isDefault(scheme) ? undefined : 'ellipsis'}
+                    onClickRightIcon={isDefault(scheme) ? undefined : (e) => handleClickMore(e, scheme)}
+                    onClickLeftIcon={hasChildren ? () => toggleExpand(scheme.id) : undefined}
+                />
+            </div>
+        );
+    }
+
     // 递归渲染方案列表
-    const renderSchemeList = (parentId: number | null, indentLevel: number = 0) => {
-        const schemes = getChildSchemes(parentId);
-        
-        return schemes.map((scheme) => {
-            const children = getChildSchemes(scheme.id);
-            const hasChildren = children.length > 0;
-            const isExpanded = expandedSchemeIds.includes(scheme.id);
-            const isDragging = draggedItem && draggedItem.scheme.id === scheme.id;
-            const isDragOver = dragOverItem && dragOverItem.scheme.id === scheme.id;
-            const dragPosition = isDragOver ? dragOverItem?.position : null;
-            
-            return (
-                <React.Fragment key={scheme.id}>
-                    <div
-                        className="filter-scheme-item"
-                        draggable={!isDefault(scheme)}
-                        onDragStart={isDefault(scheme) ? undefined : () => handleDragStart(scheme)}
-                        onDragOver={isDefault(scheme) ? undefined : (e) => handleDragOver(scheme, e)}
-                        onDrop={() => handleDrop()}
-                        onDragEnd={handleDragEnd}
-                        style={{
-                            opacity: isDragging ? 0.5 : 1,
-                            borderTop: dragPosition === 'before' ? '2px solid var(--interactive-accent)' : undefined,
-                            borderBottom: dragPosition === 'after' ? '2px solid var(--interactive-accent)' : undefined,
-                            background: dragPosition === 'inside' ? 'var(--background-modifier-hover)' : undefined,
-                            borderRadius: 4,
-                            marginLeft: indentLevel * 12,
-                        }}
-                    >
-                        <SidebarButton
-                            leftIconName={!hasChildren ? undefined : (isExpanded ? "chevron-down" : "chevron-right")}
-                            label={scheme.name}
-                            selected={curFilterSchemeID === scheme.id}
-                            onClick={() => setCurScheme(scheme)}
-                            rightIconName={isDefault(scheme) ? undefined : 'ellipsis'}
-                            onClickRightIcon={isDefault(scheme) ? undefined : (e) => handleClickMore(e, scheme)}
-                            onClickLeftIcon={hasChildren ? () => toggleExpand(scheme.id) : undefined}
-                        />
-                    </div>
-                    {/* 递归渲染子方案 */}
-                    {hasChildren && isExpanded && (
-                        <div className="filter-scheme-item-sub">
-                            {renderSchemeList(scheme.id, indentLevel + 1)}
-                        </div>
-                    )}
-                </React.Fragment>
-            );
-        });
+    const renderSchemeList = () => {
+        const res: { scheme: FilterScheme, indentLevel: number }[] = [];
+        const dfs = (indentLevel: number, parentId: number | null) => {
+            const curSchems = getChildSchemes(parentId);
+            for (const scheme of curSchems) {
+                res.push({ scheme, indentLevel });
+                dfs(indentLevel + 1, scheme.id);
+            }
+        };
+        dfs(0, null);
+        return res.map(({ scheme, indentLevel }) => filterSchemeBtn(scheme, indentLevel));
     };
 
     return (
@@ -230,7 +230,7 @@ export const FilterSchemesInfo = () => {
                 </div>
             </div>
             <div className='filter-scheme-list' style={{ marginTop: 6, display: 'flex', gap: 4, flexDirection: 'column' }}>
-                {renderSchemeList(null)}
+                {renderSchemeList()}
             </div>
         </div>
     );

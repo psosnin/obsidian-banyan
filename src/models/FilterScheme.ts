@@ -17,7 +17,7 @@ export const getDefaultFilterScheme = (schemes: FilterScheme[]) => {
     return schemes.find(s => s.id === DefaultFilterSchemeID) ?? _DefaultFilterScheme;
 }
 
-export const createEmptyFilterScheme = (id: number = -3, name: string = ''): FilterScheme => {
+export const createEmptyFilterScheme = (id: number = -3, name: string = '', parentId: number | null = null): FilterScheme => {
     return {
         id: id,
         name: name,
@@ -25,7 +25,7 @@ export const createEmptyFilterScheme = (id: number = -3, name: string = ''): Fil
         dateRange: emptyDateRange(),
         keyword: "",
         pinned: [],
-        parentId: null,
+        parentId: parentId,
         type: 'FilterScheme'
     }
 }

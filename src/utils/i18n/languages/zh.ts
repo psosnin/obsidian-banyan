@@ -114,6 +114,7 @@ export default {
 
     filter_schemes: "常用过滤",
     create_copy: "创建副本",
+    create_sub_scheme: "创建子方案",
 
     view_schemes: "视图空间",
 

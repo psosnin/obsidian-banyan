@@ -113,6 +113,7 @@ export default {
 
     filter_schemes: "filter schemes",
     create_copy: "create copy",
+    create_sub_scheme: "create sub scheme",
 
     view_schemes: "view schemes",
 

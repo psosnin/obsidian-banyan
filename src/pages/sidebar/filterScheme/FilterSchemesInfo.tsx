@@ -27,9 +27,9 @@ export const FilterSchemesInfo = () => {
     // 存储展开状态的方案ID
     const [expandedSchemeIds, setExpandedSchemeIds] = React.useState<number[]>([]);
 
-    const handleCreateFilterScheme = () => {
+    const handleCreateFilterScheme = (parentId: number | null = null) => {
         const maxId = getMaxSchemeId(filterSchemes);
-        const newScheme = createEmptyFilterScheme(maxId + 1);
+        const newScheme = createEmptyFilterScheme(maxId + 1, '', parentId);
         const modal = new FilterEditModal(app, {
             filterScheme: newScheme,
             allTags,
@@ -46,19 +46,20 @@ export const FilterSchemesInfo = () => {
         return schemes.reduce((maxId, scheme) => Math.max(maxId, scheme.id), 0);
     };
 
-    const handleMenuClick = (action: string, scheme: FilterScheme) => {
-        if (action === 'update') {
-            const modal = new FilterEditModal(app, {
-                filterScheme: { ...scheme },
-                allTags,
-                isNew: false,
-                onSave: (updatedScheme: FilterScheme) => {
-                    updateFilterScheme(updatedScheme);
-                }
-            });
-            modal.open();
-        } else if (action === 'duplicate') {
-            const maxId = getMaxSchemeId(filterSchemes);
+    const hanldeUpdateFilterScheme = (scheme: FilterScheme) => {
+        const modal = new FilterEditModal(app, {
+            filterScheme: { ...scheme },
+            allTags,
+            isNew: false,
+            onSave: (updatedScheme: FilterScheme) => {
+                updateFilterScheme(updatedScheme);
+            }
+        });
+        modal.open();
+    }
+
+    const handleDuplicateFilterScheme = (scheme: FilterScheme) => {
+        const maxId = getMaxSchemeId(filterSchemes);
             const newScheme = {
                 ...scheme,
                 id: maxId + 1,
@@ -66,26 +67,27 @@ export const FilterSchemesInfo = () => {
                 parentId: scheme.parentId // 保持相同的父方案
             };
             createFilterScheme(newScheme);
-        } else if (action === 'delete') {
-            deleteFilterScheme(scheme.id);
-        }
-    };
+    }
 
     // 点击更多按钮弹出菜单
     const handleClickMore = (event: MouseEvent, scheme: FilterScheme) => {
         const menu = new Menu();
         menu.addItem((item) => {
             item.setTitle(i18n.t('general_update'));
-            item.onClick(() => handleMenuClick('update', scheme));
+            item.onClick(() => hanldeUpdateFilterScheme(scheme));
+        });
+        menu.addItem((item) => {
+            item.setTitle(i18n.t('create_sub_scheme'));
+            item.onClick(() => handleCreateFilterScheme(scheme.id));
         });
         menu.addItem((item) => {
             item.setTitle(i18n.t('create_copy'));
-            item.onClick(() => handleMenuClick('duplicate', scheme));
+            item.onClick(() => handleDuplicateFilterScheme(scheme));
         });
         menu.addSeparator();
         menu.addItem((item) => {
             item.setTitle(i18n.t('general_delete'));
-            item.onClick(() => handleMenuClick('delete', scheme));
+            item.onClick(() => deleteFilterScheme(scheme.id));
         });
         menu.showAtMouseEvent(event);
     };
@@ -224,7 +226,7 @@ export const FilterSchemesInfo = () => {
                 </div>
                 <div className='filter-scheme-header-add' style={{ marginRight: 8 }}>
                     <button className='filter-scheme-header-add-btn clickable-icon'
-                        onClick={handleCreateFilterScheme}>
+                        onClick={() => handleCreateFilterScheme()}>
                         <Icon name='plus' size='m' color='var(--interactive-accent)' />
                     </button>
                 </div>

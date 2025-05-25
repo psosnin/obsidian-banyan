@@ -5,6 +5,7 @@ import { BanyanSettingTab } from './BanyanSettingTab';
 import { FileUtils } from './utils/fileUtils';
 import { i18n } from './utils/i18n';
 import { TagFilter } from './models/TagFilter';
+import { ensureFileID, generateFileId } from './models/FileInfo';
 
 export default class BanyanPlugin extends Plugin {
 	settings: BanyanPluginSettings;
@@ -37,7 +38,7 @@ export default class BanyanPlugin extends Plugin {
 		// 打开笔记面板 命令和按钮
 		this.addCommand({
 			id: 'open-dashboard',
-			name:i18n.t('open_dashboard'),
+			name: i18n.t('open_dashboard'),
 			callback: () => this.activateView(CARD_DASHBOARD_VIEW_TYPE),
 		});
 		const CardIconEl = this.addRibbonIcon('wallet-cards', i18n.t('open_dashboard'), () => {
@@ -74,16 +75,16 @@ export default class BanyanPlugin extends Plugin {
 		this.app.workspace.getLeavesOfType(CARD_DASHBOARD_VIEW_TYPE).forEach(leaf => leaf.detach());
 	}
 
-	updateSettingIfNeeded = () => {
+	updateSettingIfNeeded = async () => {
 		// *** 版本更新时，在以下添加更新逻辑 ***
 		if (this.settings.settingsVersion < 2) {
 			const getNewFilterIfNeeded = (tf: TagFilter) => {
 				return tf.noTag !== undefined ? tf : { ...tf, notag: 'unlimited' };
 			};
 			this.settings.filterSchemes = [...this.settings.filterSchemes.map((scheme) => {
-				return { ...scheme, tagFilter:  getNewFilterIfNeeded(scheme.tagFilter)};
+				return { ...scheme, tagFilter: getNewFilterIfNeeded(scheme.tagFilter) };
 			})];
-			this.settings.randomNoteTagFilter = getNewFilterIfNeeded(this.settings.randomNoteTagFilter);			
+			this.settings.randomNoteTagFilter = getNewFilterIfNeeded(this.settings.randomNoteTagFilter);
 		};
 		if (this.settings.settingsVersion < CUR_SETTINGS_VERSION) { // CUR_SETTINGS_VERSION is 3
 			this.settings.filterSchemes = [...this.settings.filterSchemes.map((scheme) => {
@@ -92,12 +93,22 @@ export default class BanyanPlugin extends Plugin {
 		};
 		// *** 版本更新时，在以上添加更新逻辑 ***
 		this.settings.settingsVersion = CUR_SETTINGS_VERSION;
+		await this.ensureAllFileID();
 		this.updateSavedFile();
 		this.saveSettings();
 	}
 
+	ensureAllFileID = async () => {
+		let cnt = Math.floor(Math.random() * 1000);
+		const allFiles = this.fileUtils.getAllRawFiles();
+		for (const file of allFiles) {
+			await ensureFileID(file, this.app, cnt);
+			cnt = cnt >= 999 ? 1 : cnt + 1;
+		}
+	}
+
 	updateSavedFile = () => {
-		const _allFiles = this.fileUtils.getAllFiles().map((file) => file.getID());
+		const _allFiles = this.fileUtils.getAllFiles().map((f) => f.id);
 		if (_allFiles.length === 0) return; // 防止获取不到文件，却清空数据的情况
 		const allFiles = new Set(_allFiles);
 		this.settings.viewSchemes = [...this.settings.viewSchemes.map((scheme) => {

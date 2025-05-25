@@ -1,57 +1,9 @@
-import { TFolder, App, TFile, normalizePath, Notice, getAllTags } from "obsidian";
+import { TFolder, App, TFile, normalizePath, Notice } from "obsidian";
 import BanyanPlugin from "src/main";
+import { createFileInfo, FileInfo, generateFileId, isOKWithTagFilter } from "src/models/FileInfo";
 import { TagFilter } from "src/models/TagFilter";
 
 const PlaceholderFileName = "banyan_editor_placeholder.md";
-
-declare module 'obsidian' {
-  interface TFile {
-    getID(): number;
-    getTags(app: App): string[];
-    isOKWithTagFilter(app: App, filter: TagFilter): boolean;
-  }
-}
-
-TFile.prototype.getID = function (): number {
-  return this.stat.ctime;
-};
-
-TFile.prototype.getTags = function (app: App): string[] {
-  const cache = app.metadataCache.getFileCache(this);
-  if (!cache) return [];
-  const fileTags = getAllTags(cache)?.map((tag) => tag.slice(1)) ?? [];
-  return Array.from(new Set(fileTags));
-};
-
-TFile.prototype.isOKWithTagFilter = function (app: App, filter: TagFilter): boolean {
-  const fileTags: string[] = this.getTags(app);
-  const notTags = filter.not;
-  const orTags = filter.or.filter(row => row.length > 0); // 优化 或标签组
-
-  // *** 排除 ***
-  // 要排除的标签
-  for (const noTag of notTags) {
-    if (fileTags.some(fileTag => fileTag.startsWith(noTag))) {
-      return false;
-    }
-  }
-  // 排除无标签
-  if (filter.noTag == 'exclude' && fileTags.length === 0) return false;
-
-  // *** 包含 ***
-  // 包含无标签
-  if (filter.noTag == 'include' && fileTags.length === 0) return true;
-  // 没有「或标签组」，则不过滤
-  if (orTags.length === 0) return true;
-  
-  // 有「或标签组」，则只保留符合的文件，排除其他
-  for (const andTags of orTags) {
-    if (andTags.every(tag => fileTags.some(fileTag => fileTag.startsWith(tag)))) {
-      return true;
-    }
-  }
-  return false;
-};
 
 export class FileUtils {
 
@@ -80,10 +32,18 @@ export class FileUtils {
     return folders.filter(f => f !== "");
   }
 
-  getAllFiles(): TFile[] {
+  getAllRawFiles(): TFile[] {
     const files = this.app.vault.getMarkdownFiles()
       .filter((file: TFile) => file.path.startsWith(this.dir))
       .filter((file: TFile) => file.path !== normalizePath(`${this.dir}/${PlaceholderFileName}`));
+    return files;
+  }
+
+  getAllFiles(): FileInfo[] {
+    const files = this.getAllRawFiles()
+      .map(f => createFileInfo(f, this.app))
+      .filter(f => f !== null)
+      .map(f => f!);
     return files;
   }
 
@@ -138,13 +98,15 @@ export class FileUtils {
 
     // 打开笔记
     const leaf = this.app.workspace.getLeaf(false);
-    leaf.openFile(randomFile, { active: true }).then(() => this.app.workspace.setActiveLeaf(leaf, { focus: true }));
+    leaf.openFile(randomFile.file, { active: true }).then(() => this.app.workspace.setActiveLeaf(leaf, { focus: true }));
     // this.app.workspace.openLinkText(randomFile.path, '', false);
   }
 
-  async addFile(content?: string, open: boolean = true) {
+  async addFile(content?: string, tags: string[] = [], open: boolean = true) {
     const filePath = await this.getNewNoteFilePath();
-    const _content = content ?? `---\ntags: \n---\n`;
+    const id = generateFileId((new Date()).getTime());
+    const tagsStr = tags.length === 0 ? '' : `tags:\n${tags.map(t => `- ${t}\n`).join('')}`;
+    const _content = content ?? `---\nid: ${id}\n${tagsStr}---\n`;
     const file = await this.app.vault.create(filePath, _content);
     if (!open) return;
     const leaf = this.app.workspace.getLeaf(true);
@@ -176,9 +138,9 @@ export class FileUtils {
   //#endregion
 
   //#region 标签操作
-  getFilesTags(files: TFile[]) {
+  getFilesTags(files: FileInfo[]) {
     const rawTags = files
-      .map(f => f.getTags(this.app))
+      .map(f => f.tags)
       .reduce((pre, cur) => pre.concat(cur), []);
     const tagSet = new Set(rawTags);
     // 多级标签的初级标签也要添加，如 a/b/c 也要添加 a/b 和 a
@@ -200,8 +162,8 @@ export class FileUtils {
     return this.getFilesTags(files);
   }
 
-  getTagsFilterdFiles(files: TFile[], filter: TagFilter) {
-    return files.filter(file => file.isOKWithTagFilter(this.app, filter));
+  getTagsFilterdFiles(files: FileInfo[], filter: TagFilter) {
+    return files.filter(({tags}) => isOKWithTagFilter(tags, filter));
   }
 
   //#endregion

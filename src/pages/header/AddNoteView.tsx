@@ -92,9 +92,7 @@ const AddNoteView: React.FC<AddNoteViewProps> = ({ app, plugin, onAdd }) => {
             const file = await plugin.fileUtils.getPlaceholderFile();
             const body = await plugin.fileUtils.readFileContent(file);
             if (body.trim().length === 0 && tags.length === 0) return;
-            const meta = tags.length === 0 ? "" : `---\ntags:\n${tags.map(t => `- ${t}\n`).join('')}---\n`;
-            const content = meta + body;
-            await plugin.fileUtils.addFile(content, false);
+            await plugin.fileUtils.addFile(body, tags, false);
             await plugin.fileUtils.modifyFileContent(file, '');
             setTags([]);
             onAdd();

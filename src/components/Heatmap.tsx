@@ -1,6 +1,6 @@
-import { TFile } from 'obsidian';
 import CalendarHeatmap from 'react-calendar-heatmap';
 import { Tooltip } from 'react-tooltip'
+import { FileInfo } from 'src/models/FileInfo';
 import { i18n } from 'src/utils/i18n';
 
 export type HeatmapData = {
@@ -55,8 +55,9 @@ const shiftDate = (date: Date, numDays: number) => {
     return newDate;
 }
 
-export const getHeatmapValues = (files: TFile[]) => {
-    const valueMap = files
+export const getHeatmapValues = (fileInfos: FileInfo[]) => {
+    const valueMap = fileInfos
+        .map(f => f.file)
         .map(file => {
             const date = new Date(file.stat.ctime); // 记录创建时间，记录修改时间没意义
             const offset = date.getTimezoneOffset();

@@ -1,17 +1,18 @@
-import { Menu, TFile, Notice } from "obsidian";
+import { Menu, Notice } from "obsidian";
 import { useCombineStore } from "src/store";
 import { i18n } from "src/utils/i18n";
 import { ViewSelectModal } from "../sidebar/viewScheme/ViewSelectModal";
 import { openDeleteConfirmModal } from "src/components/ConfirmModal";
 import { Icon } from "src/components/Icon";
+import { FileInfo } from "src/models/FileInfo";
 
 export interface CardNoteMenuParams {
   event: MouseEvent;
-  file: TFile;
+  fileInfo: FileInfo;
   isPinned: boolean;
 }
 
-export const CardNoteMenuButton = ({ file, isPinned }: { file: TFile, isPinned: boolean }) => {
+export const CardNoteMenuButton = ({ fileInfo, isPinned }: { fileInfo: FileInfo, isPinned: boolean }) => {
 
   const plugin = useCombineStore((state) => state.plugin);
   const pinFile = useCombineStore((state) => state.pinFile);
@@ -21,7 +22,7 @@ export const CardNoteMenuButton = ({ file, isPinned }: { file: TFile, isPinned: 
   const setCurScheme = useCombineStore((state) => state.setCurScheme);
   const isInView = curScheme.type === 'ViewScheme';
 
-  const openCardNoteMoreMenu = ({ event, file, isPinned }: CardNoteMenuParams) => {
+  const openCardNoteMoreMenu = ({ event, fileInfo, isPinned }: CardNoteMenuParams) => {
 
     const menu = new Menu();
 
@@ -29,7 +30,7 @@ export const CardNoteMenuButton = ({ file, isPinned }: { file: TFile, isPinned: 
       menu.addItem((item) => {
         item.setTitle(i18n.t('general_open'));
         item.onClick(() => {
-          plugin.fileUtils.openFile(file);
+          plugin.fileUtils.openFile(fileInfo.file);
         });
       });
     };
@@ -38,8 +39,8 @@ export const CardNoteMenuButton = ({ file, isPinned }: { file: TFile, isPinned: 
         item.setTitle(i18n.t('remove_from_view'));
         item.onClick(() => {
           if (curScheme.type !== 'ViewScheme') return; // 按理说UI层已经保障了只有ViewScheme时才会有这个按钮
-          const newFiles = [...curScheme.files.filter((fileID) => fileID !== file.getID())];
-          const newPinned = [...curScheme.pinned.filter((fileID) => fileID !== file.getID())];
+          const newFiles = [...curScheme.files.filter((fileID) => fileID !== fileInfo.id)];
+          const newPinned = [...curScheme.pinned.filter((fileID) => fileID !== fileInfo.id)];
           const newScheme = { ...curScheme, files: newFiles, pinned: newPinned };
           updateViewScheme(newScheme);
           setCurScheme(newScheme); // 当前是视图模式才可能执行这个操作，所以当前视图也要更新
@@ -53,11 +54,11 @@ export const CardNoteMenuButton = ({ file, isPinned }: { file: TFile, isPinned: 
           const modal = new ViewSelectModal(plugin.app, {
             viewSchemes: viewSchemes,
             onSelect: (scheme) => {
-              if (scheme.files.includes(file.getID())) {
+              if (scheme.files.includes(fileInfo.id)) {
                 new Notice(i18n.t('notice_note_already_in_view'));
                 return;
               }
-              const newFiles = [...scheme.files, file.getID()];
+              const newFiles = [...scheme.files, fileInfo.id];
               const newScheme = { ...scheme, files: newFiles };
               updateViewScheme(newScheme);
             }
@@ -72,7 +73,7 @@ export const CardNoteMenuButton = ({ file, isPinned }: { file: TFile, isPinned: 
         item.onClick(() => {
           const newIsPinned = !isPinned;
           new Notice(i18n.t(newIsPinned ? 'notice_note_pinned' : 'notice_note_unpinned'));
-          pinFile(file, newIsPinned);
+          pinFile(fileInfo, newIsPinned);
         });
       });
     };
@@ -80,7 +81,7 @@ export const CardNoteMenuButton = ({ file, isPinned }: { file: TFile, isPinned: 
       menu.addItem((item) => {
         item.setTitle(i18n.t('copy_link'));
         item.onClick(() => {
-          const url = ` [[${file.path}|MEMO ▶]] `;
+          const url = ` [[${fileInfo.file.path}|MEMO ▶]] `;
           navigator.clipboard.writeText(url);
           new Notice(i18n.t('link_copied'));
         });
@@ -94,7 +95,7 @@ export const CardNoteMenuButton = ({ file, isPinned }: { file: TFile, isPinned: 
             app: plugin.app,
             description: i18n.t('delete_note_confirm'),
             onConfirm: async () => {
-              await plugin.fileUtils.trashFile(file);
+              await plugin.fileUtils.trashFile(fileInfo.file);
               new Notice(i18n.t('notice_note_to_trash'));
             }
           });
@@ -103,13 +104,13 @@ export const CardNoteMenuButton = ({ file, isPinned }: { file: TFile, isPinned: 
     };
     const ctimeInfo = () => {
       menu.addItem((item) => {
-        item.setTitle(`${i18n.t('general_create')}: ${new Date(file.stat.ctime).toLocaleString()}`);
+        item.setTitle(`${i18n.t('general_create')}: ${new Date(fileInfo.file.stat.ctime).toLocaleString()}`);
         item.setDisabled(true);
       });
     };
     const mtimeInfo = () => {
       menu.addItem((item) => {
-        item.setTitle(`${i18n.t('general_update')}: ${new Date(file.stat.mtime).toLocaleString()}`);
+        item.setTitle(`${i18n.t('general_update')}: ${new Date(fileInfo.file.stat.mtime).toLocaleString()}`);
         item.setDisabled(true);
       });
     };
@@ -129,6 +130,6 @@ export const CardNoteMenuButton = ({ file, isPinned }: { file: TFile, isPinned: 
 
   return (<button className="clickable-icon"
     children={<Icon name='ellipsis' />}
-    onClick={(e) => openCardNoteMoreMenu({ event: e.nativeEvent, file, isPinned })}
+    onClick={(e) => openCardNoteMoreMenu({ event: e.nativeEvent, fileInfo, isPinned })}
   />);
 }

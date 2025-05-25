@@ -86,9 +86,9 @@ const CardDashboardView = ({ plugin }: { plugin: BanyanPlugin }) => {
   // 文件监听逻辑
   useEffect(() => {
     const watcher = createFileWatcher(plugin);
-    const unsubscribe = watcher.onChange(({ type, file }) => {
+    const unsubscribe = watcher.onChange(({ type, fileInfo }) => {
       if (type === 'delete') {
-        updateWhendeleteFile(file.getID());
+        updateWhendeleteFile(fileInfo.id);
       }
       if (type === 'create' ||  type === 'modify' || type === 'meta-change') {
         setRefreshFlag(f => f + 1);
@@ -171,7 +171,7 @@ const CardDashboardView = ({ plugin }: { plugin: BanyanPlugin }) => {
     const modal = new ViewSelectModal(app, {
       viewSchemes: viewSchemes,
       onSelect: (scheme) => {
-        const temp = new Set<number>([...scheme.files, ...displayFiles.map((file) => file.getID())]);
+        const temp = new Set<number>([...scheme.files, ...displayFiles.map((f) => f.id)]);
         const newFiles = Array.from(temp);
         const newScheme = { ...scheme, files: newFiles };
         updateViewScheme(newScheme);
@@ -180,11 +180,11 @@ const CardDashboardView = ({ plugin }: { plugin: BanyanPlugin }) => {
     modal.open();
   };
 
-  const cardNodes = displayFiles.map((file, index) => {
+  const cardNodes = displayFiles.map((f, index) => {
     const isLastCard = index === displayFiles.length - 1;
     return (
-      <div ref={isLastCard ? lastCardElementRef : null} key={file.getID()}>
-        <CardNote file={file} />
+      <div ref={isLastCard ? lastCardElementRef : null} key={f.id}>
+        <CardNote fileInfo={f} />
       </div>
     );
   });

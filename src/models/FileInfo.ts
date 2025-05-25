@@ -1,0 +1,64 @@
+import { App, getAllTags, TFile } from "obsidian";
+import { TagFilter } from "./TagFilter";
+
+export interface FileInfo {
+  file: TFile;
+  tags: string[];
+  id: number;
+}
+
+export const generateFileId = (createTime: number, randomNum?: number) => {
+  const newId = createTime * 1000 + (randomNum ?? Math.floor(Math.random() * 1000));
+  return newId
+}
+
+export const createFileInfo = (file: TFile, app: App): FileInfo | null => {
+  const cache = app.metadataCache.getFileCache(file);
+  if (!cache) return null;
+  const fileTags = getAllTags(cache)?.map((tag) => tag.slice(1)) ?? [];
+  const tags = Array.from(new Set(fileTags));
+  const id = cache.frontmatter?.id;
+  if (!id) return null;
+  return { file, tags, id } as FileInfo;
+}
+
+export const ensureFileID = async (file: TFile, app: App, random?: number) => {
+    const metadata = app.metadataCache.getFileCache(file);
+    if (metadata?.frontmatter?.id) return;
+
+    const newId = generateFileId(file.stat.ctime, random);
+    let content = await app.vault.read(file);
+    content = content.startsWith('---\n')
+      ? content.replace('---\n', `---\nid: ${newId}\n`) // 只会替换第一个
+      : `---\nid: ${newId}\n---\n${content}`;
+    await app.vault.modify(file, content, { mtime: file.stat.mtime });
+}
+
+export const isOKWithTagFilter = (fileTags: string[], filter: TagFilter) => {
+  const notTags = filter.not;
+  const orTags = filter.or.filter(row => row.length > 0); // 优化 或标签组
+
+  // *** 排除 ***
+  // 要排除的标签
+  for (const noTag of notTags) {
+    if (fileTags.some(fileTag => fileTag.startsWith(noTag))) {
+      return false;
+    }
+  }
+  // 排除无标签
+  if (filter.noTag == 'exclude' && fileTags.length === 0) return false;
+
+  // *** 包含 ***
+  // 包含无标签
+  if (filter.noTag == 'include' && fileTags.length === 0) return true;
+  // 没有「或标签组」，则不过滤
+  if (orTags.length === 0) return true;
+
+  // 有「或标签组」，则只保留符合的文件，排除其他
+  for (const andTags of orTags) {
+    if (andTags.every(tag => fileTags.some(fileTag => fileTag.startsWith(tag)))) {
+      return true;
+    }
+  }
+  return false;
+}

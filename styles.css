@@ -355,6 +355,10 @@ If your plugin does not need CSS, delete this file.
   display: none;
 }
 
+.add-note-content .metadata-container {
+  display: none !important;
+}
+
 .add-note-content .markdown-preview-sizer {
   min-height: 0 !important;
   padding: 0 !important;

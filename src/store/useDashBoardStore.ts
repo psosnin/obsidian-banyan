@@ -1,22 +1,21 @@
-import { TFile } from "obsidian";
-import { getHeatmapValues } from "src/components/Heatmap";
 import { createEmptyFilterScheme, DefaultFilterSchemeID, FilterScheme, getDefaultFilterScheme, SearchFilterSchemeID } from "src/models/FilterScheme";
 import { ViewScheme } from "src/models/ViewScheme";
 import { StateCreator } from "zustand";
 import { withinDateRange } from "src/models/DateRange";
 import { CombineState } from ".";
+import { createFileInfo, FileInfo, isOKWithTagFilter } from "src/models/FileInfo";
 
 export interface DashBoardState {
-    allFiles: TFile[];
+    allFiles: FileInfo[];
     allTags: string[];
-    curSchemeFiles: TFile[];
+    curSchemeFiles: FileInfo[];
     curScheme: FilterScheme | ViewScheme;
-    displayFiles: TFile[];
+    displayFiles: FileInfo[];
 
     setCurScheme: (scheme: FilterScheme | ViewScheme) => void;
     requestData: () => Promise<void>;
     updateDisplayFiles: (endIndex: number) => void;
-    pinFile: (file: TFile, isPinned: boolean) => void;
+    pinFile: (f: FileInfo, isPinned: boolean) => void;
 
 }
 
@@ -41,24 +40,25 @@ export const useDashBoardStore: StateCreator<CombineState, [], [], DashBoardStat
         let filtered = allFiles;
         if (curScheme.type == 'FilterScheme') {
             // date range
-            filtered = filtered.filter((file: TFile) => withinDateRange(sortType == 'created' ? file.stat.ctime : file.stat.mtime, curScheme.dateRange));
+            filtered = filtered.filter(({file}) => withinDateRange(sortType == 'created' ? file.stat.ctime : file.stat.mtime, curScheme.dateRange));
             // key word
             if (curScheme.keyword.trim().length > 0) {
                 const keyword = curScheme.keyword.trim().toLowerCase();
-                const allLoadedContents = await Promise.all(filtered.map(async (file: TFile) => {
-                    const content = await plugin.fileUtils.readCachedFileContent(file);
-                    return { file, content };
+                const allLoadedContents = await Promise.all(filtered.map(async (fileInfo) => {
+                    const content = await plugin.fileUtils.readCachedFileContent(fileInfo.file);
+                    return { fileInfo, content };
                 }));
-                filtered = allLoadedContents.filter(({ content }) => content.toLowerCase().includes(keyword)).map(({ file }) => file);
+                filtered = allLoadedContents.filter(({ content }) => content.toLowerCase().includes(keyword)).map(({ fileInfo }) => fileInfo);
             }
             // tag filter
-            filtered = filtered.filter((file) => {
-                return file.isOKWithTagFilter(plugin.app, curScheme.tagFilter);
+            filtered = filtered.filter((fileInfo) => {
+                return isOKWithTagFilter(fileInfo.tags, curScheme.tagFilter);
             });
         } else if (curScheme.type == 'ViewScheme') {
-            filtered = filtered.filter((file: TFile) => curScheme.files.includes(file.getID()));
+            filtered = filtered.filter(fileInfo => curScheme.files.includes(fileInfo.id));
         }
-        filtered.sort((a, b) => sortType === 'created' ? b.stat.ctime - a.stat.ctime : b.stat.mtime - a.stat.mtime);
+        filtered.sort((a, b) => sortType === 'created' ? b.file.stat.ctime - a.file.stat.ctime : b.file.stat.mtime - a.file.stat.mtime);
+        // console.log('requestData', allFiles.length, filtered.length);
         set({ allFiles, allTags, curSchemeFiles: filtered });
     },
     updateDisplayFiles: (endIndex: number) => {
@@ -66,16 +66,15 @@ export const useDashBoardStore: StateCreator<CombineState, [], [], DashBoardStat
         const curSchemeFiles = get().curSchemeFiles;
         const files = curSchemeFiles.slice(0, endIndex);
         const displayFiles = files
-            .filter((file) => curScheme.pinned.includes(file.getID()))
-            .concat(files.filter((file) => !curScheme.pinned.includes(file.getID())));
+            .filter((f) => curScheme.pinned.includes(f.id))
+            .concat(files.filter((f) => !curScheme.pinned.includes(f.id)));
         set({ displayFiles });
     },
-    pinFile: (file: TFile, isPinned: boolean) => {
+    pinFile: (f: FileInfo, isPinned: boolean) => {
         const curScheme = get().curScheme;
         const viewSchemes = get().viewSchemes;
         const filterSchemes = get().filterSchemes;
-        const fileId = file.getID();
-        const newPinned = [...curScheme.pinned.filter(p => p !== fileId)].concat(isPinned ? [fileId] : []);
+        const newPinned = [...curScheme.pinned.filter(p => p !== f.id)].concat(isPinned ? [f.id] : []);
         const newScheme = { ...curScheme, pinned: newPinned };
         set({ curScheme: newScheme });
         if (newScheme.type === 'ViewScheme') {

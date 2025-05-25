@@ -1,10 +1,11 @@
 import { TFile, Vault, MetadataCache } from 'obsidian';
 import BanyanPlugin from 'src/main';
+import { createFileInfo, ensureFileID, FileInfo } from 'src/models/FileInfo';
 
 export type FileChangeType = 'create' | 'delete' | 'modify' | 'rename' | 'meta-change';
 export interface FileChange {
   type: FileChangeType;
-  file: TFile;
+  fileInfo: FileInfo;
 }
 
 export type FileChangeCallback = (change: FileChange) => void;
@@ -29,8 +30,8 @@ export class FileWatcher {
   }
 
   private initFileCache() {
-    this.plugin.fileUtils.getAllFiles().forEach(file => {
-      this.fileCache.set(file.path, file.stat.mtime);
+    this.plugin.fileUtils.getAllFiles().forEach(fileInfo => {
+      this.fileCache.set(fileInfo.file.path, fileInfo.file.stat.mtime);
     });
   }
 
@@ -42,34 +43,45 @@ export class FileWatcher {
     this.metadataCache.on('changed', this.handleMetaChange);
   }
 
-  private handleCreate(file: TFile) {
+  private async handleCreate(file: TFile) {
     if (file.extension !== 'md') return;
     this.fileCache.set(file.path, file.stat.mtime);
-    this.emit({ type: 'create', file });
+    await ensureFileID(file, this.plugin.app);
+    const fileInfo = createFileInfo(file, this.plugin.app);
+    if (!fileInfo) return;
+    this.emit({ type: 'create', fileInfo });
   }
 
   private handleDelete(file: TFile) {
     if (file.extension !== 'md') return;
+    const fileInfo = createFileInfo(file, this.plugin.app);
+    if (!fileInfo) return;
     this.fileCache.delete(file.path);
-    this.emit({ type: 'delete', file });
+    this.emit({ type: 'delete', fileInfo });
   }
 
   private handleModify(file: TFile) {
     if (file.extension !== 'md') return;
+    const fileInfo = createFileInfo(file, this.plugin.app);
+    if (!fileInfo) return;
     this.fileCache.set(file.path, file.stat.mtime);
-    this.emit({ type: 'modify', file });
+    this.emit({ type: 'modify', fileInfo });
   }
 
   private handleRename(file: TFile, oldPath: string) {
     if (file.extension !== 'md') return;
+    const fileInfo = createFileInfo(file, this.plugin.app);
+    if (!fileInfo) return;
     this.fileCache.set(file.path, this.fileCache.get(oldPath)!);
     this.fileCache.delete(oldPath);
-    this.emit({ type:'rename', file: file});
+    this.emit({ type:'rename', fileInfo});
   }
 
   private handleMetaChange(file: TFile) {
     if (file.extension !== 'md') return;
-    this.emit({ type: 'meta-change', file });
+    const fileInfo = createFileInfo(file, this.plugin.app);
+    if (!fileInfo) return;
+    this.emit({ type: 'meta-change', fileInfo });
   }
 
   public onChange(cb: FileChangeCallback) {
@@ -85,6 +97,7 @@ export class FileWatcher {
     this.vault.off('create', this.handleCreate);
     this.vault.off('delete', this.handleDelete);
     this.vault.off('modify', this.handleModify);
+    this.vault.off('rename', this.handleRename);
     this.metadataCache.off('changed', this.handleMetaChange);
     this.callbacks.clear();
     this.fileCache.clear();

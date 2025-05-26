@@ -105,8 +105,8 @@ export class FileUtils {
   async addFile(content?: string, tags: string[] = [], open: boolean = true) {
     const filePath = await this.getNewNoteFilePath();
     const id = generateFileId((new Date()).getTime());
-    const tagsStr = tags.length === 0 ? '' : `tags:\n${tags.map(t => `- ${t}\n`).join('')}`;
-    const _content = content ?? `---\nid: ${id}\n${tagsStr}---\n`;
+    const tagsStr = `tags:\n${tags.map(t => `- ${t}\n`).join('')}`;
+    const _content = `---\nid: ${id}\n${tagsStr}---\n` + (content ?? '');
     const file = await this.app.vault.create(filePath, _content);
     if (!open) return;
     const leaf = this.app.workspace.getLeaf(true);

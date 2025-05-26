@@ -94,6 +94,7 @@ export default {
     // 侧边栏
     note: "note",
     tag: "tag",
+    days: "days",
 
     month1: "January",
     month2: "February",

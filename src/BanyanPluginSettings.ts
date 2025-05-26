@@ -9,6 +9,7 @@ export interface BanyanPluginSettings {
 	cardsColumns: number;
 	showTitle: boolean;
 	randomNoteTagFilter: TagFilter;
+	firstUseDate: string;
 
 	sortType: 'created' | 'modified';
 	filterSchemes: FilterScheme[];
@@ -16,6 +17,12 @@ export interface BanyanPluginSettings {
 }
 
 export const CUR_SETTINGS_VERSION = 3;
+
+const getToday = () => {
+	const today = new Date();
+	today.setHours(0, 0, 0, 0);
+	return today.toLocaleDateString();
+}
 
 export const DEFAULT_SETTINGS: BanyanPluginSettings = {
 	settingsVersion: CUR_SETTINGS_VERSION,
@@ -27,4 +34,5 @@ export const DEFAULT_SETTINGS: BanyanPluginSettings = {
 	viewSchemes: [],
 	randomNoteTagFilter: emptyTagFilter(),
 	cardsColumns: 1,
+	firstUseDate: getToday(),
 }

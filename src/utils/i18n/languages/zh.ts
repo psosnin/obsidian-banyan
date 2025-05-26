@@ -95,6 +95,7 @@ export default {
     // 侧边栏
     note: "笔记",
     tag: "标签",
+    days: "天",
 
     month1: "一月",
     month2: "二月",

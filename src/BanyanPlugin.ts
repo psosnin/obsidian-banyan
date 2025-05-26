@@ -5,7 +5,7 @@ import { BanyanSettingTab } from './BanyanSettingTab';
 import { FileUtils } from './utils/fileUtils';
 import { i18n } from './utils/i18n';
 import { TagFilter } from './models/TagFilter';
-import { ensureFileID, generateFileId } from './models/FileInfo';
+import { ensureFileID } from './models/FileInfo';
 
 export default class BanyanPlugin extends Plugin {
 	settings: BanyanPluginSettings;
@@ -13,6 +13,10 @@ export default class BanyanPlugin extends Plugin {
 
 	async onload() {
 		await this.loadSettings();
+
+		// 初始化 store
+		const { useCombineStore } = await import('./store');
+		useCombineStore.getState().setupPlugin(this);
 
 		this.fileUtils = new FileUtils(this.app, this);
 

@@ -56,9 +56,6 @@ export class CardDashboard extends ItemView {
 
 const CardDashboardView = ({ plugin }: { plugin: BanyanPlugin }) => {
 
-  const setupPlugin = useCombineStore((state) => state.setupPlugin);
-
-  useEffect(() => setupPlugin(plugin), []);
 
   const requestData = useCombineStore((state) => state.requestData);
   const updateDisplayFiles = useCombineStore((state) => state.updateDisplayFiles);

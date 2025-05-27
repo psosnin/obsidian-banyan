@@ -56,7 +56,7 @@ export default class BanyanPlugin extends Plugin {
 		this.addSettingTab(new BanyanSettingTab(this.app, this));
 
 		this.app.workspace.onLayoutReady(() => {
-			this.updateSettingIfNeeded();			
+			this.updateSettingIfNeeded();
 			// 启动时自动打开自定义面板
 			if (this.settings.openWhenStartObsidian) {
 				this.activateView(CARD_DASHBOARD_VIEW_TYPE);
@@ -77,9 +77,9 @@ export default class BanyanPlugin extends Plugin {
 	}
 
 	setupRandomReview = () => {
-		const icons = ['dice', 'shuffle', 'dices', 'dice-6', 
+		const icons = ['dice', 'shuffle', 'dices', 'dice-6',
 			'dice-5', 'dice-4', 'dice-3', 'dice-2', 'dice-1'];
-		this.settings.randomReviewFilters.forEach((filter, index) => {
+		this.settings.randomReviewFilters.forEach((filter) => {
 			const name = `${i18n.t('open_random_note')} - ${filter.name}`;
 			const icon = icons[filter.id % icons.length];
 			this.addCommand({

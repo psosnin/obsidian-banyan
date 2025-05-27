@@ -101,6 +101,9 @@ export const RandomReviewInfo = () => {
         plugin.fileUtils.openRandomFile(filter.tagFilter);
     };
 
+    const icons = React.useMemo(() => ['dice', 'shuffle', 'dices', 'dice-6',
+        'dice-5', 'dice-4', 'dice-3', 'dice-2', 'dice-1'], []);
+
     return (
         <div className='random-review-container' style={{ marginTop: 16 }}>
             <div className='random-review-header' style={{ marginLeft: 12, display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -129,6 +132,7 @@ export const RandomReviewInfo = () => {
                             borderRadius: 4
                         }}>
                         <SidebarButton
+                            leftIconName={icons[filter.id % icons.length]}
                             label={filter.name}
                             onClick={() => handleSelectFilter(filter)}
                             rightIconName='ellipsis'

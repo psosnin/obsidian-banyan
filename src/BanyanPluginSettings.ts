@@ -1,6 +1,7 @@
 import { FilterScheme, getDefaultFilterScheme } from "./models/FilterScheme";
 import { ViewScheme } from "./models/ViewScheme";
 import { emptyTagFilter, TagFilter } from "./models/TagFilter";
+import { DefaultRandomReviewFilter, RandomReviewFilter } from "./models/RandomReviewFilters";
 
 export interface BanyanPluginSettings {
 	settingsVersion: number;
@@ -14,6 +15,7 @@ export interface BanyanPluginSettings {
 	sortType: 'created' | 'modified';
 	filterSchemes: FilterScheme[];
 	viewSchemes: ViewScheme[];
+	randomReviewFilters: RandomReviewFilter[];
 }
 
 export const CUR_SETTINGS_VERSION = 3;
@@ -35,4 +37,5 @@ export const DEFAULT_SETTINGS: BanyanPluginSettings = {
 	randomNoteTagFilter: emptyTagFilter(),
 	cardsColumns: 1,
 	firstUseDate: getToday(),
+	randomReviewFilters: [DefaultRandomReviewFilter],
 }

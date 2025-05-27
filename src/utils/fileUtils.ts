@@ -2,6 +2,7 @@ import { TFolder, App, TFile, normalizePath, Notice } from "obsidian";
 import BanyanPlugin from "src/main";
 import { createFileInfo, FileInfo, generateFileId, isOKWithTagFilter } from "src/models/FileInfo";
 import { TagFilter } from "src/models/TagFilter";
+import { i18n } from "./i18n";
 
 const PlaceholderFileName = "banyan_editor_placeholder.md";
 
@@ -84,11 +85,11 @@ export class FileUtils {
     this.app.workspace.openLinkText(file.path, '', false);
   }
 
-  openRandomFile() {
+  openRandomFile(tagFilter: TagFilter) {
     const files = this.getAllFiles();
-    const filteredFiles = this.getTagsFilterdFiles(files, this.plugin.settings.randomNoteTagFilter);
+    const filteredFiles = this.getTagsFilterdFiles(files, tagFilter);
     if (!files || filteredFiles.length === 0) {
-      new Notice('没有找到任何笔记');
+      new Notice(i18n.t('random_reivew_no_match'));
       return;
     }
 

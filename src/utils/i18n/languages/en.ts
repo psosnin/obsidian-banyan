@@ -110,7 +110,13 @@ export default {
     month12: "December",
 
     all_notes: "all notes",
+
     random_review: "random review",
+    random_review_name_placeholder: "Enter name",
+    random_review_title_create: "Create Random Review",
+    random_review_title_update: "Update Random Review",
+    random_review_name_label: "Name",
+    random_reivew_no_match: "No notes match the filter rules",
 
     filter_schemes: "filter schemes",
     create_copy: "create copy",

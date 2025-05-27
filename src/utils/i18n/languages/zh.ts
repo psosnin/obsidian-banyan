@@ -111,7 +111,13 @@ export default {
     month12: "十二月",
 
     all_notes: "所有笔记",
+    
     random_review: "随机回顾",
+    random_review_name_placeholder: "输入名称",
+    random_review_title_create: "创建随机回顾",
+    random_review_title_update: "更新随机回顾",
+    random_review_name_label: "名称",
+    random_reivew_no_match: "没有符合筛选规则的笔记",
 
     filter_schemes: "常用过滤",
     create_copy: "创建副本",

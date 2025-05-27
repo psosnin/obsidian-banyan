@@ -1,8 +1,5 @@
 import { App, Platform, PluginSettingTab, Setting } from 'obsidian';
 import BanyanPlugin from './main';
-import { createRoot } from 'react-dom/client';
-import { StrictMode, useState, } from 'react';
-import { TagFilterView } from './components/TagFilterView';
 import { i18n } from './utils/i18n';
 
 export class BanyanSettingTab extends PluginSettingTab {
@@ -20,7 +17,6 @@ export class BanyanSettingTab extends PluginSettingTab {
 		this.setupOpenWhenStartObsidianSetting(containerEl);
 		this.setupShowTitleSetting(containerEl);
 		this.setupCardsColumnsSetting(containerEl);
-		this.setupRandomNoteSetting(containerEl);
 	}
 
 	setupCardsDirectorySetting(containerEl: HTMLElement) {
@@ -85,27 +81,6 @@ export class BanyanSettingTab extends PluginSettingTab {
 			});
 	}
 
-	setupRandomNoteSetting(containerEl: HTMLElement) {
-		const randomSetting = new Setting(containerEl)
-			.setName(i18n.t('setting_random_review_name'))
-			.setDesc(i18n.t('setting_random_review_desc'));
-		const allTags = this.plugin.fileUtils.getAllFilesTags();
-		const root = createRoot(randomSetting.controlEl);
-		root.render(
-			<StrictMode>
-				<this.TagFilterGroupView allTags={allTags} />
-			</StrictMode>
-		);
-	}
-
-	TagFilterGroupView = ({ allTags }: { allTags: string[] }) => {
-		const [value, setValue] = useState(this.plugin.settings.randomNoteTagFilter);
-		return <TagFilterView allTags={allTags} value={value} showLabel={false} onChange={(value) => {
-			setValue(value);
-			this.plugin.settings.randomNoteTagFilter = value;
-			this.plugin.saveSettings().then(() => { });
-		}} />;
-	}
 
 	createFolderSuggest(
 		inputEl: HTMLInputElement,

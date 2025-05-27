@@ -1,7 +1,7 @@
 import { getHeatmapValues, Heatmap } from 'src/components/Heatmap';
 import { FilterSchemesInfo } from './filterScheme/FilterSchemesInfo';
 import { ViewSchemesInfo } from './viewScheme/ViewSchemesInfo';
-import { SidebarButton } from './SidebarButton';
+import { RandomReviewInfo } from './randomReview/RandomReviewInfo';
 import { i18n } from 'src/utils/i18n';
 import { useCombineStore } from 'src/store';
 import { SearchFilterScheme } from 'src/models/FilterScheme';
@@ -11,22 +11,17 @@ export const SidebarContent = () => {
     const allFiles = useCombineStore((state) => state.allFiles);
     const heatmapValues = useMemo(() => getHeatmapValues(allFiles), [allFiles]);
     const setCurScheme = useCombineStore((state) => state.setCurScheme);
-    const plugin = useCombineStore((state) => state.plugin);
     
     const handleClickDate = (date: string) => {
         setCurScheme({ ...SearchFilterScheme, name: date, dateRange: { from: date, to: date } });
     }
 
-    const handleClickRandomNote = () => {
-        plugin.fileUtils.openRandomFile();
-    }
-    
     return (
         <div id='sidebar' style={{ display: 'flex', flexDirection: 'column', padding: '0 16px', width: 320, marginRight: 16 }}>
             <StatisticsInfo />
             <Heatmap values={heatmapValues} onCickDate={handleClickDate} />
             <div style={{ display: 'flex', flexDirection: 'column', marginTop: 12 }}>
-                <SidebarButton label={i18n.t('random_review')} leftIconName='dice' onClick={handleClickRandomNote} />
+                <RandomReviewInfo />
                 <FilterSchemesInfo />
                 <ViewSchemesInfo />
             </div>

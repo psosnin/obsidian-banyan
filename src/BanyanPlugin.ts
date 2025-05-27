@@ -50,24 +50,13 @@ export default class BanyanPlugin extends Plugin {
 		});
 		CardIconEl.addClass('my-plugin-ribbon-class');
 
-		// 打开随机笔记 命令和按钮
-		this.addCommand({
-			id: 'open-random-note',
-			name: i18n.t('open_random_note'),
-			callback: () => {
-				this.fileUtils.openRandomFile();
-			}
-		});
-		const RandomNoteIconEl = this.addRibbonIcon('dice', i18n.t('open_random_note'), () => {
-			this.fileUtils.openRandomFile();
-		});
-		RandomNoteIconEl.addClass('my-plugin-ribbon-class');
+		this.setupRandomReview();
 
 		// This adds a settings tab so the user can configure various aspects of the plugin
 		this.addSettingTab(new BanyanSettingTab(this.app, this));
 
 		this.app.workspace.onLayoutReady(() => {
-			this.updateSettingIfNeeded();
+			this.updateSettingIfNeeded();			
 			// 启动时自动打开自定义面板
 			if (this.settings.openWhenStartObsidian) {
 				this.activateView(CARD_DASHBOARD_VIEW_TYPE);
@@ -77,6 +66,34 @@ export default class BanyanPlugin extends Plugin {
 
 	onunload() {
 		this.app.workspace.getLeavesOfType(CARD_DASHBOARD_VIEW_TYPE).forEach(leaf => leaf.detach());
+	}
+
+	resetRandomReview = () => {
+		// 移除所有现有的随机回顾命令和功能区图标
+		(this.app.workspace.leftRibbon as any).items = (this.app.workspace.leftRibbon as any).items.filter((item: any) => !item.id.startsWith(`banyan:${i18n.t('open_random_note')}`));
+		this.settings.randomReviewFilters.forEach((filter) => {
+			this.removeCommand(`open-random-note-${filter.id}`);
+		});
+	}
+
+	setupRandomReview = () => {
+		const icons = ['dice', 'shuffle', 'dices', 'dice-6', 
+			'dice-5', 'dice-4', 'dice-3', 'dice-2', 'dice-1'];
+		this.settings.randomReviewFilters.forEach((filter, index) => {
+			const name = `${i18n.t('open_random_note')} - ${filter.name}`;
+			const icon = icons[filter.id % icons.length];
+			this.addCommand({
+				id: `open-random-note-${filter.id}`,
+				name: name,
+				callback: () => {
+					this.fileUtils.openRandomFile(filter.tagFilter);
+				}
+			});
+			const RandomNoteIconEl = this.addRibbonIcon(icon, name, () => {
+				this.fileUtils.openRandomFile(filter.tagFilter);
+			});
+			RandomNoteIconEl.addClass('my-plugin-ribbon-class');
+		});
 	}
 
 	updateSettingIfNeeded = async () => {

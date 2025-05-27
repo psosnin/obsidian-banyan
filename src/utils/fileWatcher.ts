@@ -16,10 +16,12 @@ export class FileWatcher {
   private metadataCache: MetadataCache;
   private callbacks: Set<FileChangeCallback> = new Set();
   private fileCache: Map<string, number> = new Map();
+  private dir: string;
 
   constructor(plugin: BanyanPlugin) {
     this.plugin = plugin;
     this.vault = plugin.app.vault;
+    this.dir = plugin.settings.cardsDirectory;
     this.metadataCache = plugin.app.metadataCache;
     this.handleCreate = this.handleCreate.bind(this);
     this.handleDelete = this.handleDelete.bind(this);
@@ -44,7 +46,7 @@ export class FileWatcher {
   }
 
   private async handleCreate(file: TFile) {
-    if (file.extension !== 'md') return;
+    if (file.extension !== 'md' || !file.path.startsWith(this.dir)) return;
     this.fileCache.set(file.path, file.stat.mtime);
     await ensureFileID(file, this.plugin.app);
     const fileInfo = createFileInfo(file, this.plugin.app);
@@ -53,7 +55,7 @@ export class FileWatcher {
   }
 
   private handleDelete(file: TFile) {
-    if (file.extension !== 'md') return;
+    if (file.extension !== 'md' || !file.path.startsWith(this.dir)) return;
     const fileInfo = createFileInfo(file, this.plugin.app);
     if (!fileInfo) return;
     this.fileCache.delete(file.path);
@@ -61,7 +63,7 @@ export class FileWatcher {
   }
 
   private handleModify(file: TFile) {
-    if (file.extension !== 'md') return;
+    if (file.extension !== 'md' || !file.path.startsWith(this.dir)) return;
     const fileInfo = createFileInfo(file, this.plugin.app);
     if (!fileInfo) return;
     this.fileCache.set(file.path, file.stat.mtime);
@@ -69,7 +71,7 @@ export class FileWatcher {
   }
 
   private handleRename(file: TFile, oldPath: string) {
-    if (file.extension !== 'md') return;
+    if (file.extension !== 'md' || !file.path.startsWith(this.dir)) return;
     const fileInfo = createFileInfo(file, this.plugin.app);
     if (!fileInfo) return;
     this.fileCache.set(file.path, this.fileCache.get(oldPath)!);
@@ -78,7 +80,7 @@ export class FileWatcher {
   }
 
   private handleMetaChange(file: TFile) {
-    if (file.extension !== 'md') return;
+    if (file.extension !== 'md' || !file.path.startsWith(this.dir)) return;
     const fileInfo = createFileInfo(file, this.plugin.app);
     if (!fileInfo) return;
     this.emit({ type: 'meta-change', fileInfo });

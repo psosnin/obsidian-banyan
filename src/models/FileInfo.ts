@@ -23,15 +23,15 @@ export const createFileInfo = (file: TFile, app: App): FileInfo | null => {
 }
 
 export const ensureFileID = async (file: TFile, app: App, random?: number) => {
-    const metadata = app.metadataCache.getFileCache(file);
-    if (metadata?.frontmatter?.id) return;
+  const metadata = app.metadataCache.getFileCache(file);
+  if (metadata?.frontmatter?.id) return;
 
-    const newId = generateFileId(file.stat.ctime, random);
-    let content = await app.vault.read(file);
-    content = content.startsWith('---\n')
-      ? content.replace('---\n', `---\nid: ${newId}\n`) // 只会替换第一个
-      : `---\nid: ${newId}\n---\n${content}`;
-    await app.vault.modify(file, content, { mtime: file.stat.mtime });
+  const newId = generateFileId(file.stat.ctime, random);
+  let content = await app.vault.read(file);
+  content = content.startsWith('---\n')
+    ? content.replace('---\n', `---\nid: ${newId}\n`) // 只会替换第一个
+    : `---\nid: ${newId}\n---\n${content}`;
+  await app.vault.modify(file, content, { mtime: file.stat.mtime });
 }
 
 export const isOKWithTagFilter = (fileTags: string[], filter: TagFilter) => {
@@ -49,12 +49,10 @@ export const isOKWithTagFilter = (fileTags: string[], filter: TagFilter) => {
   if (filter.noTag == 'exclude' && fileTags.length === 0) return false;
 
   // *** 包含 ***
-  // 包含无标签
+  // 没有包含意义的过滤项，则不过滤
+  if (orTags.length === 0 && filter.noTag != 'include') return true;
+  // 考虑每一个过滤项
   if (filter.noTag == 'include' && fileTags.length === 0) return true;
-  // 没有「或标签组」，则不过滤
-  if (orTags.length === 0) return true;
-
-  // 有「或标签组」，则只保留符合的文件，排除其他
   for (const andTags of orTags) {
     if (andTags.every(tag => fileTags.some(fileTag => fileTag.startsWith(tag)))) {
       return true;

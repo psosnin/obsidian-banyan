@@ -294,6 +294,10 @@ If your plugin does not need CSS, delete this file.
   display: none;
 }
 
+.card-note-content .mod-footer {
+  display: none;
+}
+
 /* 
  * 添加笔记视图
  */
@@ -352,6 +356,10 @@ If your plugin does not need CSS, delete this file.
 }
 
 .add-note-content .mod-header {
+  display: none;
+}
+
+.add-note-container .embedded-backlinks {
   display: none;
 }
 

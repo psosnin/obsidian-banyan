@@ -1,4 +1,4 @@
-import { App, WorkspaceLeaf, MarkdownView } from "obsidian";
+import { App, WorkspaceLeaf, MarkdownView, Editor } from "obsidian";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Icon } from "src/components/Icon";
 import TagInput from "src/components/TagInput";
@@ -17,6 +17,7 @@ const AddNoteView: React.FC<AddNoteViewProps> = ({ app, plugin, onAdd }) => {
   const [focused, setFocused] = useState(false);
   const [hasContent, setHasContent] = useState(false);
   const [showPlaceholder, setShowPlaceholder] = useState(false);
+  const [editor, setEditor] = useState<Editor | null>(null);
 
   const updateHasContent = useCallback(() => {
     const ele = leaf.view.containerEl.querySelector('.cm-content') as HTMLElement;
@@ -35,6 +36,7 @@ const AddNoteView: React.FC<AddNoteViewProps> = ({ app, plugin, onAdd }) => {
           console.log('添加笔记视图初始化失败');
           return;
         }
+        setEditor(leaf.view.editor);
         await leaf.view.setState(
           { ...leaf.view.getState(), mode: 'source' },
           { history: false })
@@ -81,9 +83,15 @@ const AddNoteView: React.FC<AddNoteViewProps> = ({ app, plugin, onAdd }) => {
   }, [focused, hasContent]);
 
   return (
-    <div className={"add-note-container" + (focused ? " add-note-container--focusd" : "")} >
+    <div className={"add-note-container" + (focused ? " add-note-container--focusd" : "")} onClick={(e) => {
+      if (!(e.target instanceof HTMLElement)) return;
+      const tagName = e.target.tagName.toUpperCase();
+      if (tagName !== 'INPUT' && tagName!== 'BUTTON' && tagName !== 'SVG' ) { // 分别是标签输入框、按钮、按钮上的图标
+        editor?.focus();
+      }
+    } } >
       {showPlaceholder && <div style={{ position: 'absolute', left: 32, top: 26, color: 'var(--text-faint)' }}>{i18n.t('editor_content_placeholder')}</div>}
-      <div ref={ref} className={"add-note-content"} />
+      <div ref={ref} className="add-note-content" />
       <div className="add-note-footer" style={{ display: "flex", justifyContent: "space-between", alignItems: 'end' }}>
         <div style={{ width: '100%', maxWidth: '460px' }}><TagInput tags={tags} onChange={setTags} allTags={allTags} placeholder={i18n.t('editor_tags_placeholder')} allowCreate={true}
         /></div>

@@ -22,12 +22,21 @@ export const createFileInfo = (file: TFile, app: App): FileInfo | null => {
   return { file, tags, id } as FileInfo;
 }
 
+const hasFileID = (content: string) => {
+  const yamlMatch = content.match(/^---\n([\s\S]*?)\n---/);
+  if (yamlMatch) {
+    const hasId = /^id:\s*\d+$/m.test(yamlMatch[1]);
+    return hasId;
+  }
+  return false;
+}
+
 export const ensureFileID = async (file: TFile, app: App, random?: number) => {
-  const metadata = app.metadataCache.getFileCache(file);
-  if (metadata?.frontmatter?.id) return;
+  let content = await app.vault.read(file);
+  if (hasFileID(content)) return;
 
   const newId = generateFileId(file.stat.ctime, random);
-  let content = await app.vault.read(file);
+  console.log('add new id',newId, 'for', file.name);
   content = content.startsWith('---\n')
     ? content.replace('---\n', `---\nid: ${newId}\n`) // 只会替换第一个
     : `---\nid: ${newId}\n---\n${content}`;

@@ -5,7 +5,7 @@ import { createFileInfo, ensureFileID, FileInfo } from 'src/models/FileInfo';
 export type FileChangeType = 'create' | 'delete' | 'modify' | 'rename' | 'meta-change';
 export interface FileChange {
   type: FileChangeType;
-  fileInfo: FileInfo;
+  fileInfo: FileInfo | TFile;
 }
 
 export type FileChangeCallback = (change: FileChange) => void;
@@ -46,7 +46,7 @@ export class FileWatcher {
   }
 
   private async handleCreate(file: TFile) {
-    if (file.extension !== 'md' || !file.path.startsWith(this.dir)) return;
+    if (!this.plugin.fileUtils.isLegalMarkdownFile(file)) return;
     this.fileCache.set(file.path, file.stat.mtime);
     await ensureFileID(file, this.plugin.app);
     const fileInfo = createFileInfo(file, this.plugin.app);
@@ -55,15 +55,13 @@ export class FileWatcher {
   }
 
   private handleDelete(file: TFile) {
-    if (file.extension !== 'md' || !file.path.startsWith(this.dir)) return;
-    const fileInfo = createFileInfo(file, this.plugin.app);
-    if (!fileInfo) return;
+    if (!this.plugin.fileUtils.isLegalMarkdownFile(file)) return;
     this.fileCache.delete(file.path);
-    this.emit({ type: 'delete', fileInfo });
+    this.emit({ type: 'delete', fileInfo: file });
   }
 
   private handleModify(file: TFile) {
-    if (file.extension !== 'md' || !file.path.startsWith(this.dir)) return;
+    if (!this.plugin.fileUtils.isLegalMarkdownFile(file)) return;
     const fileInfo = createFileInfo(file, this.plugin.app);
     if (!fileInfo) return;
     this.fileCache.set(file.path, file.stat.mtime);
@@ -71,7 +69,7 @@ export class FileWatcher {
   }
 
   private handleRename(file: TFile, oldPath: string) {
-    if (file.extension !== 'md' || !file.path.startsWith(this.dir)) return;
+    if (!this.plugin.fileUtils.isLegalMarkdownFile(file)) return;
     const fileInfo = createFileInfo(file, this.plugin.app);
     if (!fileInfo) return;
     this.fileCache.set(file.path, this.fileCache.get(oldPath)!);
@@ -80,7 +78,7 @@ export class FileWatcher {
   }
 
   private handleMetaChange(file: TFile) {
-    if (file.extension !== 'md' || !file.path.startsWith(this.dir)) return;
+    if (!this.plugin.fileUtils.isLegalMarkdownFile(file)) return;
     const fileInfo = createFileInfo(file, this.plugin.app);
     if (!fileInfo) return;
     this.emit({ type: 'meta-change', fileInfo });

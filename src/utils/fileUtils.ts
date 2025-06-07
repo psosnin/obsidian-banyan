@@ -33,10 +33,17 @@ export class FileUtils {
     return folders.filter(f => f !== "");
   }
 
+  isLegalFile(file: TFile) {
+    return file.path.startsWith(this.dir) && file.path !== normalizePath(`${this.dir}/${PlaceholderFileName}`);
+  }
+
+  isLegalMarkdownFile(file: TFile) {
+    return file.extension === 'md' && this.isLegalFile(file);
+  }
+
   getAllRawFiles(): TFile[] {
     const files = this.app.vault.getMarkdownFiles()
-      .filter((file: TFile) => file.path.startsWith(this.dir))
-      .filter((file: TFile) => file.path !== normalizePath(`${this.dir}/${PlaceholderFileName}`));
+      .filter((file: TFile) => this.isLegalFile(file));
     return files;
   }
 

@@ -14,7 +14,7 @@ const NoteContentView = ({ app, fileInfo }: { app: App, fileInfo: FileInfo }) =>
     const setupView = async () => {
       if (!ref.current) return;
       try {
-        await (leaf as WorkspaceLeaf).openFile(fileInfo.file)
+        await (leaf as WorkspaceLeaf).openFile(fileInfo.file);
         if (!(leaf.view instanceof MarkdownView)) {
           console.log('视图初始化失败或类型不正确', fileInfo.file.name);
           return;
@@ -23,7 +23,7 @@ const NoteContentView = ({ app, fileInfo }: { app: App, fileInfo: FileInfo }) =>
           { ...leaf.view.getState(), mode: 'preview' },
           { history: false })
         ref.current?.empty();
-        ref.current?.appendChild(leaf.containerEl); // 放这里也OK
+        ref.current?.appendChild(leaf.containerEl);
       } catch (e) { console.log('打开文件失败', e, fileInfo) };
     };
     setupView();

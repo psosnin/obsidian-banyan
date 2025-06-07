@@ -67,8 +67,6 @@ const CardDashboardView = ({ plugin }: { plugin: BanyanPlugin }) => {
   const setCurScheme = useCombineStore((state) => state.setCurScheme);
   const updateViewScheme = useCombineStore((state) => state.updateViewScheme);
   const curSchemeNotesLength = useCombineStore((state) => state.curSchemeFiles.length);
-  const updateWhenDeleteFile = useCombineStore((state) => state.updateWhenDeleteFile);
-
   const app = plugin.app;
 
   const [showSidebar, setShowSidebar] = useState<'normal' | 'hide' | 'show'>(Platform.isMobile ? 'hide' : 'normal');
@@ -83,9 +81,9 @@ const CardDashboardView = ({ plugin }: { plugin: BanyanPlugin }) => {
   // 文件监听逻辑
   useEffect(() => {
     const watcher = createFileWatcher(plugin);
-    const unsubscribe = watcher.onChange(({ type, fileInfo }) => {
+    const unsubscribe = watcher.onChange(({ type }) => {
       if (type === 'delete') {
-        updateWhenDeleteFile(fileInfo.id);
+        setRefreshFlag(f => f + 1);
       }
       if (type === 'create' ||  type === 'modify' || type === 'meta-change') {
         setRefreshFlag(f => f + 1);

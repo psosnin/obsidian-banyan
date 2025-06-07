@@ -20,6 +20,7 @@ export const CardNoteMenuButton = ({ fileInfo, isPinned }: { fileInfo: FileInfo,
   const updateViewScheme = useCombineStore((state) => state.updateViewScheme);
   const curScheme = useCombineStore((state) => state.curScheme);
   const setCurScheme = useCombineStore((state) => state.setCurScheme);
+  const updateWhenDeleteFile = useCombineStore((state) => state.updateWhenDeleteFile);
   const isInView = curScheme.type === 'ViewScheme';
 
   const openCardNoteMoreMenu = ({ event, fileInfo, isPinned }: CardNoteMenuParams) => {
@@ -95,6 +96,7 @@ export const CardNoteMenuButton = ({ fileInfo, isPinned }: { fileInfo: FileInfo,
             app: plugin.app,
             description: i18n.t('delete_note_confirm'),
             onConfirm: async () => {
+              updateWhenDeleteFile(fileInfo.id);
               await plugin.fileUtils.trashFile(fileInfo.file);
               new Notice(i18n.t('notice_note_to_trash'));
             }

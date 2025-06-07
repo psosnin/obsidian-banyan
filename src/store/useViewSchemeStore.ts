@@ -10,7 +10,7 @@ export interface ViewSchemeState {
     createViewScheme: (viewScheme: ViewScheme) => void;
     updateViewScheme: (viewScheme: ViewScheme) => void;
     deleteViewScheme: (id: number) => void;
-    updateWhendeleteFile: (fileID: number) => void;
+    updateWhenDeleteFile: (fileID: number) => void;
 
     updateViewSchemeList: (viewSchemes: ViewScheme[]) => void;
 }
@@ -30,7 +30,7 @@ export const useViewSchemeStore: StateCreator<CombineState, [], [], ViewSchemeSt
     deleteViewScheme: (id: number) => {
         get().updateViewSchemeList(get().viewSchemes.filter((scheme) => scheme.id !== id));
     },
-    updateWhendeleteFile: (fileID: number) => {
+    updateWhenDeleteFile: (fileID: number) => {
         const viewSchemes = get().viewSchemes;
         const curScheme = get().curScheme;
         const setCurScheme = get().setCurScheme;

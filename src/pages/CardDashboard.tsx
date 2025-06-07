@@ -67,7 +67,7 @@ const CardDashboardView = ({ plugin }: { plugin: BanyanPlugin }) => {
   const setCurScheme = useCombineStore((state) => state.setCurScheme);
   const updateViewScheme = useCombineStore((state) => state.updateViewScheme);
   const curSchemeNotesLength = useCombineStore((state) => state.curSchemeFiles.length);
-  const updateWhendeleteFile = useCombineStore((state) => state.updateWhendeleteFile);
+  const updateWhenDeleteFile = useCombineStore((state) => state.updateWhenDeleteFile);
 
   const app = plugin.app;
 
@@ -85,7 +85,7 @@ const CardDashboardView = ({ plugin }: { plugin: BanyanPlugin }) => {
     const watcher = createFileWatcher(plugin);
     const unsubscribe = watcher.onChange(({ type, fileInfo }) => {
       if (type === 'delete') {
-        updateWhendeleteFile(fileInfo.id);
+        updateWhenDeleteFile(fileInfo.id);
       }
       if (type === 'create' ||  type === 'modify' || type === 'meta-change') {
         setRefreshFlag(f => f + 1);

@@ -1,6 +1,7 @@
 import esbuild from "esbuild";
 import process from "process";
 import builtins from "builtin-modules";
+import fs from "fs";
 
 const banner =
 	`/*
@@ -10,6 +11,18 @@ if you want to view the source, please visit the github repository of this plugi
 `;
 
 const prod = (process.argv[2] === "production");
+
+const copyPlugin = {
+	name: 'copy-plugin',
+	setup(build) {
+		build.onEnd(() => {
+			const src = 'manifest.json';
+			const dest = 'dist/manifest.json';
+			fs.copyFileSync(src, dest);
+			console.log('Copied manifest.json to dist/');
+		});
+	},
+};
 
 // JavaScript构建上下文
 const jsContext = await esbuild.context({
@@ -40,6 +53,7 @@ const jsContext = await esbuild.context({
 	treeShaking: true,
 	outfile: "dist/main.js",
 	minify: prod,
+	plugins: [copyPlugin],
 });
 
 // CSS构建上下文

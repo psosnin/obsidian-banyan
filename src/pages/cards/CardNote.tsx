@@ -33,12 +33,7 @@ const NoteContentView = ({ app, fileInfo }: { app: App, fileInfo: FileInfo }) =>
     const observer = new ResizeObserver(() => {
       const ele = ref.current?.querySelector('.view-content');
       if (ele) {
-        if (overflow && ele.scrollHeight <= 500) {
-          setOverflow(false);
-        }
-        if (!overflow && ele.scrollHeight > 500) {
-          setOverflow(true);
-        }
+        setOverflow(ele.scrollHeight > 500);
       }
     });
     if (ref.current) {

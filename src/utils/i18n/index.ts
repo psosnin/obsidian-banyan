@@ -1,4 +1,4 @@
-import { moment } from "obsidian";
+import { getLanguage } from "obsidian";
 import en from "./languages/en";
 import zh from "./languages/zh";
 
@@ -14,7 +14,7 @@ class I18nService {
 
   constructor() {
     // 获取Obsidian当前语言设置
-    this.currentLanguage = moment.locale() || 'en';
+    this.currentLanguage = getLanguage() || 'en';
   }
 
   t(key: keyof Translations, vars?: Record<string, string>): string {

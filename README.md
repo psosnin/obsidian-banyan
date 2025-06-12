@@ -95,4 +95,4 @@ Welcome to submit issue reports and feature suggestions! If you want to contribu
 
 ## License
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+This project is licensed under the GPLv3 License. See the [LICENSE](LICENSE) file for details.

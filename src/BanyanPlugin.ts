@@ -34,10 +34,9 @@ export default class BanyanPlugin extends Plugin {
 				await this.fileUtils.addFile();
 			}
 		});
-		const AddCardIconEl = this.addRibbonIcon('lightbulb', i18n.t('add_card_note'), async (evt: MouseEvent) => {
+		this.addRibbonIcon('lightbulb', i18n.t('add_card_note'), async (evt: MouseEvent) => {
 			await this.fileUtils.addFile();
 		});
-		AddCardIconEl.addClass('my-plugin-ribbon-class');
 
 		// 打开笔记面板 命令和按钮
 		this.addCommand({
@@ -45,10 +44,9 @@ export default class BanyanPlugin extends Plugin {
 			name: i18n.t('open_dashboard'),
 			callback: () => this.activateView(CARD_DASHBOARD_VIEW_TYPE),
 		});
-		const CardIconEl = this.addRibbonIcon('wallet-cards', i18n.t('open_dashboard'), () => {
+		this.addRibbonIcon('wallet-cards', i18n.t('open_dashboard'), () => {
 			this.activateView(CARD_DASHBOARD_VIEW_TYPE);
 		});
-		CardIconEl.addClass('my-plugin-ribbon-class');
 
 		this.setupRandomReview();
 
@@ -89,10 +87,9 @@ export default class BanyanPlugin extends Plugin {
 					this.fileUtils.openRandomFile(filter.tagFilter);
 				}
 			});
-			const RandomNoteIconEl = this.addRibbonIcon(icon, name, () => {
+			this.addRibbonIcon(icon, name, () => {
 				this.fileUtils.openRandomFile(filter.tagFilter);
 			});
-			RandomNoteIconEl.addClass('my-plugin-ribbon-class');
 		});
 	}
 

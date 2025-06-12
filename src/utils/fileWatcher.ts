@@ -38,11 +38,11 @@ export class FileWatcher {
   }
 
   private registerEvents() {
-    this.vault.on('create', this.handleCreate);
-    this.vault.on('delete', this.handleDelete);
-    this.vault.on('modify', this.handleModify);
-    this.vault.on('rename', this.handleRename);
-    this.metadataCache.on('changed', this.handleMetaChange);
+    this.plugin.registerEvent(this.vault.on('create', this.handleCreate));
+    this.plugin.registerEvent(this.vault.on('delete', this.handleDelete));
+    this.plugin.registerEvent(this.vault.on('modify', this.handleModify));
+    this.plugin.registerEvent(this.vault.on('rename', this.handleRename));
+    this.plugin.registerEvent(this.metadataCache.on('changed', this.handleMetaChange));
   }
 
   private async handleCreate(file: TFile) {

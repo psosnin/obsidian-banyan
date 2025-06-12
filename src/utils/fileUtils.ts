@@ -123,7 +123,7 @@ export class FileUtils {
   }
 
   async trashFile(file: TFile) {
-    await this.app.vault.trash(file, true);
+    await this.app.fileManager.trashFile(file);
   }
   //#endregion
 

@@ -1,6 +1,7 @@
 import { App, Platform, PluginSettingTab, Setting } from 'obsidian';
 import BanyanPlugin from './main';
 import { i18n } from './utils/i18n';
+import FolderSuggest from './components/FolderSuggest';
 
 export class BanyanSettingTab extends PluginSettingTab {
 	plugin: BanyanPlugin;
@@ -24,14 +25,12 @@ export class BanyanSettingTab extends PluginSettingTab {
 			.setName(i18n.t('setting_note_directory_name'))
 			.setDesc(i18n.t('setting_note_directory_desc'))
 			.addText(async text => {
-				const folders = await this.plugin.fileUtils.getAllFolders();
-				this.createFolderSuggest(text.inputEl, folders, async (folder) => {
-					text.setValue(folder);
-					this.plugin.settings.cardsDirectory = folder;
+				new FolderSuggest(this.app, text.inputEl, async (value) => {
+					text.setValue(value);
+					this.plugin.settings.cardsDirectory = value;
 					await this.plugin.saveSettings();
 				});
-				text.setPlaceholder(i18n.t('setting_note_directory_placeholder'))
-					.setValue(this.plugin.settings.cardsDirectory || "")
+				text.setValue(this.plugin.settings.cardsDirectory || "")
 					.onChange(async (value) => {
 						this.plugin.settings.cardsDirectory = value;
 						await this.plugin.saveSettings();
@@ -81,40 +80,4 @@ export class BanyanSettingTab extends PluginSettingTab {
 			});
 	}
 
-
-	createFolderSuggest(
-		inputEl: HTMLInputElement,
-		folders: string[],
-		onSelect: (folder: string) => void
-	) {
-		let suggestEl: HTMLDivElement | null = null;
-		const showSuggestions = (value: string) => {
-			if (suggestEl) suggestEl.remove();
-			const filtered = folders.filter(f => f.includes(value));
-			if (filtered.length === 0) return;
-			suggestEl = document.createElement('div');
-			suggestEl.className = 'folder-suggest-dropdown';
-			filtered.forEach(folder => {
-				const item = document.createElement('div');
-				item.textContent = folder;
-				item.className = 'folder-suggest-item';
-				item.onmousedown = (e) => {
-					e.preventDefault();
-					onSelect(folder);
-					if (suggestEl) suggestEl.remove();
-				};
-				suggestEl?.appendChild(item);
-			});
-			inputEl.parentElement?.appendChild(suggestEl);
-		};
-		inputEl.addEventListener('focus', () => {
-			showSuggestions(inputEl.value);
-		});
-		inputEl.addEventListener('input', () => {
-			showSuggestions(inputEl.value);
-		});
-		inputEl.addEventListener('blur', () => {
-			setTimeout(() => { if (suggestEl) suggestEl.remove(); }, 100);
-		});
-	}
 }

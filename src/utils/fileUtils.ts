@@ -18,23 +18,10 @@ export class FileUtils {
   }
 
   //#region 文件获取
-  async getAllFolders(): Promise<string[]> {
-    const folders: string[] = [];
-    const walk = (folder: TFolder, path: string) => {
-      folders.push(path);
-      for (const child of folder.children) {
-        if (child instanceof TFolder) {
-          walk(child, child.path);
-        }
-      }
-    };
-    const root = this.app.vault.getRoot();
-    walk(root, "");
-    return folders.filter(f => f !== "");
-  }
 
   isLegalFile(file: TFile) {
-    return file.path.startsWith(this.dir) && file.path !== normalizePath(`${this.dir}/${PlaceholderFileName}`);
+    const path = this.getPlaceholderFilePath();
+    return file.path.startsWith(this.dir) && file.path !== path;
   }
 
   isLegalMarkdownFile(file: TFile) {
@@ -55,8 +42,12 @@ export class FileUtils {
     return files;
   }
 
+  getPlaceholderFilePath() {
+    return normalizePath(`${this.dir}/${PlaceholderFileName}`);
+  }
+
   async getPlaceholderFile() {
-    const path = normalizePath(`${this.dir}/${PlaceholderFileName}`);
+    const path = this.getPlaceholderFilePath();
     const file = this.app.vault.getFileByPath(path);
     if (file) return file;
     const res = await this.app.vault.create(path, "");
@@ -116,6 +107,7 @@ export class FileUtils {
     const tagsStr = `tags:\n${tags.map(t => `- ${t}\n`).join('')}`;
     const _content = `---\nid: ${id}\n${tagsStr}---\n` + (content ?? '');
     const file = await this.app.vault.create(filePath, _content);
+
     if (!open) return;
     const leaf = this.app.workspace.getLeaf(true);
     await leaf.openFile(file, { active: true, state: { mode: 'source' }, });
@@ -171,7 +163,7 @@ export class FileUtils {
   }
 
   getTagsFilterdFiles(files: FileInfo[], filter: TagFilter) {
-    return files.filter(({tags}) => isOKWithTagFilter(tags, filter));
+    return files.filter(({ tags }) => isOKWithTagFilter(tags, filter));
   }
 
   //#endregion

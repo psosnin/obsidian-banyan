@@ -1,20 +1,20 @@
 export default {
 
     /* 通用 */
-    general_save: "save",
-    general_cancel: "cancel",
-    general_confirm: "confirm",
-    general_search: "search",
-    general_reset: "reset",
-    general_update: "update",
-    general_create: "create",
-    general_delete: "delete",
-    general_edit: "edit",
-    general_open: "open",
-    general_close: "close",
-    general_pin: "pin",
-    general_unpin: "unpin",
-    general_copy: "copy",
+    general_save: "Save",
+    general_cancel: "Cancel",
+    general_confirm: "Confirm",
+    general_search: "Search",
+    general_reset: "Reset",
+    general_update: "Update",
+    general_create: "Create",
+    general_delete: "Delete",
+    general_edit: "Edit",
+    general_open: "Open",
+    general_close: "Close",
+    general_pin: "Pin",
+    general_unpin: "Unpin",
+    general_copy: "copy", // used in phrase
 
     /* 组件 */
 
@@ -32,69 +32,69 @@ export default {
     tag_group_label_notag_exclude: "exclude",
 
     // filter scheme编辑区
-    filter_scheme_title_update: "update filter scheme",
-    filter_scheme_title_create: "create filter scheme",
-    filter_scheme_name_label: "name",
-    filter_scheme_name_placeholder: "please input the name",
-    filter_scheme_date_label: "date",
-    filter_scheme_keyword_label: "keyword",
-    filter_scheme_keyword_placeholder: "you can input the keyword",
+    filter_scheme_title_update: "Update filter scheme",
+    filter_scheme_title_create: "Create filter scheme",
+    filter_scheme_name_label: "Name",
+    filter_scheme_name_placeholder: "Please input the name",
+    filter_scheme_date_label: "Date",
+    filter_scheme_keyword_label: "Keyword",
+    filter_scheme_keyword_placeholder: "You can input the keyword",
 
     // 视图编辑区
-    view_scheme_title_update: "update view scheme",
-    view_scheme_title_create: "create view scheme",
-    view_scheme_name_label: "name",
-    view_scheme_name_placeholder: "please input the name",
+    view_scheme_title_update: "Update view scheme",
+    view_scheme_title_create: "Create view scheme",
+    view_scheme_name_label: "Name",
+    view_scheme_name_placeholder: "Please input the name",
     /* 设置 */
-    setting_note_directory_name: "note directory",
-    setting_note_directory_desc: "directory this plugin works on",
-    setting_note_directory_placeholder: "please input the path of the directory",
+    setting_note_directory_name: "Note directory",
+    setting_note_directory_desc: "Directory this plugin works on",
+    setting_note_directory_placeholder: "Please input the path of the directory",
 
-    setting_on_open_name: "open after start",
-    setting_on_open_desc: "enable this to open the plugin when obsidian starts",
+    setting_on_open_name: "Open after start",
+    setting_on_open_desc: "Enable this to open the plugin when obsidian starts",
 
-    setting_show_title_name: "show title",
-    setting_show_title_desc: "whether to show the title in card note",
+    setting_show_title_name: "Show title",
+    setting_show_title_desc: "Whether to show the title in card note",
 
-    setting_col_nums_name: "number of columns",
-    setting_col_nums_desc: "when the panel is wide enough, how many columns to show",
+    setting_col_nums_name: "Number of columns",
+    setting_col_nums_desc: "When the panel is wide enough, how many columns to show",
     setting_col_nums_1_col: "1 column",
     setting_col_nums_2_col: "2 columns",
 
-    setting_random_review_name: "range of random review",
-    setting_random_review_desc: "random review notes in the note directory",
+    setting_random_review_name: "Range of random review",
+    setting_random_review_desc: "Random review notes in the note directory",
 
     /* 命令和ribbon */
-    add_card_note: "add card note",
-    open_dashboard: "open dashboard",
-    open_random_note: "random open a note",
+    add_card_note: "Add card note",
+    open_dashboard: "Open dashboard",
+    open_random_note: "Random open a note",
 
     /* 首页 */
-    notice_error_when_load_notes: "something went wrong when loading notes",
-    notice_note_to_trash: "the note have been moved to system trash",
-    delete_note_confirm: "are you sure to move this note to system trash?",
-    notice_note_already_in_view: "the note is already in the view",
-    notice_note_pinned: "note pinned",
-    notice_note_unpinned: "note unpinned",
+    notice_note_to_trash: "The note has been deleted.",
+    delete_note_confirm: "Are you sure to delete this note?",
+    notice_error_when_load_notes: "Something went wrong when loading notes",
+    notice_note_already_in_view: "The note is already in the view",
+    notice_note_pinned: "Note pinned",
+    notice_note_unpinned: "Note unpinned",
     // 标题栏
-    search_bar_placeholder: "search",
-    search_view_title: "search condition",
-    search_input_placeholder: "keyword",
+    search_bar_placeholder: "Search",
+    search_view_title: "Search condition",
+    search_input_placeholder: "Keyword",
 
     // 编辑区
-    editor_content_placeholder: "your thoughts...",
-    editor_tags_placeholder: "input tags here",
+    editor_content_placeholder: "Your thoughts...",
+    editor_tags_placeholder: "Input tags here",
 
     // 副标题栏
     loaded_notes: "{{count}}/{{total}} notes loaded",
-    batch_add_to_view: "batch add to view",
-    recently_updated: "recently updated",
-    recently_created: "recently created",
+    batch_add_to_view: "Batch add to view",
+    recently_updated: "Recently updated",
+    recently_created: "Recently created",
 
     // 侧边栏
-    note: "note",
-    tag: "tag",
-    days: "days",
+    note: "Note",
+    tag: "Tag",
+    days: "Days",
 
     month1: "January",
     month2: "February",
@@ -109,30 +109,30 @@ export default {
     month11: "November",
     month12: "December",
 
-    all_notes: "all notes",
+    all_notes: "All notes",
 
-    random_review: "random review",
+    random_review: "Random review",
     random_review_name_placeholder: "Enter name",
     random_review_title_create: "Create Random Review",
     random_review_title_update: "Update Random Review",
     random_review_name_label: "Name",
     random_reivew_no_match: "No notes match the filter rules",
 
-    filter_schemes: "filter schemes",
-    create_copy: "create copy",
-    create_sub_scheme: "create sub scheme",
+    filter_schemes: "Filter schemes",
+    create_copy: "Create copy",
+    create_sub_scheme: "Create sub scheme",
 
-    view_schemes: "view schemes",
+    view_schemes: "View schemes",
 
     // 卡片
-    created_at: "craeted at",
-    updated_at: "updated at",
-    copy_link: "copy link",
-    add_to_view: "add to view",
-    remove_from_view: "remove from view",
-    link_copied: "link copied",
+    created_at: "Created at",
+    updated_at: "Updated at",
+    copy_link: "Copy link",
+    add_to_view: "Add to view",
+    remove_from_view: "Remove from view",
+    link_copied: "Link copied",
 
     // 底部栏
-    reached_bottom: "you have reached the bottom.~",
+    reached_bottom: "You have reached the bottom.~",
 
 };

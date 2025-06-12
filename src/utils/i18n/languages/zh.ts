@@ -72,8 +72,8 @@ export default {
 
     /* 首页 */
     notice_error_when_load_notes: "加载笔记内容时出错",
-    notice_note_to_trash: "笔记已移至系统回收站",
-    delete_note_confirm: "确定要将此笔记移至系统回收站吗？",
+    notice_note_to_trash: "笔记已删除",
+    delete_note_confirm: "确定要删除此笔记吗？",
     notice_note_already_in_view: "笔记已存在于该视图中",
     notice_note_pinned: "已置顶",
     notice_note_unpinned: "已取消置顶",

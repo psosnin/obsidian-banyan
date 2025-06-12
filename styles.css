@@ -364,7 +364,7 @@ If your plugin does not need CSS, delete this file.
   background-color: transparent !important;
 }
 
-.view-content .empty-state {
+.add-note-content .view-content .empty-state {
   display: none;
 }
 

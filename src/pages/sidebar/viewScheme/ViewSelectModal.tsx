@@ -55,19 +55,18 @@ const ViewSelectContainer = ({ props, close }: {
         close();
     };
 
-    return <div className="view-select-container" style={ Platform.isMobile ? { padding: '30px 20px 30px 20px' } : {} }>
-        <div style={{ marginBottom: 16, fontWeight: "bold" }}>选择要导入的视图</div>
-        <div style={{ marginBottom: '0.5em', display: 'flex', gap: '1em', flexWrap: 'wrap', flexDirection: 'column' }}>
+    return <div className={"view-select-container " + (Platform.isMobile ? "view-select-mobile-padding" : "")}>
+        <div className="view-select-title">选择要导入的视图</div>
+        <div className="view-select-schemes-container">
             {viewSchemes.map((scheme, index) => {
-                return <div key={scheme.id} style={{ 
-                        borderRadius: '8px', padding: '8px 12px', cursor: "pointer", flex: 1, 
-                        background: highlighted === index ? "var(--interactive-accent)" : "var(--background-modifier-border)" }} 
+                return <div key={scheme.id} 
+                    className={"view-select-scheme-item " + (highlighted === index ? "view-select-scheme-item-highlighted" : "view-select-scheme-item-normal")}
                     onClick={() => handleChoose(index)}>{scheme.name}</div>;                
             })}
         </div>
-        <div style={{ display: "flex", justifyContent: "flex-end", gap: 8, marginTop: 16 }}>
+        <div className="view-select-buttons">
             <button onClick={handleCancel}>取消</button>
-            <button onClick={handleConfirm} style={{ background: "var(--interactive-accent)", color: "var(--text-on-accent)", border: "none", borderRadius: 4, padding: "4px 16px" }}>确定</button>
+            <button onClick={handleConfirm} className="view-select-confirm-button">确定</button>
         </div>
     </div>;
 };

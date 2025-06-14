@@ -1,0 +1,109 @@
+/* 条目 */
+.filter-scheme-item {
+    border-radius: 4px;
+}
+
+.filter-scheme-item-dragging {
+    opacity: 0.5;
+}
+
+.filter-scheme-item-drag-over-before {
+    border-top: 2px solid var(--interactive-accent);
+}
+
+.filter-scheme-item-drag-over-after {
+    border-bottom: 2px solid var(--interactive-accent);
+}
+
+.filter-scheme-item-drag-over-inside {
+    background: var(--background-modifier-hover);
+}
+
+/* 方案列表 */
+
+.filter-scheme-container {
+    margin-top: 16px;
+}
+
+.filter-scheme-header {
+    margin-left: 12px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.filter-scheme-header-title {
+    font-size: var(--font-smaller);
+    color: var(--interactive-accent);
+}
+
+.filter-scheme-header-add {
+    margin-right: 8px;
+}
+
+.filter-scheme-list {
+    margin-top: 6px;
+    display: flex;
+    gap: 4px;
+    flex-direction: column;
+}
+
+/* 弹窗容器 */
+.filter-modal-container {
+    padding: 10px 10px;
+}
+
+.filter-modal-title {
+    margin-bottom: 16px;
+    font-weight: bold;
+}
+
+.filter-modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 16px;
+}
+
+/* 弹窗的视图 */
+
+.filter-view-container {
+    margin-bottom: 6px;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.filter-view-label-margin {
+    margin-right: 12px;
+    width: 60px;
+    display: inline-block;
+}
+
+.filter-name-container input[type="text"] {
+    padding: 21px 20px;
+    background-color: var(--background-secondary);
+    border: none;
+    outline: none;
+    border-radius: 8px;
+}
+
+.filter-keyword-container input[type="text"] {
+    padding: 21px 20px;
+    background-color: var(--background-secondary);
+    border: none;
+    outline: none;
+    border-radius: 8px;
+}
+
+.filter-date-container span {
+    margin-left: 4px;
+    margin-right: 4px;
+}
+
+.filter-tags-container {
+    display: flex; 
+    flex-direction: row;
+}

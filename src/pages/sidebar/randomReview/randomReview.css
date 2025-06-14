@@ -1,0 +1,83 @@
+/*
+ * 列表部分
+ */
+
+.random-review-container {
+  margin-top: 16px;
+}
+
+.random-review-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin-left: 12px;
+}
+
+.random-review-header-title {
+  font-size: var(--font-smaller);
+  color: var(--interactive-accent);
+}
+
+.random-review-header-add {
+  margin-right: 8px;
+}
+
+.random-review-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 6px;
+}
+
+.random-review-item {
+  border-radius: 4px;
+}
+
+.random-review-item-dragged {
+  opacity: 0.5;
+}
+
+.random-review-item-dragover {
+  border: 1px dashed var(--interactive-accent);
+}
+
+/* 弹窗 */
+
+.random-review-modal-container {
+  padding: 10px 10px;
+}
+
+.random-review-modal-title {
+  margin-bottom: 16px;
+  font-weight: bold;
+}
+
+.random-review-modal-content {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 0.5em;
+  flex-wrap: wrap;
+}
+
+.random-review-name-container label {
+  margin-right: 12px;
+  width: 60px;
+  display: inline-block;
+}
+
+.random-review-name-container input[type="text"] {
+  padding: 21px 20px; 
+  background-color: var(--background-secondary);
+  border: none;
+  outline: none;
+  border-radius: 8px;
+}
+
+.random-review-button-container {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 16px;
+}

@@ -31,10 +31,10 @@ export const TagFilterView: React.FC<TagFilterViewProps> = ({ allTags, value, on
   };
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+    <div className="tag-filter-view">
       {value.or.map((tags, idx) => (
-        <div key={idx} style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          {showLabel && <label style={{ marginRight: 4 }}>{idx == 0 ? i18n.t('tag_group_label_include') : i18n.t('tag_group_label_or_include')}</label>}
+        <div key={idx} className="tag-filter-row">
+          {showLabel && <label className="tag-filter-label">{idx == 0 ? i18n.t('tag_group_label_include') : i18n.t('tag_group_label_or_include')}</label>}
           <TagInput
             tags={tags}
             onChange={t => handleAndTagChange(idx, t)}
@@ -42,15 +42,15 @@ export const TagFilterView: React.FC<TagFilterViewProps> = ({ allTags, value, on
             placeholder={idx == 0 ? i18n.t('tag_group_placeholder_include') : i18n.t('tag_group_placeholder_or_include')}
           />
           {value.or.length > 1 && idx != 0 && (
-            <button onClick={() => handleRemoveAndRow(idx)} style={{ marginLeft: 2, padding: '0px 12px' }}>-</button>
+            <button onClick={() => handleRemoveAndRow(idx)} className="tag-filter-button">-</button>
           )}
           {idx === value.or.length - 1 && (
-            <button onClick={handleAddAndRow} style={{ marginLeft: 2, padding: '0px 12px' }}>+ {i18n.t('tag_group_btn_or')}</button>
+            <button onClick={handleAddAndRow} className="tag-filter-button">+ {i18n.t('tag_group_btn_or')}</button>
           )}
         </div>
       ))}
-      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-        {showLabel && <label style={{ marginRight: 4 }}>{i18n.t('tag_group_label_exclude')}</label>}
+      <div className="tag-filter-row">
+        {showLabel && <label className="tag-filter-label">{i18n.t('tag_group_label_exclude')}</label>}
         <TagInput
           tags={value.not}
           onChange={handleNotTagChange}
@@ -58,28 +58,28 @@ export const TagFilterView: React.FC<TagFilterViewProps> = ({ allTags, value, on
           placeholder={i18n.t('tag_group_placeholder_exclude')}
         />
       </div>
-      <div style={{ display: "flex", alignItems: "baseline", gap: 12, paddingTop: 6 }}>
-        <label>{i18n.t('tag_group_label_notag')}</label>
+      <div className="tag-filter-notag-container">
+      <label className="tag-filter-label">{i18n.t('tag_group_label_notag')}</label>
         <label>
-          <input type="checkbox" style={{ verticalAlign: 'middle' }} checked={value.noTag == 'unlimited'} onChange={(e) => {
+          <input type="checkbox" className="tag-filter-checkbox" checked={value.noTag == 'unlimited'} onChange={(e) => {
             if (!e.target.checked || value.noTag == 'unlimited') return;
             onChange({ ...value, noTag: 'unlimited' });
           }} />
-          <span style={{ marginLeft: 4 }}>{i18n.t('tag_group_label_notag_unlimited')}</span>
+          <span className="tag-filter-checkbox-label">{i18n.t('tag_group_label_notag_unlimited')}</span>
         </label>
         <label>
-          <input type="checkbox" style={{ verticalAlign: 'middle' }} checked={value.noTag == 'include'} onChange={(e) => {
+          <input type="checkbox" className="tag-filter-checkbox" checked={value.noTag == 'include'} onChange={(e) => {
             if (!e.target.checked || value.noTag == 'include') return;
             onChange({ ...value, noTag: 'include' });
           }} />
-          <span style={{ marginLeft: 4 }}>{i18n.t('tag_group_label_notag_include')}</span>
+          <span className="tag-filter-checkbox-label">{i18n.t('tag_group_label_notag_include')}</span>
         </label>
         <label>
-          <input type="checkbox" style={{ verticalAlign: 'middle' }} checked={value.noTag == 'exclude'} onChange={(e) => {
+          <input type="checkbox" className="tag-filter-checkbox" checked={value.noTag == 'exclude'} onChange={(e) => {
             if (!e.target.checked || value.noTag == 'exclude') return;
             onChange({ ...value, noTag: 'exclude' });
           }} />
-          <span style={{ marginLeft: 4 }}>{i18n.t('tag_group_label_notag_exclude')}</span>
+          <span className="tag-filter-checkbox-label">{i18n.t('tag_group_label_notag_exclude')}</span>
         </label>
       </div>
     </div>

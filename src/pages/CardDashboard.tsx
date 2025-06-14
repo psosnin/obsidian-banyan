@@ -195,19 +195,19 @@ const CardDashboardView = ({ plugin }: { plugin: BanyanPlugin }) => {
   const columns = getColumns(cardNodes, colCount);
 
   return (
-    <div className="dashboard-container" ref={dashboardRef} style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', width: '100%' }}>
+    <div className="dashboard-container" ref={dashboardRef}>
       {showSidebar != 'normal' && <Sidebar visible={showSidebar == 'show'} onClose={() => setShowSidebar('hide')}><SidebarContent /></Sidebar>}
       {showSidebar == 'normal' && <SidebarContent />}
       <div className="main-container">
-        <div className="main-header-container" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', fontSize: 'var(--font-small)' }}>
-          <div className="main-header-title" style={{ display: "flex", alignItems: "center" }}>
-            <button className="clickable-icon" style={{ display: showSidebar == 'normal' ? 'none' : 'inline-flex' }}
+        <div className="main-header-container">
+          <div className="main-header-title">
+            <button className={"clickable-icon " + (showSidebar == 'normal' ? "sidebar-toggle-button-hidden" : "sidebar-toggle-button-visible")}
               onClick={() => setShowSidebar('show')}
               title="展开侧边栏"
             ><Icon name="menu" /></button>
             {curScheme.id === DefaultFilterSchemeID && <div className="main-header-title-content">{curScheme.name}</div>}
             {curScheme.id !== DefaultFilterSchemeID &&
-              <div style={{ display: "flex" }}>
+              <div className="main-header-title-container">
                 <div className="main-header-title-content main-header-title-content-clickable" onClick={() => {
                   setCurScheme(getDefaultFilterScheme(filterSchemes));
                 }}>{getDefaultFilterScheme(filterSchemes).name}</div>
@@ -217,27 +217,27 @@ const CardDashboardView = ({ plugin }: { plugin: BanyanPlugin }) => {
           </div>
           <Searchbar />
         </div>
-        {!Platform.isMobile && <div style={{ marginTop: 16 }}><AddNoteView app={app} plugin={plugin} onAdd={() => setRefreshFlag(f => f + 1)} /></div>}
-        <div className="main-subheader-container" style={{ marginBottom: 6, marginTop: 0, display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
-          <div style={{ display: "flex", alignItems: 'center' }}>
-            <span style={{ padding: '12px 6px', color: 'var(--text-muted)', fontSize: 'var(--font-smaller)' }}>{i18n.t('loaded_notes', { count: `${displayFiles.length}`, total: `${curSchemeNotesLength}` })}</span>
+        {!Platform.isMobile && <div className="main-header-add-note-container"><AddNoteView app={app} plugin={plugin} onAdd={() => setRefreshFlag(f => f + 1)} /></div>}
+        <div className="main-subheader-container">
+          <div className="main-subheader-info">
+            <span className="main-subheader-loaded-notes">{i18n.t('loaded_notes', { count: `${displayFiles.length}`, total: `${curSchemeNotesLength}` })}</span>
             {cardNodes.length > 0 && <SortFilesButton plugin={plugin} sortType={sortType} setSortType={setSortType} />}
           </div>
-          <div className="main-subheader-btn-section" style={{ display: "flex", gap: 8 }}>
-            {curScheme.type != 'ViewScheme' && curScheme.id != DefaultFilterSchemeID && cardNodes.length > 0 && <button className="clickable-icon" onClick={handleBatchImportToView} style={{ padding: '4px 12px', color: 'var(--interactive-accent)' }}>批量添加到视图</button>}
+          <div className="main-subheader-btn-section">
+            {curScheme.type != 'ViewScheme' && curScheme.id != DefaultFilterSchemeID && cardNodes.length > 0 && <button className="clickable-icon batch-add-button" onClick={handleBatchImportToView}>{i18n.t('batch_add_to_view')}</button>}
           </div>
         </div>
-        <div className="main-cards" style={{ display: 'flex', gap: 16, flex: 1 }}>
+        <div className="main-cards">
           {cardNodes.length === 0 ? (
             <EmptyStateCard isSearch={curScheme.type == 'FilterScheme' && curScheme.id !== DefaultFilterSchemeID} />
           ) : (
             columns.map((col, idx) => (
-              <div className="main-cards-column" style={{ width: '100%' }} key={idx}>{col}</div>
+              <div className="main-cards-column" key={idx}>{col}</div>
             ))
           )}
         </div>
         {/* Add loading and end-of-list indicators here */}
-        <div style={{ textAlign: 'center', padding: '20px', color: 'var(--text-muted)' }}>
+        <div className="main-cards-loading">
           {isLoading && <div>加载中...</div>}
           {!isLoading && displayFiles.length >= curSchemeNotesLength && cardNodes.length > 0 && <div>{i18n.t('reached_bottom')}</div>}
         </div>
@@ -272,7 +272,7 @@ const SortFilesButton = ({ plugin, sortType, setSortType }: { plugin: BanyanPlug
   };
 
   return (
-    <button className="clickable-icon" style={{ marginLeft: '6px' }}
+    <button className="clickable-icon sort-button"
       children={<Icon name="arrow-down-wide-narrow" />}
       onClick={(e) => sortMenu(e.nativeEvent)}
     />

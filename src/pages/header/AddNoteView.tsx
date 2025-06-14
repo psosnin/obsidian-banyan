@@ -90,12 +90,12 @@ const AddNoteView: React.FC<AddNoteViewProps> = ({ app, plugin, onAdd }) => {
         editor?.focus();
       }
     } } >
-      {showPlaceholder && <div style={{ position: 'absolute', left: 32, top: 26, color: 'var(--text-faint)' }}>{i18n.t('editor_content_placeholder')}</div>}
+      {showPlaceholder && <div className="add-note-placeholder">{i18n.t('editor_content_placeholder')}</div>}
       <div ref={ref} className="add-note-content" />
-      <div className="add-note-footer" style={{ display: "flex", justifyContent: "space-between", alignItems: 'end' }}>
-        <div style={{ width: '100%', maxWidth: '460px' }}><TagInput tags={tags} onChange={setTags} allTags={allTags} placeholder={i18n.t('editor_tags_placeholder')} allowCreate={true}
+      <div className="add-note-footer">
+        <div className="add-note-tag-input-container"><TagInput tags={tags} onChange={setTags} allTags={allTags} placeholder={i18n.t('editor_tags_placeholder')} allowCreate={true}
         /></div>
-        <button style={{ padding: "12px 20px", background: focused ? "var(--interactive-accent)" : "var(--background-modifier-hover)" }}
+        <button className={`add-note-send-button ${focused ? 'add-note-send-button-focused' : 'add-note-send-button-unfocused'}`}
           onClick={async () => {
             const file = await plugin.fileUtils.getPlaceholderFile();
             const body = await plugin.fileUtils.readFileContent(file);

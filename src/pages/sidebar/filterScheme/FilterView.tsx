@@ -16,34 +16,31 @@ export interface FilterViewProps {
 export const FilterView: React.FC<FilterViewProps> = ({ allTags, filterScheme, setFilterScheme, showName = true, showKeyword = true, showLabel = true }) => {
 
   return (
-    <div style={{ marginBottom: '0.5em', display: 'flex', gap: Platform.isMobile ? '1.2em' : '1em', flexWrap: 'wrap', flexDirection: 'column' }}>
+    <div className="filter-view-container">
       {showName && <div className="filter-name-container" >
-        {showLabel && <label style={{ marginRight: 12 }}>{i18n.t('filter_scheme_name_label')}</label>}
+        {showLabel && <label className="filter-view-label-margin">{i18n.t('filter_scheme_name_label')}</label>}
         <input
           type="text"
           value={filterScheme.name}
           placeholder={showLabel ? "" : i18n.t('filter_scheme_name_placeholder')}
           onChange={e => setFilterScheme({ ...filterScheme, name: e.target.value })}
-          style={{ marginRight: 4, padding: '20px 16px', backgroundColor: 'var(--background-secondary)', border: 'none', outline: 'none' }}
         />
       </div>}
       <div className="filter-date-container">
-        {showLabel && <label style={{ marginRight: 12 }}>{i18n.t('filter_scheme_date_label')}</label>}
+        {showLabel && <label className="filter-view-label-margin">{i18n.t('filter_scheme_date_label')}</label>}
         <input
           type="date"
           value={filterScheme.dateRange.from}
           onChange={e => setFilterScheme({ ...filterScheme, dateRange: { from: e.target.value, to: filterScheme.dateRange.to } })}
-          style={{ marginRight: 4 }}
         />
         <span> - </span>
         <input
           type="date"
           value={filterScheme.dateRange.to}
           onChange={e => setFilterScheme({ ...filterScheme, dateRange: { to: e.target.value, from: filterScheme.dateRange.from } })}
-          style={{ marginLeft: 4 }}
         />
       </div>
-      <div className="filter-tags-container" style={{ display: "flex", flexDirection: 'row' }}>
+      <div className="filter-tags-container">
         <TagFilterView
           allTags={allTags}
           value={filterScheme.tagFilter}
@@ -52,13 +49,12 @@ export const FilterView: React.FC<FilterViewProps> = ({ allTags, filterScheme, s
         />
       </div>
       {showKeyword && <div className="filter-keyword-container">
-        {showLabel && <label style={{ marginRight: 12 }}>{i18n.t('filter_scheme_keyword_label')}</label>}
+        {showLabel && <label className="filter-view-label-margin">{i18n.t('filter_scheme_keyword_label')}</label>}
         <input
           type="text"
           value={filterScheme.keyword}
           placeholder={showLabel ? "" : i18n.t('filter_scheme_keyword_placeholder')}
           onChange={e => setFilterScheme({ ...filterScheme, keyword: e.target.value })}
-          style={{ marginRight: 4, padding: '20px 16px', backgroundColor: 'var(--background-secondary)', border: 'none', outline: 'none' }}
         />
       </div>}
     </div>

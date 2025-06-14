@@ -19,7 +19,7 @@ export const Heatmap = ({ values, onCickDate }: {
                 endDate={today}
                 onClick={(value) => value && onCickDate(value.date)}
                 values={values}
-                gutterSize={6}
+                gutterSize={5}
                 classForValue={(value: HeatmapData) => {
                     if (!value || value.count === 0) {
                         return 'color-scale-0';
@@ -37,14 +37,14 @@ export const Heatmap = ({ values, onCickDate }: {
                 }}
                 showWeekdayLabels={false}
                 monthLabels={[
-                    i18n.t('month1'), i18n.t('month2'), i18n.t('month3'), 
-                    i18n.t('month4'), i18n.t('month5'), i18n.t('month6'), 
-                    i18n.t('month7'), i18n.t('month8'), i18n.t('month9'), 
-                    i18n.t('month10'), i18n.t('month11'), i18n.t('month12'), 
+                    i18n.t('month1'), i18n.t('month2'), i18n.t('month3'),
+                    i18n.t('month4'), i18n.t('month5'), i18n.t('month6'),
+                    i18n.t('month7'), i18n.t('month8'), i18n.t('month9'),
+                    i18n.t('month10'), i18n.t('month11'), i18n.t('month12'),
                 ]}
                 showOutOfRangeDays={true}
             />
-            <Tooltip id="my-tooltip" style={{ zIndex: 2001 }} />
+            <Tooltip id="my-tooltip" className="heatmap-tooltip" />
         </div>
     );
 }

@@ -11,23 +11,21 @@ export interface SearchViewProps {
 export const SearchView: React.FC<SearchViewProps> = ({ allTags, filterScheme, setFilterScheme}) => {
 
   return (
-    <div style={{ marginBottom: '0.5em', display: 'flex', gap: '1em', flexWrap: 'wrap', flexDirection: 'column' }}>
-      <div className="filter-date-container">
+    <div className="search-view-container">
+      <div className="search-view-date-container">
         <input
           type="date"
           value={filterScheme.dateRange.from}
           onChange={e => setFilterScheme({...filterScheme, dateRange: { from: e.target.value, to: filterScheme.dateRange.to  }})}
-          style={{ marginRight: 4 }}
         />
         <span> - </span>
         <input
           type="date"
           value={filterScheme.dateRange.to}
           onChange={e => setFilterScheme({...filterScheme, dateRange: { to: e.target.value, from: filterScheme.dateRange.from }})}
-          style={{ marginLeft: 4 }}
         />
       </div>
-      <div className="filter-tags-container" style={{ display: "flex", flexDirection: 'row' }}>
+      <div className="search-view-tags-container">
         <TagFilterView
           allTags={allTags}
           value={filterScheme.tagFilter}

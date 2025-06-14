@@ -25,56 +25,38 @@ export const SidebarButton: React.FC<SidebarButtonProps> = ({
     onClickRightIcon,
 }) => {
     const [hover, setHover] = useState(false);
-    const iconMargin = 28;
-    const baseStyle: React.CSSProperties = {
-        display: 'flex',
-        alignItems: 'center',
-        paddingLeft: 12, // 根据缩进级别增加左边距
-        paddingRight: 4,
-        gap: 6,
-        borderRadius: 8,
-        color: selected ? 'var(--text-normal)' : 'var(--text-muted)',
-        background: selected ? 'var(--background-secondary-alt)' : hover ? 'var(--background-secondary)' : 'transparent',
-        cursor: 'pointer',
-        transition: 'background 0.2s, color 0.2s',
-        height: 36,
-    };
     return (
         <div
-            style={baseStyle}
+            className={"sidebar-btn-base " + (selected ? " sidebar-btn-selectd" : hover ? " sidebar-btn-hover" : " sidebar-btn-normal")}
             onClick={onClick}
             onMouseEnter={() => setHover(true)}
             onMouseLeave={() => setHover(false)}
         >
             {/* 左侧图标 */}
-            {leftIconName && onClickLeftIcon && <button className="clickable-icon" style={{ cursor: 'pointer' }}
+            {leftIconName && onClickLeftIcon && <button className="sidebar-btn-left-icon-clickable clickable-icon"
                 onClick={(e) => {
                     e.stopPropagation();
                     onClickLeftIcon();
                 }} >
                 <Icon size="m" name={leftIconName} color={selected ? 'var(--text-normal)' : 'var(--text-muted)'} />
             </button>}
-            {leftIconName && !onClickLeftIcon && <div style={{ padding: '4px 6px' }} >
+            {leftIconName && !onClickLeftIcon && <div className="sidebar-btn-left-icon-unclickable">
                 <Icon size="m" name={leftIconName} color={selected ? 'var(--text-normal)' : 'var(--text-muted)'} />
             </div>}
-            {!leftIconName && <div style={{ marginLeft: iconMargin }}></div>}
+            {!leftIconName && <div className="sidebar-btn-left-margin"></div>}
 
             {/* 文本 */}
-            <span style={{
-                fontWeight: selected ? 'var(--bold-weight)' : 'var(--font-normal)',
-                overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', flex: 1,
-                display: 'inline-block', fontSize: 'var(--font-small)'
-            }}>{label}</span>
+            <span className={"sidebar-btn-text " + (selected ? "sidebar-btn-text-selected" : "sidebar-btn-text-normal")}>{label}</span>
 
             {/* 右侧 */}
-            <div className="sidebar-btn-right" style={{ display: "flex", gap: 12, alignItems: 'center' }}>
+            <div className="sidebar-btn-right">
                 {/* 右侧文案 */}
-                {rightLabel && <span style={{ fontSize: 'var(--font-smaller)' }}>{rightLabel}</span>}
+                {rightLabel && <span className="sidebar-btn-right-label">{rightLabel}</span>}
                 {/* 右侧图标 */}
-                {rightIconName && <button className="clickable-icon" onClick={(e) => {
+                {rightIconName && <button className="clickable-icon sidebar-btn-right-icon" onClick={(e) => {
                     e.stopPropagation();
                     onClickRightIcon && onClickRightIcon(e.nativeEvent);
-                }} style={{ marginRight: 4 }}>
+                }}>
                     <Icon name={rightIconName} size="s" color={selected ? 'var(--text-normal)' : 'var(--text-muted)'} />
                 </button>}
             </div>

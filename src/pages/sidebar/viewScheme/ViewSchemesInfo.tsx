@@ -100,19 +100,19 @@ export const ViewSchemesInfo = () => {
     };
 
     return (
-        <div className='view-scheme-container' style={{ marginTop: 16 }}>
-            <div className='view-scheme-header' style={{ marginLeft: 12, display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div className='view-scheme-header-title' style={{ fontSize: 'var(--font-smaller)', color: 'var(--interactive-accent)' }}>
+        <div className='view-scheme-container'>
+            <div className='view-scheme-header'>
+                <div className='view-scheme-header-title'>
                     <span>{i18n.t('view_schemes')}</span>
                 </div>
-                <div className='view-scheme-header-add' style={{ marginRight: 8 }}>
+                <div className='view-scheme-header-add'>
                     <button className='view-scheme-header-add-btn clickable-icon'
                         onClick={handleCreateViewScheme}>
                         <Icon name='plus' size='m' color='var(--interactive-accent)' />
                     </button>
                 </div>
             </div>
-            <div className='view-scheme-list' style={{ marginTop: 6, display: 'flex', gap: 4, flexDirection: 'column' }}>
+            <div className='view-scheme-list'>
                 {viewSchemes.map((scheme, index) => (
                     <div
                         key={scheme.id}
@@ -121,11 +121,11 @@ export const ViewSchemesInfo = () => {
                         onDragOver={(e) => handleDragOver(index, e)}
                         onDrop={() => handleDrop(index)}
                         onDragEnd={() => handleDragEnd()}
-                        style={{
-                            opacity: draggedIndex === index ? 0.5 : 1,
-                            border: dragOverIndex === index && draggedIndex !== null ? '1px dashed var(--interactive-accent)' : undefined,
-                            borderRadius: 4
-                        }}>
+                        className={`view-scheme-item ${
+                            draggedIndex === index ? 'view-scheme-item-dragged' : ''
+                            } ${
+                            dragOverIndex === index && draggedIndex !== null ? 'view-scheme-item-dragover' : ''
+                            }`}>
                         <SidebarButton
                             label={scheme.name}
                             selected={curViewSchemeID === scheme.id}

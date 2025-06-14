@@ -44,18 +44,18 @@ const FilterViewContainer = ({ props, close }: { props: FilterEditModalProps, cl
     const handleCancel = () => {
         close();
     };
-    return <div className="filter-modal-container" style={{ padding: '30px 20px 30px 20px' }}>
-        <div style={{}}>
-            <div style={{ marginBottom: 16, fontWeight: "bold" }}>{isNew ? i18n.t('filter_scheme_title_create') : i18n.t('filter_scheme_title_update')}</div>
+    return <div className="filter-modal-container">
+        <div>
+            <div className="filter-modal-title">{isNew ? i18n.t('filter_scheme_title_create') : i18n.t('filter_scheme_title_update')}</div>
             <FilterView
                 allTags={allTags}
                 filterScheme={scheme}
                 setFilterScheme={v => setScheme(v)}
                 showLabel={!Platform.isMobile}
             />
-            <div style={{ display: "flex", justifyContent: "flex-end", gap: 8, marginTop: 16 }}>
+            <div className="filter-modal-footer">
                 <button onClick={handleCancel}>{i18n.t('general_cancel')}</button>
-                <button onClick={handleSave} style={{ background: "var(--interactive-accent)", color: "var(--text-on-accent)", border: "none", borderRadius: 4, padding: "4px 16px" }}>{i18n.t('general_save')}</button>
+                <button onClick={handleSave} className="mod-cta">{i18n.t('general_save')}</button>
             </div>
         </div>
     </div>;

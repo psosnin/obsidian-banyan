@@ -173,20 +173,21 @@ export const FilterSchemesInfo = () => {
         return (
             <div
                 key={scheme.id}
-                className="filter-scheme-item"
+                className={`filter-scheme-item ${
+                    isDragging ? 'filter-scheme-item-dragging' : ''
+                } ${
+                    dragPosition === 'before' ? 'filter-scheme-item-drag-over-before' : ''
+                } ${
+                    dragPosition === 'after' ? 'filter-scheme-item-drag-over-after' : ''
+                } ${
+                    dragPosition === 'inside' ? 'filter-scheme-item-drag-over-inside' : ''
+                }`.trim()}
                 draggable={!isDefault(scheme)}
                 onDragStart={isDefault(scheme) ? undefined : () => handleDragStart(scheme)}
                 onDragOver={isDefault(scheme) ? undefined : (e) => handleDragOver(scheme, e)}
                 onDrop={() => handleDrop()}
                 onDragEnd={handleDragEnd}
-                style={{
-                    opacity: isDragging ? 0.5 : 1,
-                    borderTop: dragPosition === 'before' ? '2px solid var(--interactive-accent)' : undefined,
-                    borderBottom: dragPosition === 'after' ? '2px solid var(--interactive-accent)' : undefined,
-                    background: dragPosition === 'inside' ? 'var(--background-modifier-hover)' : undefined,
-                    borderRadius: 4,
-                    marginLeft: indentLevel * 12,
-                }}
+                style={{ marginLeft: indentLevel * 12 }}
             >
                 <SidebarButton
                     leftIconName={!hasChildren ? undefined : (isExpanded ? "chevron-down" : "chevron-right")}
@@ -217,22 +218,19 @@ export const FilterSchemesInfo = () => {
     };
 
     return (
-        <div className='filter-scheme-container' style={{ marginTop: 16 }}>
-            <div className='filter-scheme-header' style={{
-                marginLeft: 12, display: 'flex',
-                flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'
-            }}>
-                <div className='filter-scheme-header-title' style={{ fontSize: 'var(--font-smaller)', color: 'var(--interactive-accent)' }}>
+        <div className='filter-scheme-container'>
+            <div className='filter-scheme-header'>
+                <div className='filter-scheme-header-title'>
                     <span>{i18n.t('filter_schemes')}</span>
                 </div>
-                <div className='filter-scheme-header-add' style={{ marginRight: 8 }}>
+                <div className='filter-scheme-header-add'>
                     <button className='filter-scheme-header-add-btn clickable-icon'
                         onClick={() => handleCreateFilterScheme()}>
                         <Icon name='plus' size='m' color='var(--interactive-accent)' />
                     </button>
                 </div>
             </div>
-            <div className='filter-scheme-list' style={{ marginTop: 6, display: 'flex', gap: 4, flexDirection: 'column' }}>
+            <div className='filter-scheme-list'>
                 {renderSchemeList()}
             </div>
         </div>

@@ -1,0 +1,23 @@
+.empty-state-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 320px;
+    background: var(--background-secondary);
+    border-radius: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    padding: 48px 24px;
+    width: 600px;
+}
+
+.empty-state-card-icon {
+    margin-bottom: 24px;
+}
+
+.empty-state-card-text {
+    font-size: 20px;
+    color: var(--text-normal);
+    font-weight: 500;
+    margin-bottom: 8px;
+}

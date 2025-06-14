@@ -1,0 +1,194 @@
+
+/* 容器 */
+
+.add-note-container {
+    background: var(--background-secondary);
+    color: var(--text-normal);
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 6px;
+    position: relative;
+    box-shadow: 0 2px 8px #0002;
+    width: 100%;
+    max-width: 600px;
+    border: 1px solid transparent;
+}
+
+.add-note-container--focusd {
+    border: 1px solid var(--interactive-accent-hover);
+}
+
+.add-note-content {
+    min-height: 100px;
+    overflow: hidden;
+    position: relative;
+    word-break: break-word;
+    margin-top: 8px;
+}
+
+.add-note-placeholder {
+    position: absolute;
+    left: 32px;
+    top: 26px;
+    color: var(--text-faint);
+}
+
+.add-note-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+.add-note-tag-input-container {
+    width: 100%;
+    max-width: 460px;
+}
+
+.add-note-send-button {
+    padding: 12px 20px;
+}
+
+.add-note-send-button-focused {
+    background: var(--interactive-accent);
+}
+
+.add-note-send-button-unfocused {
+    background: var(--background-modifier-hover);
+}
+
+/* 编辑器 */
+
+.add-note-content .workspace-leaf {
+    contain: initial !important;
+    height: 100%;
+}
+
+.add-note-content .workspace-leaf-resize-handle {
+    display: none;
+}
+
+.add-note-content .view-header {
+    display: none;
+}
+
+.add-note-content .view-content {
+    flex: 1;
+    overflow: hidden;
+    background-color: transparent !important;
+}
+
+.add-note-content .markdown-preview-view {
+    padding: 0;
+    overflow: hidden !important;
+}
+
+.add-note-content .modal-content {
+    margin: 0;
+}
+
+.add-note-content .mod-header {
+    display: none;
+}
+
+.add-note-container .embedded-backlinks {
+    display: none;
+}
+
+.add-note-content .metadata-container {
+    display: none !important;
+}
+
+.add-note-content .markdown-preview-sizer {
+    min-height: 0 !important;
+    padding: 0 !important;
+    margin: 0;
+}
+
+.add-note-content .markdown-preview-section {
+    min-height: 0 !important;
+    padding: 0 !important;
+    margin: 0;
+}
+
+.add-note-content .cm-scroller {
+    padding: 0 0 0 12px !important;
+    margin: 0 !important;
+}
+
+.add-note-content .cm-gutters {
+    display: none;
+}
+
+.add-note-content .cm-content {
+    padding: 0 !important;
+}
+
+.add-note-content .cm-active.cm-line {
+    background-color: transparent !important;
+}
+
+.add-note-content .view-content .empty-state {
+    display: none;
+}
+
+@media (max-width: 767px) {
+
+    .add-note-container {
+        border-radius: 8px;
+        padding: 16px;
+        margin-bottom: 6px;
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .add-note-footer {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .add-note-footer>div {
+        width: 100% !important;
+        margin-bottom: 10px;
+    }
+
+}
+
+/* 宽屏设备 */
+@media (min-width: 768px) {
+
+    .add-note-content .cm-line {
+        font-size: 0.85rem;
+        /* line-height: 1.2; */
+    }
+
+    .add-note-content .cm-header-1 {
+        font-size: 1.25rem;
+        line-height: 1.3;
+    }
+
+    .add-note-content .cm-header-2 {
+        font-size: 1.2rem;
+        line-height: 1.3;
+    }
+
+    .add-note-content .cm-header-3 {
+        font-size: 1.15rem;
+        line-height: 1.25;
+    }
+
+    .add-note-content .cm-header-4 {
+        font-size: 1.1rem;
+        line-height: 1.25;
+    }
+
+    .add-note-content .cm-header-5 {
+        font-size: 1.05rem;
+        line-height: 1.2;
+    }
+
+    .add-note-content .cm-header-6 {
+        font-size: 1rem;
+        line-height: 1.2;
+    }
+
+}

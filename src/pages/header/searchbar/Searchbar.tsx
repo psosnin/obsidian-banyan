@@ -49,7 +49,7 @@ export const Searchbar = () => {
             // 检查是否点击的是标签选择器的下拉菜单、标签元素或其他浮动元素
             // 这些元素可能在DOM中不是filterBoxRef的子元素，但在UI上是属于搜索框的一部分
             if (
-                targetElement.closest('.card-note-tag') 
+                targetElement.closest('.tag-input-tag') 
                 || targetElement.closest('.tag-input-container')
                 || targetElement.closest('.tag-input-inputarea')
                 || targetElement.closest('.tag-input-suggest')
@@ -77,11 +77,11 @@ export const Searchbar = () => {
 
     if (Platform.isMobile) {
         return (
-            <div style={{ position: 'relative' }}>
-                <div ref={filterButtonRef} onClick={() => setShowFilterBox(v => !v)} style={{ cursor: 'pointer', marginLeft: 4, marginRight: 16 }}><Icon name="search" /></div>
+            <div className="searchbar-mobile-container">
+                <div ref={filterButtonRef} onClick={() => setShowFilterBox(v => !v)} className="searchbar-mobile-button"><Icon name="search" /></div>
                 {showFilterBox && (
-                    <div ref={filterBoxRef} style={{ position: 'absolute', top: '100%', marginTop: 6, right: 0, zIndex: 10, background: 'var(--background-primary)', boxShadow: '0 2px 8px 8px rgba(0,0,0,0.15)', borderRadius: 8, padding: 16, width: '90vw' }}>
-                        <div style={{ marginBottom: 12, fontSize: 'var(--font-text-size)', fontWeight: 'var(--font-semibold)' }}>{i18n.t('search_view_title')}</div>
+                    <div ref={filterBoxRef} className="searchbar-mobile-filter-box">
+                        <div className="searchbar-mobile-filter-box-title">{i18n.t('search_view_title')}</div>
                         <input
                             type="text"
                             placeholder={i18n.t('search_input_placeholder')}
@@ -95,16 +95,16 @@ export const Searchbar = () => {
                                     handleSearch();
                                 }
                             }}
-                            style={{ background: 'var(--background-secondary)', border: 'none', outline: 'none', flex: 1, marginBottom: 16 }}
+                            className="searchbar-mobile-input"
                         />
                         <SearchView
                             allTags={allTags}
                             filterScheme={tempFilterScheme}
                             setFilterScheme={setTempFilterScheme}
                         />
-                        <div style={{ display: 'flex', justifyContent: 'flex-start', gap: 8, marginTop: 16 }}>                            
+                        <div className="searchbar-action-buttons">                            
                             <button onClick={handleReset}>{i18n.t('general_reset')}</button>
-                            <div style={{ flex: 1 }}></div>
+                            <div className="searchbar-action-buttons-spacer"></div>
                             <button onClick={handleSearch} className="mod-cta">{i18n.t('general_search')}</button>
                         </div>
                     </div>
@@ -114,7 +114,7 @@ export const Searchbar = () => {
     }
 
     return (
-        <div className="main-header-searchbar" style={{ position: 'relative', display: 'flex', marginLeft: 16, alignItems: 'center', backgroundColor: 'var(--background-secondary)', borderRadius: 8, padding: '0 8px', height: 32, minWidth: 220, }}>
+        <div className="searchbar-desktop-container">
             <Icon name="search" />
             <input
                 type="text"
@@ -129,20 +129,19 @@ export const Searchbar = () => {
                         handleSearch();
                     }
                 }}
-                style={{ background: 'transparent', border: 'none', outline: 'none', flex: 1 }}
             />
-            <div ref={filterButtonRef} onClick={() => setShowFilterBox(v => !v)} style={{ cursor: 'pointer', marginLeft: 4 }}><Icon name="sliders-horizontal" /></div>
+            <div ref={filterButtonRef} onClick={() => setShowFilterBox(v => !v)} className="searchbar-desktop-filter-button"><Icon name="sliders-horizontal" /></div>
             {showFilterBox && (
-                <div ref={filterBoxRef} style={{ position: 'absolute', top: '100%', marginTop: 6, right: 0, zIndex: 10, background: 'var(--background-primary)', boxShadow: '0 2px 8px 4px rgba(0,0,0,0.15)', borderRadius: 8, padding: 16, minWidth: 360 }}>
-                    <div style={{ marginBottom: 12, fontSize: 'var(--font-text-size)' }}>{i18n.t('search_view_title')}</div>
+                <div ref={filterBoxRef} className="searchbar-desktop-filter-box">
+                    <div className="searchbar-desktop-filter-box-title">{i18n.t('search_view_title')}</div>
                     <SearchView
                         allTags={allTags}
                         filterScheme={tempFilterScheme}
                         setFilterScheme={setTempFilterScheme}
                     />
-                    <div style={{ display: 'flex', justifyContent: 'flex-start', gap: 8, marginTop: 16 }}>                        
+                    <div className="searchbar-action-buttons">                        
                         <button onClick={handleReset}>{i18n.t('general_reset')}</button>
-                        <div style={{ flex: 1 }}></div>
+                        <div className="searchbar-action-buttons-spacer"></div>
                         <button onClick={handleSearch} className="mod-cta">{i18n.t('general_search')}</button>
                     </div>
                 </div>

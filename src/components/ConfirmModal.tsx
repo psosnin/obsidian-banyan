@@ -1,6 +1,7 @@
 import { App, Modal } from "obsidian";
 import * as React from "react";
 import { createRoot, Root } from "react-dom/client";
+import { i18n } from "src/utils/i18n";
 
 interface ConfirmModalProps {
     title: string,
@@ -49,12 +50,12 @@ const ConfirmContainer = ({ props, close }: {
         close();
     };
 
-    return <div className="confirm-container" style={{ padding: '12px' }}>
-        {title && title.trim().length > 0 && <div style={{ marginBottom: 16, fontWeight: "bold" }}>{title}</div>}
-        {description && description.trim().length > 0 && <div style={{ marginBottom: 16 }}>{description}</div>}
-        <div style={{ display: "flex", justifyContent: "flex-end", gap: 8, marginTop: 16 }}>
-            <button onClick={handleCancel}>取消</button>
-            <button onClick={handleConfirm} style={{ background: "var(--interactive-accent)", color: "var(--text-on-accent)", border: "none", borderRadius: 4, padding: "4px 16px" }}>确定</button>
+    return <div className="confirm-container">
+        {title && title.trim().length > 0 && <div className="confirm-title">{title}</div>}
+        {description && description.trim().length > 0 && <div className="confirm-desc">{description}</div>}
+        <div className="confirm-btn-container">
+            <button onClick={handleCancel}>{i18n.t('general_cancel')}</button>
+            <button onClick={handleConfirm} className="confirm-btn-confirm">{i18n.t('general_confirm')}</button>
         </div>
     </div>;
 };

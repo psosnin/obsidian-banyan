@@ -105,19 +105,19 @@ export const RandomReviewInfo = () => {
         'dice-5', 'dice-4', 'dice-3', 'dice-2', 'dice-1'], []);
 
     return (
-        <div className='random-review-container' style={{ marginTop: 16 }}>
-            <div className='random-review-header' style={{ marginLeft: 12, display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div className='random-review-header-title' style={{ fontSize: 'var(--font-smaller)', color: 'var(--interactive-accent)' }}>
+        <div className='random-review-container'>
+            <div className='random-review-header'>
+                <div className='random-review-header-title'>
                     <span>{i18n.t('random_review')}</span>
                 </div>
-                <div className='random-review-header-add' style={{ marginRight: 8 }}>
+                <div className='random-review-header-add'>
                     <button className='random-review-header-add-btn clickable-icon'
                         onClick={handleCreateFilter}>
                         <Icon name='plus' size='m' color='var(--interactive-accent)' />
                     </button>
                 </div>
             </div>
-            <div className='random-review-list' style={{ marginTop: 6, display: 'flex', gap: 4, flexDirection: 'column' }}>
+            <div className='random-review-list'>
                 {randomReviewFilters.map((filter, index) => (
                     <div
                         key={filter.id}
@@ -126,11 +126,7 @@ export const RandomReviewInfo = () => {
                         onDragOver={(e) => handleDragOver(index, e)}
                         onDrop={() => handleDrop(index)}
                         onDragEnd={() => handleDragEnd()}
-                        style={{
-                            opacity: draggedIndex === index ? 0.5 : 1,
-                            border: dragOverIndex === index && draggedIndex !== null ? '1px dashed var(--interactive-accent)' : undefined,
-                            borderRadius: 4
-                        }}>
+                        className={`random-review-item ${draggedIndex === index ? 'random-review-item-dragged' : ''} ${dragOverIndex === index && draggedIndex !== null ? 'random-review-item-dragover' : ''}`}>
                         <SidebarButton
                             leftIconName={icons[filter.id % icons.length]}
                             label={filter.name}

@@ -1,0 +1,127 @@
+/* 选择弹窗 */
+.view-select-mobile-padding {
+    padding: 30px 20px 30px 20px;
+}
+
+.view-select-title {
+    margin-bottom: 16px;
+    font-weight: bold;
+}
+
+.view-select-schemes-container {
+    margin-bottom: 0.5em;
+    display: flex;
+    gap: 1em;
+    flex-wrap: wrap;
+    flex-direction: column;
+}
+
+.view-select-scheme-item {
+    border-radius: 8px;
+    padding: 8px 12px;
+    cursor: pointer;
+    flex: 1;
+}
+
+.view-select-scheme-item-normal {
+    background: var(--background-modifier-border);
+}
+
+.view-select-scheme-item-highlighted {
+    background: var(--interactive-accent);
+}
+
+.view-select-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 16px;
+}
+
+.view-select-confirm-button {
+    background: var(--interactive-accent);
+    color: var(--text-on-accent);
+    border: none;
+    border-radius: 4px;
+    padding: 4px 16px;
+}
+
+/* 列表部分 */
+
+.view-scheme-container {
+    margin-top: 16px;
+}
+
+.view-scheme-header {
+    margin-left: 12px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.view-scheme-header-title span {
+    font-size: var(--font-smaller);
+    color: var(--interactive-accent);
+}
+
+.view-scheme-header-add {
+    margin-right: 8px;
+}
+
+.view-scheme-list {
+    margin-top: 6px;
+    display: flex;
+    gap: 4px;
+    flex-direction: column;
+}
+
+.view-scheme-item {
+    border-radius: 4px;
+}
+
+.view-scheme-item-dragged {
+    opacity: 0.5;
+}
+
+.view-scheme-item-dragover {
+    border: 1px dashed var(--interactive-accent);
+}
+
+/* 编辑弹窗 */
+
+.view-modal-container {
+    padding: 10px 10px;
+}
+
+.view-modal-title {
+    margin-bottom: 16px;
+    font-weight: bold;
+}
+
+.view-modal-content {
+    margin-bottom: 0.5em;
+    display: flex;
+    gap: 1em;
+    flex-wrap: wrap;
+    flex-direction: column;
+}
+
+.view-modal-label {
+    margin-right: 12px;
+}
+
+.view-name-container input[type="text"] {
+    border-radius: 8px;
+    padding: 21px 10px;
+    background-color: var(--background-secondary);
+    border: none;
+    outline: none;
+}
+
+.view-modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 16px;
+}

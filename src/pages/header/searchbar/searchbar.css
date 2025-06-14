@@ -1,0 +1,113 @@
+/* 视图 */
+.search-view-container {
+    margin-bottom: 0.5em; 
+    display: flex;
+     gap: 1em; 
+     flex-wrap: wrap; 
+     flex-direction: column;
+}
+
+.search-view-container span {
+    margin-left: 4px;
+    margin-right: 4px;
+}
+
+.search-view-tags-container {
+    display: flex;
+    flex-direction: row;
+}
+
+.search-view-tags-container label {
+    width: auto;
+}
+
+/* 容器 */
+.searchbar-mobile-container {
+    position: relative;
+}
+
+.searchbar-mobile-button {
+    cursor: pointer;
+    margin-left: 4px;
+    margin-right: 16px;
+}
+
+.searchbar-mobile-filter-box {
+    position: absolute;
+    top: 100%;
+    margin-top: 6px;
+    right: 0;
+    z-index: 10;
+    background: var(--background-primary);
+    box-shadow: 0 2px 8px 8px rgba(0, 0, 0, 0.15);
+    border-radius: 8px;
+    padding: 16px;
+    width: 90vw;
+}
+
+.searchbar-mobile-filter-box-title {
+    margin-bottom: 12px;
+    font-size: var(--font-text-size);
+    font-weight: var(--font-semibold);
+}
+
+.searchbar-mobile-input {
+    background: var(--background-secondary);
+    border: none;
+    outline: none;
+    flex: 1;
+    margin-bottom: 16px;
+}
+
+.searchbar-action-buttons {
+    display: flex;
+    justify-content: flex-start;
+    gap: 8px;
+    margin-top: 16px;
+}
+
+.searchbar-action-buttons-spacer {
+    flex: 1;
+}
+
+.searchbar-desktop-container {
+    position: relative;
+    display: flex;
+    margin-left: 16px;
+    align-items: center;
+    background-color: var(--background-secondary);
+    border-radius: 8px;
+    padding: 0 8px;
+    height: 32px;
+    min-width: 220px;
+}
+
+.searchbar-desktop-container input[type='text'] {
+    background: transparent;
+    border: none;
+    outline: none;
+    flex: 1;
+}
+
+.searchbar-desktop-filter-button {
+    cursor: pointer;
+    margin-left: 4px;
+}
+
+.searchbar-desktop-filter-box {
+    position: absolute;
+    top: 100%;
+    margin-top: 6px;
+    right: 0;
+    z-index: 10;
+    background: var(--background-primary);
+    box-shadow: 0 2px 8px 4px rgba(0, 0, 0, 0.15);
+    border-radius: 8px;
+    padding: 16px;
+    min-width: 360px;
+}
+
+.searchbar-desktop-filter-box-title {
+    margin-bottom: 12px;
+    font-size: var(--font-text-size);
+}

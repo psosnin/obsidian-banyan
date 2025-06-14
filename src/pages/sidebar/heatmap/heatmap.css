@@ -1,0 +1,42 @@
+.heatmap-tooltip {
+    z-index: 2001;
+}
+
+.react-calendar-heatmap text {
+    font-size: 10px;
+    fill: #aaa;
+}
+
+.react-calendar-heatmap .react-calendar-heatmap-small-text {
+    font-size: 5px;
+}
+
+.react-calendar-heatmap rect:hover {
+    stroke: #555;
+    stroke-width: 1px;
+}
+
+.react-calendar-heatmap .color-scale-0 {
+    fill: var(--background-primary-alt);
+}
+
+.react-calendar-heatmap .color-scale-1 {
+    fill: color-mix(in srgb, var(--theme-color) 33%, var(--background-primary-alt) 66%);
+}
+
+.react-calendar-heatmap .color-scale-2 {
+    fill: color-mix(in srgb, var(--theme-color) 66%, var(--background-primary-alt) 33%);
+}
+
+.react-calendar-heatmap .color-scale-3 {
+    fill: color-mix(in srgb, var(--theme-color) 100%, var(--background-primary-alt) 00%);
+}
+
+.react-calendar-heatmap text {
+    fill: --var(--color-text);
+    font-size: 6x;
+}
+
+.react-calendar-heatmap .color-filled {
+    fill: var(--theme-color);
+}

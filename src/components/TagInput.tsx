@@ -7,10 +7,9 @@ interface TagInputProps {
   allTags: string[];
   placeholder?: string;
   allowCreate?: boolean;
-  backgroundColor?: string;
 }
 
-const TagInput: React.FC<TagInputProps> = ({ tags, onChange, allTags, placeholder, allowCreate = false, backgroundColor }) => {
+const TagInput: React.FC<TagInputProps> = ({ tags, onChange, allTags, placeholder, allowCreate = false }) => {
 
   const [input, setInput] = useState("");
 
@@ -80,12 +79,12 @@ const TagInput: React.FC<TagInputProps> = ({ tags, onChange, allTags, placeholde
   };
 
   return (
-    <div className="tag-input-container" style={{ backgroundColor: backgroundColor ?? 'var(--background-secondary)', padding: '6px 12px', borderRadius: 8, position: "relative" }}>
-      <div className="tag-input-inputarea" style={{ display: "flex", flexWrap: "wrap", overflowX: "hidden", alignItems: "center", gap: 4, rowGap: 6 }}>
+    <div className="tag-input-container">
+      <div className="tag-input-inputarea">
         {tags.map((tag, idx) => (
-          <span key={tag} className="card-note-tag">
+          <span key={tag} className="tag-input-tag">
             {tag}
-            <span style={{ marginLeft: 4, cursor: "pointer" }} onClick={() => handleRemoveTag(idx)}>&times;</span>
+            <span className="tag-input-tag-remove-btn" onClick={() => handleRemoveTag(idx)}>&times;</span>
           </span>
         ))}
         <input
@@ -97,34 +96,18 @@ const TagInput: React.FC<TagInputProps> = ({ tags, onChange, allTags, placeholde
           onBlur={handleBlur}
           onFocus={() => { setShowSuggest(true); setHighlight(-1); }}
           placeholder={placeholder}
-          style={{ border: "none", outline: "none", background: 'transparent' }}
         />
       </div>
       {showSuggest && filtered.length > 0 && (
         <div
           className="tag-input-suggest"
           ref={suggestRef}
-          style={{
-            position: 'absolute',
-            left: 12,
-            top: suggestTop,
-            background: 'var(--background-primary)',
-            border: '1px solid var(--background-modifier-border)',
-            color: 'var(--text-color)', borderRadius: 6,
-            padding: '6px',
-            zIndex: 10, minWidth: 240,
-            maxHeight: 200, overflowY: 'auto',
-          }}
+          style={{ top: suggestTop }}
         >
           {filtered.map((tag, idx) => (
             <div
+              className={"tag-input-suggest-item " + (highlight === idx ? 'tag-input-suggest-item-bg-highlight' : 'tag-input-suggest-item-bg-normal')}
               key={tag}
-              style={{
-                padding: '6px',
-                background: highlight === idx ? 'var(--background-primary-alt)' : 'transparent',
-                cursor: 'pointer', borderRadius: 6,
-                fontSize: 'var(--font-small)',
-              }}
               onMouseDown={() => addTag(tag)}
               onMouseEnter={() => setHighlight(idx)}
             >

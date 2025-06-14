@@ -19,17 +19,17 @@ export default {
     /* 组件 */
 
     // 标签筛选区
-    tag_group_label_include: "include",
-    tag_group_placeholder_include: "include tags",
-    tag_group_label_or_include: "or include",
-    tag_group_placeholder_or_include: "or include tags",
-    tag_group_label_exclude: "exclude",
-    tag_group_placeholder_exclude: "exclude tags",
-    tag_group_btn_or: "or",
-    tag_group_label_notag: "no tag",
-    tag_group_label_notag_unlimited: "unlimited",
-    tag_group_label_notag_include: "include",
-    tag_group_label_notag_exclude: "exclude",
+    tag_group_label_include: "Include",
+    tag_group_placeholder_include: "Include tags",
+    tag_group_label_or_include: "Or include",
+    tag_group_placeholder_or_include: "Or include tags",
+    tag_group_label_exclude: "Exclude",
+    tag_group_placeholder_exclude: "Exclude tags",
+    tag_group_btn_or: "OR",
+    tag_group_label_notag: "No tag",
+    tag_group_label_notag_unlimited: "Unlimited",
+    tag_group_label_notag_include: "Include",
+    tag_group_label_notag_exclude: "Exclude",
 
     // filter scheme编辑区
     filter_scheme_title_update: "Update filter scheme",
@@ -87,7 +87,7 @@ export default {
 
     // 副标题栏
     loaded_notes: "{{count}}/{{total}} notes loaded",
-    batch_add_to_view: "Batch add to view",
+    batch_add_to_view: "Add those notes to view",
     recently_updated: "Recently updated",
     recently_created: "Recently created",
 

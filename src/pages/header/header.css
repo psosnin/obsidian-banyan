@@ -43,8 +43,8 @@
 }
 
 .main-header-title-content-clickable:hover {
-    background: var(--background-secondary-alt);
-    border-radius: 4px;
+    background: var(--background-secondary);
+    border-radius: 6px;
 }
 
 /* 副标题 */

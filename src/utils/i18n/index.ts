@@ -9,7 +9,7 @@ class I18nService {
   private currentLanguage: string;
   private translations: Record<string, Translations> = {
     en,
-    'zh-cn' : zh,
+    zh,
   };
 
   constructor() {

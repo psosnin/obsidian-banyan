@@ -100,7 +100,7 @@
 .card-note-tag {
   display: flex;
   align-items: center;
-  background-color: var(--background-primary-alt);
+  background-color: var(--background-primary);
   border: var(--tag-border-width) solid var(--background-primary-alt);
   border-radius: var(--tag-radius);
   color: var(--text-normal);

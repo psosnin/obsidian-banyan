@@ -1,6 +1,8 @@
+import { useMemo } from 'react';
 import CalendarHeatmap from 'react-calendar-heatmap';
 import { Tooltip } from 'react-tooltip'
 import { FileInfo } from 'src/models/FileInfo';
+import { useCombineStore } from 'src/store';
 import { i18n } from 'src/utils/i18n';
 
 export type HeatmapData = {
@@ -8,10 +10,14 @@ export type HeatmapData = {
     count: number,
 }
 
-export const Heatmap = ({ values, onCickDate }: {
-    values: HeatmapData[], onCickDate: (date: string) => void
+export const Heatmap = ({ onCickDate }: {
+    onCickDate: (date: string) => void
 }) => {
     const today = new Date();
+    const plugin = useCombineStore((state) => state.plugin);
+    const sortType = plugin.settings.sortType;    
+    const allFiles = useCombineStore((state) => state.allFiles);
+    const values = useMemo(() => getHeatmapValues(allFiles, sortType), [allFiles, sortType]);
     return (
         <div>
             <CalendarHeatmap
@@ -30,9 +36,8 @@ export const Heatmap = ({ values, onCickDate }: {
                 }}
                 tooltipDataAttrs={(value: HeatmapData): { [key: string]: string } => {
                     return {
-                        // 'data-tooltip': `${value.count} 条笔记于 ${value.date.toISOString().slice(0, 10)}`,
                         'data-tooltip-id': 'my-tooltip',
-                        'data-tooltip-content': value.count != undefined && value.date != undefined ? `${value.count} 条笔记创建于 ${value.date}` : '',
+                        'data-tooltip-content': value.count != undefined && value.date != undefined ? `${value.count} ${i18n.t(sortType == 'created' ? 'notes_created_at' : 'notes_modified_at')} ${value.date}` : '',
                     };
                 }}
                 showWeekdayLabels={false}
@@ -55,11 +60,11 @@ const shiftDate = (date: Date, numDays: number) => {
     return newDate;
 }
 
-export const getHeatmapValues = (fileInfos: FileInfo[]) => {
+export const getHeatmapValues = (fileInfos: FileInfo[], sortType: 'created' | 'modified') => {
     const valueMap = fileInfos
-        .map(f => f.file)
-        .map(file => {
-            const date = new Date(file.stat.ctime); // 记录创建时间，记录修改时间没意义
+        .map(f => f.file.stat)
+        .map(stat => {
+            const date = new Date(sortType == 'created' ? stat.ctime : stat.mtime);
             const offset = date.getTimezoneOffset();
             date.setTime(date.getTime() - offset * 60 * 1000); // offset是毫秒，要变成小时
             return date.toISOString().slice(0, 10);
@@ -71,7 +76,7 @@ export const getHeatmapValues = (fileInfos: FileInfo[]) => {
         .from(valueMap.entries())
         .map(([key, value]) => {
             return { date: key, count: value };
-        }); // 第一层转换
+        });
 }
 
 // 调试用

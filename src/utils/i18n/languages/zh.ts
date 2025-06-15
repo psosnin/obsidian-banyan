@@ -109,9 +109,11 @@ export default {
     month10: "十月",
     month11: "十一月",
     month12: "十二月",
+    notes_created_at: "条笔记创建于",
+    notes_modified_at: "条笔记更新于",
 
     all_notes: "所有笔记",
-    
+
     random_review: "随机回顾",
     random_review_name_placeholder: "输入名称",
     random_review_title_create: "创建随机回顾",

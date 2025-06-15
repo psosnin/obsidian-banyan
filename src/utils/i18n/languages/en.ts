@@ -108,6 +108,8 @@ export default {
     month10: "October",
     month11: "November",
     month12: "December",
+    notes_created_at: "notes created at",
+    notes_modified_at: "notes modified at",
 
     all_notes: "All notes",
 

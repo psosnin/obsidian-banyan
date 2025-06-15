@@ -1,4 +1,4 @@
-import { getHeatmapValues, Heatmap } from 'src/pages/sidebar/heatmap/Heatmap';
+import { Heatmap } from 'src/pages/sidebar/heatmap/Heatmap';
 import { FilterSchemesInfo } from './filterScheme/FilterSchemesInfo';
 import { ViewSchemesInfo } from './viewScheme/ViewSchemesInfo';
 import { RandomReviewInfo } from './randomReview/RandomReviewInfo';
@@ -8,8 +8,6 @@ import { SearchFilterScheme } from 'src/models/FilterScheme';
 import { useMemo } from 'react';
 
 export const SidebarContent = () => {
-    const allFiles = useCombineStore((state) => state.allFiles);
-    const heatmapValues = useMemo(() => getHeatmapValues(allFiles), [allFiles]);
     const setCurScheme = useCombineStore((state) => state.setCurScheme);
     
     const handleClickDate = (date: string) => {
@@ -19,7 +17,7 @@ export const SidebarContent = () => {
     return (
         <div className="sidebar-content-container">
             <StatisticsInfo />
-            <Heatmap values={heatmapValues} onCickDate={handleClickDate} />
+            <Heatmap onCickDate={handleClickDate} />
             <div className="sidebar-section-container">
                 <RandomReviewInfo />
                 <FilterSchemesInfo />

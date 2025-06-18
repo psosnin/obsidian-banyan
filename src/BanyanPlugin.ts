@@ -63,7 +63,7 @@ export default class BanyanPlugin extends Plugin {
 	}
 
 	onunload() {
-		this.app.workspace.getLeavesOfType(CARD_DASHBOARD_VIEW_TYPE).forEach(leaf => leaf.detach());
+		// do nothing
 	}
 
 	resetRandomReview = () => {

@@ -1,4 +1,4 @@
-import { TFolder, App, TFile, normalizePath, Notice } from "obsidian";
+import { App, TFile, normalizePath, Notice } from "obsidian";
 import BanyanPlugin from "src/main";
 import { createFileInfo, FileInfo, generateFileId, isOKWithTagFilter } from "src/models/FileInfo";
 import { TagFilter } from "src/models/TagFilter";
@@ -21,7 +21,7 @@ export class FileUtils {
 
   isLegalFile(file: TFile) {
     const path = this.getPlaceholderFilePath();
-    return file.path.startsWith(this.dir) && file.path !== path;
+    return file.path.startsWith(this.dir + '/') && file.path !== path;
   }
 
   isLegalMarkdownFile(file: TFile) {
@@ -103,10 +103,13 @@ export class FileUtils {
 
   async addFile(content?: string, tags: string[] = [], open: boolean = true) {
     const filePath = await this.getNewNoteFilePath();
-    const id = generateFileId((new Date()).getTime());
-    const tagsStr = `tags:\n${tags.map(t => `- ${t}\n`).join('')}`;
-    const _content = `---\nid: ${id}\n${tagsStr}---\n` + (content ?? '');
-    const file = await this.app.vault.create(filePath, _content);
+    const file = await this.app.vault.create(filePath, content ?? '');
+
+    await this.app.fileManager.processFrontMatter(file, (frontmatter) => {
+      const id = generateFileId((new Date()).getTime());
+      frontmatter.tags = tags; 
+      frontmatter.id = id;      
+    });
 
     if (!open) return;
     const leaf = this.app.workspace.getLeaf(true);

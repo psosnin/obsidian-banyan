@@ -22,25 +22,16 @@ export const createFileInfo = (file: TFile, app: App): FileInfo | null => {
   return { file, tags, id } as FileInfo;
 }
 
-const hasFileID = (content: string) => {
-  const yamlMatch = content.match(/^---\n([\s\S]*?)\n---/);
-  if (yamlMatch) {
-    const hasId = /^id:\s*\d+$/m.test(yamlMatch[1]);
-    return hasId;
-  }
-  return false;
-}
-
 export const ensureFileID = async (file: TFile, app: App, random?: number) => {
-  let content = await app.vault.read(file);
-  if (hasFileID(content)) return;
-
-  const newId = generateFileId(file.stat.ctime, random);
-  console.log('add new id',newId, 'for', file.name);
-  content = content.startsWith('---\n')
-    ? content.replace('---\n', `---\nid: ${newId}\n`) // 只会替换第一个
-    : `---\nid: ${newId}\n---\n${content}`;
-  await app.vault.modify(file, content, { mtime: file.stat.mtime });
+  try {
+    await app.fileManager.processFrontMatter(file, (frontmatter) => {
+      if (frontmatter.id !== undefined) return;
+      const newId = generateFileId(file.stat.ctime, random);
+      frontmatter.id = newId;      
+    }, { mtime: file.stat.mtime });
+  } catch (error) {
+    console.log('error when read file id', file.path, error);
+  }
 }
 
 export const isOKWithTagFilter = (fileTags: string[], filter: TagFilter) => {

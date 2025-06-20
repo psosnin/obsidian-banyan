@@ -1,7 +1,7 @@
 import { App, TFile, normalizePath, Notice } from "obsidian";
 import BanyanPlugin from "src/main";
-import { createFileInfo, FileInfo, generateFileId, isOKWithTagFilter } from "src/models/FileInfo";
-import { TagFilter } from "src/models/TagFilter";
+import { createFileInfo, FileInfo, generateFileId } from "src/models/FileInfo";
+import { TagFilter, isOKWithTagFilter } from "src/models/TagFilter";
 import { i18n } from "./i18n";
 
 const PlaceholderFileName = "banyan_editor_placeholder.md";

@@ -3,7 +3,8 @@ import { ViewScheme } from "src/models/ViewScheme";
 import { StateCreator } from "zustand";
 import { withinDateRange } from "src/models/DateRange";
 import { CombineState } from ".";
-import { createFileInfo, FileInfo, isOKWithTagFilter } from "src/models/FileInfo";
+import { FileInfo } from "src/models/FileInfo";
+import { isOKWithTagFilter } from "src/models/TagFilter";
 
 export interface DashBoardState {
     allFiles: FileInfo[];

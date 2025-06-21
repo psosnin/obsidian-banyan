@@ -117,9 +117,7 @@ export const FilterSchemesInfo = () => {
     };
 
     const reorder = () => {
-        if (!draggedItem || !dragOverItem) {
-            return;
-        };
+        if (!draggedItem || !dragOverItem) return;
 
         const { scheme: draggedScheme } = draggedItem;
         const { scheme: targetScheme, position } = dragOverItem;
@@ -138,21 +136,18 @@ export const FilterSchemesInfo = () => {
         if (isChildOf(targetScheme.id, draggedScheme.id)) return;
 
         moveScheme(draggedScheme, targetScheme, position);
-
-        setDraggedItem(null);
-        setDragOverItem(null);
     }
 
     const handleDrop = () => {
         reorder(); // 防止有时候 handleDragEnd 不执行
+        setDraggedItem(null);
+        setDragOverItem(null);
     };
 
     const handleDragEnd = () => {
         reorder(); // 防止有时候 handleDrop 不执行
-    };
-
-    const isDefault = (scheme: FilterScheme) => {
-        return scheme.id === DefaultFilterSchemeID;
+        setDraggedItem(null);
+        setDragOverItem(null);
     };
 
     // 切换方案的展开/折叠状态

@@ -31,7 +31,7 @@
 }
 
 .random-review-item {
-  border-radius: 4px;
+  border-radius: 8px;
 }
 
 .random-review-item-dragged {
@@ -39,7 +39,7 @@
 }
 
 .random-review-item-dragover {
-  border: 1px dashed var(--interactive-accent);
+  border: 2px dashed var(--interactive-accent);
 }
 
 /* 弹窗 */

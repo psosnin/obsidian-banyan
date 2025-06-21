@@ -1,6 +1,6 @@
 /* 条目 */
 .filter-scheme-item {
-    border-radius: 4px;
+    border-radius: 8px;
 }
 
 .filter-scheme-item-dragging {
@@ -8,15 +8,15 @@
 }
 
 .filter-scheme-item-drag-over-before {
-    border-top: 2px solid var(--interactive-accent);
+    border-top: 2px dashed var(--interactive-accent);
 }
 
 .filter-scheme-item-drag-over-after {
-    border-bottom: 2px solid var(--interactive-accent);
+    border-bottom: 2px dashed var(--interactive-accent);
 }
 
 .filter-scheme-item-drag-over-inside {
-    background: var(--background-modifier-hover);
+    border: 2px dashed var(--interactive-accent);
 }
 
 /* 方案列表 */

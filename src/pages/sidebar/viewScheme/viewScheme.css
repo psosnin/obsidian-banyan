@@ -77,7 +77,7 @@
 }
 
 .view-scheme-item {
-    border-radius: 4px;
+    border-radius: 8px;
 }
 
 .view-scheme-item-dragged {
@@ -85,7 +85,7 @@
 }
 
 .view-scheme-item-dragover {
-    border: 1px dashed var(--interactive-accent);
+    border: 2px dashed var(--interactive-accent);
 }
 
 /* 编辑弹窗 */

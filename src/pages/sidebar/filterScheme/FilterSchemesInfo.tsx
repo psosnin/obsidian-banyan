@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { createEmptyFilterScheme, DefaultFilterSchemeID, FilterScheme } from "src/models/FilterScheme";
 import { FilterEditModal } from "./FilterEditModal";
 import { Icon } from "src/components/Icon";
@@ -60,19 +60,20 @@ export const FilterSchemesInfo = () => {
 
     const handleDuplicateFilterScheme = (scheme: FilterScheme) => {
         const maxId = getMaxSchemeId(filterSchemes);
-            const newScheme = {
-                ...scheme,
-                id: maxId + 1,
-                name: `${scheme.name} ${i18n.t('general_copy')}`,
-                parentId: scheme.parentId // 保持相同的父方案
-            };
-            createFilterScheme(newScheme);
+        const newScheme = {
+            ...scheme,
+            id: maxId + 1,
+            name: `${scheme.name} ${i18n.t('general_copy')}`,
+            parentId: scheme.parentId // 保持相同的父方案
+        };
+        createFilterScheme(newScheme);
     }
 
     // 点击更多按钮弹出菜单
     const handleClickMore = (event: MouseEvent, scheme: FilterScheme) => {
         const menu = new Menu();
-        menu.addItem((item) => {
+        const isDefault = scheme.id === DefaultFilterSchemeID;
+        if (!isDefault) menu.addItem((item) => {
             item.setTitle(i18n.t('general_update'));
             item.onClick(() => hanldeUpdateFilterScheme(scheme));
         });
@@ -80,12 +81,12 @@ export const FilterSchemesInfo = () => {
             item.setTitle(i18n.t('create_sub_scheme'));
             item.onClick(() => handleCreateFilterScheme(scheme.id));
         });
-        menu.addItem((item) => {
+        if (!isDefault) menu.addItem((item) => {
             item.setTitle(i18n.t('create_copy'));
             item.onClick(() => handleDuplicateFilterScheme(scheme));
         });
-        menu.addSeparator();
-        menu.addItem((item) => {
+        if (!isDefault) menu.addSeparator();
+        if (!isDefault) menu.addItem((item) => {
             item.setTitle(i18n.t('general_delete'));
             item.onClick(() => deleteFilterScheme(scheme.id));
         });
@@ -107,7 +108,7 @@ export const FilterSchemesInfo = () => {
 
         let position: 'before' | 'inside' | 'after' = 'inside';
 
-        if (mouseY < rect.top + thirdHeight) {
+        if (mouseY < rect.top + thirdHeight && scheme.id !== DefaultFilterSchemeID) {
             position = 'before';
         } else if (mouseY > rect.bottom - thirdHeight) {
             position = 'after';
@@ -165,6 +166,7 @@ export const FilterSchemesInfo = () => {
         const isDragging = draggedItem && draggedItem.scheme.id === scheme.id;
         const isDragOver = dragOverItem && dragOverItem.scheme.id === scheme.id;
         const dragPosition = isDragOver ? dragOverItem?.position : null;
+        const isDefault = scheme.id === DefaultFilterSchemeID;
         return (
             <div
                 key={scheme.id}
@@ -177,9 +179,9 @@ export const FilterSchemesInfo = () => {
                 } ${
                     dragPosition === 'inside' ? 'filter-scheme-item-drag-over-inside' : ''
                 }`.trim()}
-                draggable={!isDefault(scheme)}
-                onDragStart={isDefault(scheme) ? undefined : () => handleDragStart(scheme)}
-                onDragOver={isDefault(scheme) ? undefined : (e) => handleDragOver(scheme, e)}
+                draggable={!isDefault}
+                onDragStart={isDefault ? undefined : () => handleDragStart(scheme)}
+                onDragOver={(e) => handleDragOver(scheme, e)}
                 onDrop={() => handleDrop()}
                 onDragEnd={handleDragEnd}
                 style={{ marginLeft: indentLevel * 12 }}
@@ -189,18 +191,18 @@ export const FilterSchemesInfo = () => {
                     label={scheme.name}
                     selected={curFilterSchemeID === scheme.id}
                     onClick={() => setCurScheme(scheme)}
-                    rightIconName={isDefault(scheme) ? undefined : 'ellipsis'}
-                    onClickRightIcon={isDefault(scheme) ? undefined : (e) => handleClickMore(e, scheme)}
+                    rightIconName={'ellipsis'}
+                    onClickRightIcon={(e) => handleClickMore(e, scheme)}
                     onClickLeftIcon={hasChildren ? () => toggleExpand(scheme.id) : undefined}
                 />
             </div>
         );
-    }
+    };
 
     // 递归渲染方案列表
     const renderSchemeList = () => {
         const res: { scheme: FilterScheme, indentLevel: number }[] = [];
-        const dfs = (indentLevel: number, parentId: number | null) => {
+        const dfs = (indentLevel: number, parentId: number | null) => {          
             const curSchems = getChildSchemes(parentId);
             for (const scheme of curSchems) {
                 res.push({ scheme, indentLevel });

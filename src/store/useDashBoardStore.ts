@@ -46,7 +46,8 @@ export const useDashBoardStore: StateCreator<CombineState, [], [], DashBoardStat
             if (curScheme.keyword.trim().length > 0) {
                 const keyword = curScheme.keyword.trim().toLowerCase();
                 const allLoadedContents = await Promise.all(filtered.map(async (fileInfo) => {
-                    const content = await plugin.fileUtils.readCachedFileContent(fileInfo.file);
+                    let content = await plugin.fileUtils.readCachedFileContent(fileInfo.file);
+                    content = stripMarkdown(content);
                     return { fileInfo, content };
                 }));
                 filtered = allLoadedContents.filter(({ content }) => content.toLowerCase().includes(keyword)).map(({ fileInfo }) => fileInfo);
@@ -93,3 +94,13 @@ export const useDashBoardStore: StateCreator<CombineState, [], [], DashBoardStat
         }
     },
 });
+
+const stripMarkdown = (mdStr: string) => {
+    return mdStr
+      .replace(/(\*\*|__)(.*?)\1/g, '$2')  // 加粗
+      .replace(/(\*|_)(.*?)\1/g, '$2')     // 斜体
+      .replace(/~~(.*?)~~/g, '$1')         // 删除线
+      .replace(/`(.*?)`/g, '$1')           // 行内代码
+      .replace(/!?$$(.*?)$$$.*?$/g, '$1') // 链接和图片
+      .replace(/^#+\s+/gm, '');            // 标题
+  }

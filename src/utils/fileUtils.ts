@@ -92,7 +92,7 @@ export class FileUtils {
     }
 
     // 随机选择一个笔记
-    const randomIndex = Math.floor(Math.random() * filteredFiles.length);
+    const randomIndex = getRandomNumber(filteredFiles.length-1);
     const randomFile = filteredFiles[randomIndex];
 
     // 打开笔记
@@ -170,4 +170,10 @@ export class FileUtils {
   }
 
   //#endregion
+}
+
+function getRandomNumber(max: number) {
+  const timestamp = Date.now();
+  const random = Math.floor(Math.random() * max);
+  return (timestamp + random) % (max + 1);
 }

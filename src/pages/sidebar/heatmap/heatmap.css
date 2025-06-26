@@ -21,15 +21,15 @@
 }
 
 .react-calendar-heatmap .color-scale-1 {
-    fill: color-mix(in srgb, var(--theme-color) 33%, var(--background-primary-alt) 66%);
+    fill: color-mix(in srgb, var(--color-accent) 33%, var(--background-primary-alt) 66%);
 }
 
 .react-calendar-heatmap .color-scale-2 {
-    fill: color-mix(in srgb, var(--theme-color) 66%, var(--background-primary-alt) 33%);
+    fill: color-mix(in srgb, var(--color-accent) 66%, var(--background-primary-alt) 33%);
 }
 
 .react-calendar-heatmap .color-scale-3 {
-    fill: color-mix(in srgb, var(--theme-color) 100%, var(--background-primary-alt) 00%);
+    fill: color-mix(in srgb, var(--color-accent) 100%, var(--background-primary-alt) 00%);
 }
 
 .react-calendar-heatmap text {
@@ -38,5 +38,5 @@
 }
 
 .react-calendar-heatmap .color-filled {
-    fill: var(--theme-color);
+    fill: var(--color-accent);
 }

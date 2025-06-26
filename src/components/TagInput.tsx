@@ -1,4 +1,5 @@
 import { useState, useRef, useLayoutEffect } from "react";
+import { i18n } from "src/utils/i18n"; 
 import { Notice } from "obsidian";
 
 interface TagInputProps {
@@ -32,9 +33,9 @@ const TagInput: React.FC<TagInputProps> = ({ tags, onChange, allTags, placeholde
   const addTag = (tag: string) => {
     if (tag && tag.length > 0) {
       if (tags.includes(tag)) {
-        new Notice("该标签已添加");
+        new Notice(i18n.t('tag_already_added'));
       } else if (!allowCreate && !allTags.includes(tag)) {
-        new Notice("只能选择已有标签");
+        new Notice(i18n.t('only_existing_tags'));
       } else {
         onChange([...tags, tag]);
       }

@@ -203,7 +203,7 @@ const CardDashboardView = ({ plugin }: { plugin: BanyanPlugin }) => {
           <div className="main-header-title">
             <button className={"clickable-icon " + (showSidebar == 'normal' ? "sidebar-toggle-button-hidden" : "sidebar-toggle-button-visible")}
               onClick={() => setShowSidebar('show')}
-              title="展开侧边栏"
+              title={i18n.t('expand_sidebar')}
             ><Icon name="menu" /></button>
             {curScheme.id === DefaultFilterSchemeID && <div className="main-header-title-content">{curScheme.name}</div>}
             {curScheme.id !== DefaultFilterSchemeID &&
@@ -238,7 +238,7 @@ const CardDashboardView = ({ plugin }: { plugin: BanyanPlugin }) => {
         </div>
         {/* Add loading and end-of-list indicators here */}
         <div className="main-cards-loading">
-          {isLoading && <div>加载中...</div>}
+          {isLoading && <div>{i18n.t('loading_text')}</div>}
           {!isLoading && displayFiles.length >= curSchemeNotesLength && cardNodes.length > 0 && <div>{i18n.t('reached_bottom')}</div>}
         </div>
       </div>

@@ -34,5 +34,5 @@ export const DefaultFilterSchemeID = -1;
 export const SearchFilterSchemeID = -2;
 
 const _DefaultFilterScheme = createEmptyFilterScheme(DefaultFilterSchemeID, i18n.t('all_notes'));
-export const createEmptySearchFilterScheme = () => createEmptyFilterScheme(SearchFilterSchemeID, '搜索结果');
+export const createEmptySearchFilterScheme = () => createEmptyFilterScheme(SearchFilterSchemeID, i18n.t('search_result'));
 export const SearchFilterScheme: FilterScheme = createEmptySearchFilterScheme();

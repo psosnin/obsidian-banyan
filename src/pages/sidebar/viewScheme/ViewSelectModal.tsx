@@ -1,5 +1,7 @@
 import { App, Modal, Platform } from "obsidian";
 import * as React from "react";
+import {i18n} from 'src/utils/i18n';
+
 import { createRoot, Root } from "react-dom/client";
 import { ViewScheme } from "src/models/ViewScheme";
 
@@ -56,7 +58,7 @@ const ViewSelectContainer = ({ props, close }: {
     };
 
     return <div className={"view-select-container " + (Platform.isMobile ? "view-select-mobile-padding" : "")}>
-        <div className="view-select-title">选择要导入的视图</div>
+        <div className="view-select-title">{i18n.t('select_view_to_import')}</div>
         <div className="view-select-schemes-container">
             {viewSchemes.map((scheme, index) => {
                 return <div key={scheme.id} 
@@ -65,8 +67,8 @@ const ViewSelectContainer = ({ props, close }: {
             })}
         </div>
         <div className="view-select-buttons">
-            <button onClick={handleCancel}>取消</button>
-            <button onClick={handleConfirm} className="view-select-confirm-button">确定</button>
+            <button onClick={handleCancel}>{i18n.t('general_cancel')}</button>
+            <button onClick={handleConfirm} className="view-select-confirm-button">{i18n.t('general_confirm')}</button>
         </div>
     </div>;
 };

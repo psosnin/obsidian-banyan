@@ -18,6 +18,13 @@ export default {
 
     /* 组件 */
 
+    // 确认弹窗
+    confirm_delete_title: "确认删除",
+
+    // 标签输入框
+    tag_already_added: "该标签已添加",
+    only_existing_tags: "只能选择已有标签",
+
     // 标签筛选区
     tag_group_label_include: "包含",
     tag_group_placeholder_include: "包含标签",
@@ -45,6 +52,7 @@ export default {
     view_scheme_title_create: "创建视图",
     view_scheme_name_label: "名称",
     view_scheme_name_placeholder: "请输入名称",
+    select_view_to_import: "选择要导入的视图",
 
     /* 设置 */
     setting_note_directory_name: "笔记目录",
@@ -77,10 +85,13 @@ export default {
     notice_note_already_in_view: "笔记已存在于该视图中",
     notice_note_pinned: "已置顶",
     notice_note_unpinned: "已取消置顶",
+
     // 标题栏
     search_bar_placeholder: "搜索",
     search_view_title: "搜索条件",
     search_input_placeholder: "关键字",
+    search_result: "搜索结果",
+    expand_sidebar: "展开侧边栏",
 
     // 编辑区
     editor_content_placeholder: "此刻的想法是...",
@@ -134,8 +145,11 @@ export default {
     add_to_view: "添加到视图",
     remove_from_view: "从视图中移除",
     link_copied: "已复制链接",
+    empty_search_result: "无搜索结果",
+    empty_note_result: "暂无笔记",
 
     // 底部栏
+    loading_text: "加载中...",
     reached_bottom: "你已经到底部了",
 
 };

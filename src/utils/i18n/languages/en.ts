@@ -18,6 +18,13 @@ export default {
 
     /* 组件 */
 
+    // 确认弹窗
+    confirm_delete_title: "Confirm deletion",
+
+    // 标签输入框
+    tag_already_added: "The tag has already been added",
+    only_existing_tags: "Only existing tags can be used",
+
     // 标签筛选区
     tag_group_label_include: "Include",
     tag_group_placeholder_include: "Include tags",
@@ -44,7 +51,9 @@ export default {
     view_scheme_title_update: "Update view scheme",
     view_scheme_title_create: "Create view scheme",
     view_scheme_name_label: "Name",
-    view_scheme_name_placeholder: "Please input the name",
+    view_scheme_name_placeholder: "Please input name",
+    select_view_to_import: "Select view to import",
+
     /* 设置 */
     setting_note_directory_name: "Note directory",
     setting_note_directory_desc: "Directory this plugin works on",
@@ -76,10 +85,13 @@ export default {
     notice_note_already_in_view: "The note is already in the view",
     notice_note_pinned: "Note pinned",
     notice_note_unpinned: "Note unpinned",
+
     // 标题栏
     search_bar_placeholder: "Search",
     search_view_title: "Search condition",
     search_input_placeholder: "Keyword",
+    search_result: "Search result",
+    expand_sidebar: "Expand sidebar",
 
     // 编辑区
     editor_content_placeholder: "Your thoughts...",
@@ -133,8 +145,11 @@ export default {
     add_to_view: "Add to view",
     remove_from_view: "Remove from view",
     link_copied: "Link copied",
+    empty_search_result: "No search results",
+    empty_note_result: "No notes yet",
 
     // 底部栏
+    loading_text: "Loading...",
     reached_bottom: "You have reached the bottom.~",
 
 };

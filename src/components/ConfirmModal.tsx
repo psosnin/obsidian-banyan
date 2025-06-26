@@ -68,7 +68,7 @@ export const openDeleteConfirmModal = ({app, title, description, onCancel, onCon
     onConfirm: () => void,
 }) => {
     const modal = new ConfirmModal(app, {
-        title: title ?? '确认删除',
+        title: title ?? i18n.t('confirm_delete_title'),
         description: description ?? '',
         onCancel: onCancel,
         onConfirm: onConfirm,

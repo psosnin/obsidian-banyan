@@ -104,7 +104,7 @@ const AddNoteView: React.FC<AddNoteViewProps> = ({ app, plugin, onAdd }) => {
             await plugin.fileUtils.modifyFileContent(file, '');
             setTags([]);
             onAdd();
-          }}><Icon name="send-horizontal" size="l" color="white" /></button>
+          }}><Icon name="send-horizontal" size="l" /></button>
       </div>
     </div>
   );

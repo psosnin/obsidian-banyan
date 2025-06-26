@@ -82,7 +82,7 @@ export const CardNoteMenuButton = ({ fileInfo, isPinned }: { fileInfo: FileInfo,
       menu.addItem((item) => {
         item.setTitle(i18n.t('copy_link'));
         item.onClick(() => {
-          const url = ` [[${fileInfo.file.path}|MEMO ▶]] `;
+          const url = ` [[${fileInfo.file.path}]] `;
           navigator.clipboard.writeText(url);
           new Notice(i18n.t('link_copied'));
         });

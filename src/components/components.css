@@ -47,6 +47,18 @@
     align-items: center;
     gap: 4px;
     row-gap: 6px;
+
+    input[type='text'] {
+        border: none;
+        outline: none;
+        background: transparent;
+    }
+
+    input[type='text']:focus {
+        border: none;
+        outline: none;
+        box-shadow: none;
+    }
 }
 
 .tag-input-tag-remove-btn {
@@ -54,11 +66,6 @@
     cursor: pointer;
 }
 
-.tag-input-inputarea input[type='text'] {
-    border: none;
-    outline: none;
-    background: transparent;
-}
 
 .tag-input-suggest {
     position: absolute;
@@ -107,7 +114,7 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-  }
+}
 
 /* 标签过滤视图 */
 

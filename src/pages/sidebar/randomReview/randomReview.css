@@ -61,18 +61,25 @@
   flex-wrap: wrap;
 }
 
-.random-review-name-container label {
-  margin-right: 12px;
-  width: 60px;
-  display: inline-block;
-}
+.random-review-name-container {
+  label {
+    margin-right: 12px;
+    width: 60px;
+    display: inline-block;
+  }
 
-.random-review-name-container input[type="text"] {
-  padding: 21px 20px; 
-  background-color: var(--background-secondary);
-  border: none;
-  outline: none;
-  border-radius: 8px;
+  input[type="text"] {
+    padding: 21px 20px; 
+    background-color: var(--background-secondary);
+    border: none;
+    outline: none;
+    border-radius: 8px;
+  }
+  input[type="text"]:focus {
+    border: none;
+    outline: none;
+    box-shadow: none;
+  }
 }
 
 .random-review-button-container {

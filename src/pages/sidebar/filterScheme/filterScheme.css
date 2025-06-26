@@ -82,20 +82,34 @@
     display: inline-block;
 }
 
-.filter-name-container input[type="text"] {
-    padding: 21px 20px;
-    background-color: var(--background-secondary);
-    border: none;
-    outline: none;
-    border-radius: 8px;
+.filter-name-container {
+    input[type="text"] {
+        padding: 21px 20px;
+        background-color: var(--background-secondary);
+        border: none;
+        outline: none;
+        border-radius: 8px;
+    }
+    input[type="text"]:focus {
+        border: none;
+        outline: none;
+        box-shadow: none;
+    }
 }
 
-.filter-keyword-container input[type="text"] {
-    padding: 21px 20px;
-    background-color: var(--background-secondary);
-    border: none;
-    outline: none;
-    border-radius: 8px;
+.filter-keyword-container {
+    input[type="text"] {
+        padding: 21px 20px;
+        background-color: var(--background-secondary);
+        border: none;
+        outline: none;
+        border-radius: 8px;
+    }
+    input[type="text"]:focus {
+        border: none;
+        outline: none;
+        box-shadow: none;
+    }
 }
 
 .filter-date-container span {

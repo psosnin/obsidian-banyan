@@ -56,14 +56,14 @@ export class FileUtils {
 
   private async getNewNoteFilePath() {
     const now = new Date();
-    const year = now.getFullYear();
-    const quarter = Math.floor((now.getMonth() + 3) / 3);
-    const month = (now.getMonth() + 1).toString().padStart(2, '0');
-    const day = now.getDate().toString().padStart(2, '0');
+    const year = now.getFullYear().toString();
+    const quarter = Math.floor((now.getMonth() + 3) / 3).toString();
+    const month = (now.getMonth() + 1).toString().padStart(2, '0').toString();
+    const day = now.getDate().toString().padStart(2, '0').toString();
     const hour = now.getHours().toString().padStart(2, '0');
     const minute = now.getMinutes().toString().padStart(2, '0');
     const second = now.getSeconds().toString().padStart(2, '0');
-    const folderPath = `${this.dir}/${year}年/${quarter}季度/${month}月/${day}日`;
+    const folderPath = `${this.dir}/${i18n.t('create_note_folder_path', { year, quarter, month, day })}`;
     await this.ensureDirectoryExists(folderPath);
     const fileName = `${year}-${month}-${day} ${hour}-${minute}-${second}.md`;
     const filePath = normalizePath(`${folderPath}/${fileName}`);

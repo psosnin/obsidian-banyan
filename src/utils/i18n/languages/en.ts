@@ -16,6 +16,8 @@ export default {
     general_unpin: "Unpin",
     general_copy: "copy", // used in phrase
 
+    create_note_folder_path: "Year{{year}}/Quarter{{quarter}}/Month{{month}}/Day{{day}}",
+
     /* 组件 */
 
     // 确认弹窗

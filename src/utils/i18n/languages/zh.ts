@@ -16,6 +16,8 @@ export default {
     general_unpin: "取消置顶",
     general_copy: "副本",
 
+    create_note_folder_path: "{{year}}年/{{quarter}}季度/{{month}}月/{{day}}日",
+
     /* 组件 */
 
     // 确认弹窗

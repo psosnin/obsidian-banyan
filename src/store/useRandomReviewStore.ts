@@ -33,8 +33,7 @@ export const useRandomReviewStore: StateCreator<CombineState, [], [], RandomRevi
         const plugin = get().plugin;
         plugin.resetRandomReview();
         
-        plugin.settings.randomReviewFilters = filters;
-        plugin.saveSettings();
+        get().updateSettings({ randomReviewFilters: filters });
         set({ randomReviewFilters: filters });
 
         plugin.setupRandomReview();

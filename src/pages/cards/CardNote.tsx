@@ -49,10 +49,11 @@ const NoteContentView = ({ app, fileInfo }: { app: App, fileInfo: FileInfo }) =>
 const CardNote = ({ fileInfo }: { fileInfo: FileInfo }) => {
 
   const plugin = useCombineStore((state) => state.plugin);
+  const settings = useCombineStore((state) => state.settings);
   const isPinned = useCombineStore((state) => state.curScheme.pinned.includes(fileInfo.id));
   const setCurScheme = useCombineStore((state) => state.setCurScheme);
   const app = plugin.app;
-  const isCreated = plugin.settings.sortType === 'created';
+  const isCreated = settings.sortType === 'created';
   const tags = fileInfo.tags;
 
   return (
@@ -62,7 +63,7 @@ const CardNote = ({ fileInfo }: { fileInfo: FileInfo }) => {
     }}>
       <div className="card-note-header">
         <div className="card-note-time">{isPinned ? `${i18n.t('general_pin')} · ` : ""}{isCreated ? i18n.t('created_at') : i18n.t('updated_at')} {new Date(isCreated ? fileInfo.file.stat.ctime : fileInfo.file.stat.mtime).toLocaleString()}</div>
-        {plugin.settings.showTitle && <div className="card-note-title"><h3>{fileInfo.file.basename}</h3></div>}
+        {settings.showTitle && <div className="card-note-title"><h3>{fileInfo.file.basename}</h3></div>}
         {tags.length > 0 && <div className="card-note-tags"> {tags.map((tag) =>
           <div className="card-note-tag" key={tag} onClick={()=>{
             const fs = createEmptySearchFilterScheme();

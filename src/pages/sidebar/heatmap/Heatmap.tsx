@@ -14,8 +14,8 @@ export const Heatmap = ({ onCickDate }: {
     onCickDate: (date: string) => void
 }) => {
     const today = new Date();
-    const plugin = useCombineStore((state) => state.plugin);
-    const sortType = plugin.settings.sortType;    
+    const settings = useCombineStore((state) => state.settings);
+    const sortType = settings.sortType;    
     const allFiles = useCombineStore((state) => state.allFiles);
     const values = useMemo(() => getHeatmapValues(allFiles, sortType), [allFiles, sortType]);
     return (

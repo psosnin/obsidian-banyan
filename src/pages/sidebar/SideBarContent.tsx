@@ -29,16 +29,16 @@ export const SidebarContent = () => {
 const StatisticsInfo = () => {
     const allFiles = useCombineStore((state) => state.allFiles);
     const allTags = useCombineStore((state) => state.allTags);
-    const plugin = useCombineStore((state) => state.plugin);
+    const settings = useCombineStore((state) => state.settings);
     
     const usedDays = useMemo(() => {
-        if (!plugin.settings.firstUseDate) return 0;
-        const firstUseDate = new Date(plugin.settings.firstUseDate);
+        if (!settings.firstUseDate) return 0;
+        const firstUseDate = new Date(settings.firstUseDate);
         const now = new Date();
         const diffTime = Math.abs(now.getTime() - firstUseDate.getTime());
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
         return diffDays;
-    }, []);
+    }, [settings.firstUseDate]);
 
     return (
         <div className="statistics-info-container">

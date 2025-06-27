@@ -9,18 +9,24 @@ const PlaceholderFileName = "banyan_editor_placeholder.md";
 export class FileUtils {
 
   app: App;
-  dir: string;
   plugin: BanyanPlugin;
   constructor(app: App, plugin: BanyanPlugin) {
     this.app = app;
     this.plugin = plugin;
-    this.dir = plugin.settings.cardsDirectory;
+  }
+
+  get dir() {
+    return this.plugin.settings.cardsDirectory;
   }
 
   //#region 文件获取
 
   isLegalFile(file: TFile) {
     const path = this.getPlaceholderFilePath();
+    // 根目录的情况
+    if (this.dir === "/") {
+      return file.path !== path;
+    }
     return file.path.startsWith(this.dir + '/') && file.path !== path;
   }
 

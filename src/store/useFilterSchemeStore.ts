@@ -94,8 +94,7 @@ export const useFilterSchemeStore: StateCreator<CombineState, [], [], FilterSche
 
     updateFilterSchemeList: (filterSchemes: FilterScheme[]) => {
         const plugin = get().plugin;
-        plugin.settings.filterSchemes = filterSchemes;
-        plugin.saveSettings();
+        get().updateSettings({ filterSchemes });
         set({ filterSchemes });
     }
 });

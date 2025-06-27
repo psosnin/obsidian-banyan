@@ -49,9 +49,7 @@ export const useViewSchemeStore: StateCreator<CombineState, [], [], ViewSchemeSt
     },
 
     updateViewSchemeList: (viewSchemes: ViewScheme[]) => {
-        const plugin = get().plugin;
-        plugin.settings.viewSchemes = viewSchemes;
-        plugin.saveSettings();
+        get().updateSettings({ viewSchemes });
         set({ viewSchemes });
     },
 });

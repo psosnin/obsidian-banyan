@@ -55,7 +55,7 @@ export class CardDashboard extends ItemView {
 }
 
 const CardDashboardView = ({ plugin }: { plugin: BanyanPlugin }) => {
-
+  const app = plugin.app;
 
   const requestData = useCombineStore((state) => state.requestData);
   const updateDisplayFiles = useCombineStore((state) => state.updateDisplayFiles);
@@ -67,10 +67,11 @@ const CardDashboardView = ({ plugin }: { plugin: BanyanPlugin }) => {
   const setCurScheme = useCombineStore((state) => state.setCurScheme);
   const updateViewScheme = useCombineStore((state) => state.updateViewScheme);
   const curSchemeNotesLength = useCombineStore((state) => state.curSchemeFiles.length);
-  const app = plugin.app;
 
+  const settings = useCombineStore((state) => state.settings);
+  const updateSortType = useCombineStore((state) => state.updateSortType);
   const [showSidebar, setShowSidebar] = useState<'normal' | 'hide' | 'show'>(Platform.isMobile ? 'hide' : 'normal');
-  const [sortType, setSortType] = useState<'created' | 'modified'>(plugin.settings.sortType || 'created');
+  const [sortType, setSortType] = useState<'created' | 'modified'>(settings.sortType || 'created');
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const notesPerPage = 10; // 每页显示的笔记数量
@@ -103,7 +104,7 @@ const CardDashboardView = ({ plugin }: { plugin: BanyanPlugin }) => {
       setIsLoading(false);
     }
     requestFiles();
-  }, [sortType, curScheme, refreshFlag, plugin.settings.cardsDirectory]);
+  }, [sortType, curScheme, refreshFlag, settings.cardsDirectory]);
 
   useEffect(() => {
     updateDisplayFiles(currentPage * notesPerPage);
@@ -137,7 +138,8 @@ const CardDashboardView = ({ plugin }: { plugin: BanyanPlugin }) => {
       const containerWidth = dashboardRef.current.clientWidth;
       const _showSidebar = containerWidth >= 900 ? 'normal' : 'hide';
       setShowSidebar(_showSidebar);
-      const cardsColumns = plugin.settings.cardsColumns;
+      const currentSettings = useCombineStore.getState().settings;
+      const cardsColumns = currentSettings.cardsColumns;
       if (cardsColumns == 1) {
         setColCount(1);
         return;
@@ -160,7 +162,7 @@ const CardDashboardView = ({ plugin }: { plugin: BanyanPlugin }) => {
     }
 
     return () => resizeObserver.disconnect();
-  }, []);
+  }, [settings.cardsColumns]);
 
   const handleBatchImportToView = () => {
     const modal = new ViewSelectModal(app, {
@@ -247,6 +249,7 @@ const CardDashboardView = ({ plugin }: { plugin: BanyanPlugin }) => {
 }
 
 const SortFilesButton = ({ plugin, sortType, setSortType }: { plugin: BanyanPlugin, sortType: 'created' | 'modified', setSortType: (st: 'created' | 'modified') => void }) => {
+  const updateSortType = useCombineStore((state) => state.updateSortType);
 
   const sortMenu = (event: MouseEvent) => {
     const sortMenu = new Menu();
@@ -255,8 +258,7 @@ const SortFilesButton = ({ plugin, sortType, setSortType }: { plugin: BanyanPlug
       item.setChecked(sortType === 'created');
       item.onClick(() => {
         setSortType('created');
-        plugin.settings.sortType = 'created';
-        plugin.saveSettings();
+        updateSortType('created');
       });
     });
     sortMenu.addItem((item) => {
@@ -264,8 +266,7 @@ const SortFilesButton = ({ plugin, sortType, setSortType }: { plugin: BanyanPlug
       item.setChecked(sortType === 'modified');
       item.onClick(() => {
         setSortType('modified');
-        plugin.settings.sortType = 'modified';
-        plugin.saveSettings();
+        updateSortType('modified');
       });
     });
     sortMenu.showAtMouseEvent(event);

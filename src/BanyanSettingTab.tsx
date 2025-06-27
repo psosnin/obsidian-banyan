@@ -14,9 +14,8 @@ export class BanyanSettingTab extends PluginSettingTab {
 	display(): void {
 		const { containerEl } = this;
 		containerEl.empty();
-
-		this.setupCardsDirectorySetting(containerEl);
 		this.setupOpenWhenStartObsidianSetting(containerEl);
+		this.setupCardsDirectorySetting(containerEl);		
 		this.setupShowTitleSetting(containerEl);
 		this.setupCardsColumnsSetting(containerEl);
 	}

@@ -111,19 +111,18 @@
     margin-right: 12px;
 }
 
-.view-name-container {
-    input[type="text"] {
-        border-radius: 8px;
-        padding: 21px 10px;
-        background-color: var(--background-secondary);
-        border: none;
-        outline: none;
-    }
-    input[type="text"]:focus {
-        border: none;
-        outline: none;
-        box-shadow: none;
-    }
+.view-name-container input[type="text"] {
+    border-radius: 8px;
+    padding: 21px 10px;
+    background-color: var(--background-secondary);
+    border: none;
+    outline: none;
+}
+
+.view-name-container input[type="text"]:focus {
+    border: none;
+    outline: none;
+    box-shadow: none;
 }
 
 .view-modal-footer {

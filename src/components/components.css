@@ -47,18 +47,18 @@
     align-items: center;
     gap: 4px;
     row-gap: 6px;
+}
 
-    input[type='text'] {
-        border: none;
-        outline: none;
-        background: transparent;
-    }
+.tag-input-inputarea input[type='text'] {
+    border: none;
+    outline: none;
+    background: transparent;
+}
 
-    input[type='text']:focus {
-        border: none;
-        outline: none;
-        box-shadow: none;
-    }
+.tag-input-inputarea input[type='text']:focus {
+    border: none;
+    outline: none;
+    box-shadow: none;
 }
 
 .tag-input-tag-remove-btn {

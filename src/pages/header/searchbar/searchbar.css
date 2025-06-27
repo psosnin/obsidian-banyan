@@ -1,10 +1,10 @@
 /* 视图 */
 .search-view-container {
-    margin-bottom: 0.5em; 
+    margin-bottom: 0.5em;
     display: flex;
-     gap: 1em; 
-     flex-wrap: wrap; 
-     flex-direction: column;
+    gap: 1em;
+    flex-wrap: wrap;
+    flex-direction: column;
 }
 
 .search-view-container span {
@@ -80,20 +80,20 @@
     padding: 0 8px;
     height: 32px;
     min-width: 220px;
+}
 
-    input[type='text'] {
-        background: transparent;
-        border: none;
-        outline: none;
-        flex: 1;
-        margin-left: 4px;
-    }
+.searchbar-desktop-container input[type='text'] {
+    background: transparent;
+    border: none;
+    outline: none;
+    flex: 1;
+    margin-left: 4px;
+}
 
-    input[type='text']:focus {
-        border: none;
-        outline: none;
-        box-shadow: none;
-    }
+.searchbar-desktop-container input[type='text']:focus {
+    border: none;
+    outline: none;
+    box-shadow: none;
 }
 
 .searchbar-desktop-filter-button {

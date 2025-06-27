@@ -1,11 +1,10 @@
 {
 	"id": "banyan",
 	"name": "Banyan",
-	"version": "1.2.11",
+	"version": "1.2.12",
 	"minAppVersion": "1.8.0",
 	"description": "A card-based homepage to browse, organize, and navigate notes effortlessly with multi-tag filtering.",
 	"author": "ratiger",
 	"authorUrl": "https://github.com/ratiger/",
-	"fundingUrl": "https://afdian.com/a/ratiger",
 	"isDesktopOnly": false
 }

@@ -145,7 +145,7 @@ const CardDashboardView = ({ plugin }: { plugin: BanyanPlugin }) => {
         return;
       }
       const mainWidth = containerWidth - (_showSidebar == 'normal' ? 400 : 0);
-      const cardWidth = 600;
+      const cardWidth = 500; // 使用固定的最小宽度，与CSS中的min-width保持一致
       const cardsPadding = 24;
       const widthFor2Cols = cardWidth + cardsPadding + cardWidth;
       const cnt = mainWidth >= widthFor2Cols ? 2 : 1;

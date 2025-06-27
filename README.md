@@ -1,98 +1,85 @@
-# Banyan - Obsidian Note Navigator
+# Banyan - Your Obsidian Homepage
 
-English | [简体中文](./README_zh.md)
+English | [简体中文](./docs/README_zh.md)
 
-> A powerful Obsidian note management and navigation plugin
+## What does this plugin do?
 
-## Introduction
+Banyan helps you better organize, browse, and review your notes. For example, when you want to find notes on a specific topic, see what you've written recently, or randomly browse through old notes.
 
-Banyan is an Obsidian note management and navigation plugin that helps you efficiently browse and manage your Obsidian notes.
-Through an intuitive card view interface, you can quickly access and operate notes in a single panel.
-The plugin supports multi-dimensional filtering functions, allowing you to filter notes through tag combinations, keyword searches, creation dates, and other conditions, and save commonly used filtering rules for quick access later.
-In addition, Banyan also provides multiple view modes, heat map statistics display, and other features, making your note management experience more flexible, intuitive, and efficient.
+When creating notes, you only need to record content and add tags, without worrying about coming up with the perfect title or organizing them into complex folder structures.  
+Access your past notes easily through the powerful filtering card view panel.  
+This is especially useful for users who prefer to write short notes.  
+Create custom random reviews to rediscover forgotten notes.
 
-## Core Features
+![demo](./docs/demo.png)
 
-### Card Panel
+## Main Features
 
-- **Card-style Note View**: Display note content in an aesthetically pleasing and intuitive card format
-- **Smart Layout**: Support single/double column layouts, automatically optimizing display effects based on panel width
-- **Rich Operations**: Support quick opening, deleting, pinning notes, and copying note links
+### 🃏 Card View - See All Your Notes at a Glance
+- Turns your notes into cards with clear titles, content previews, and tags
+- Supports single or double column display based on your screen size
+- Right-click cards for quick actions like open, delete, pin, etc.
 
-### Advanced Filtering
+### 🏷️ Compound Filtering - Find Exactly What You Need
+- Filter by tags: Supports multi-tag filtering, such as notes with `study AND important`, notes with `music OR movie`
+- Filter by time: View notes from a specific time period
+- Search content: Search for keywords in note content
 
-- **Tag Filtering**: Precisely filter notes through tag combinations, supporting both inclusion and exclusion of tags
-- **Time Filtering**: Filter by note creation date range
-- **Content Search**: Search for keywords in note content
+### 💾 Save Filter Conditions - Set Once, Use Again
+- Save commonly used filter conditions for quick access
+- Examples: "work notes", "study materials", "todo items", etc.
 
-### Filter Plans and View Management
+### 🎲 Random Review - Rediscover Old Notes
+- Randomly open notes to rediscover forgotten good content
+- Can limit scope, such as only notes with the `reading` tag
 
-- **Filter Plans**: Set up combinations of commonly used filtering conditions
-- **Custom Views**: Create and save personalized note collections
+### 📊 Heat Map Statistics - Understand Your Writing Habits
+- Shows when you write the most notes using a heat map
+- Helps you understand your writing patterns
 
-### Auxiliary Functions
+## How to Use
 
-- **Heat Map Statistics**: Intuitively display the distribution of note creation times
-- **Random Review**: Unlike Obsidian's built-in "Random Note" which doesn't support setting a scope, this plugin supports limiting the scope with multiple tags for better random note review.
+### Note Panel - Browse Card Notes
+- Click the icon in the left sidebar, or use `Ctrl/Cmd + P` command to open the note panel
 
-## Installation Guide
+### Add New Notes
+- In the desktop panel, there's an editing area for adding card notes where you can fill in content and tags to create notes.
+- Click the bulb icon in the left sidebar, or use the `Ctrl/Cmd + P` command to open a new note.
+- Notes work just like regular Obsidian notes, but there are 2 additional properties:
+    - The `tags` field, where you can input tags, or you can add tags in the note body - they will all appear in the tag line of the card view.
+    - The `id` field - please don't modify this, it's required for the plugin to function properly.
 
-### Install from Obsidian Community Plugin Library
+### Random Review
+- You can add or modify random review items in the sidebar of the panel view, and the left sidebar will also display corresponding new icons
+- Click on random review items, or the random review icon in the left sidebar, to open notes in the plugin directory that meet the tag filtering conditions.
 
-1. Open Obsidian settings panel
-2. Go to "Third-party plugins" option
+### Plugin Settings
+
+- The plugin's note directory defaults to `cards` to avoid conflicts with existing note directories.
+- Whether to automatically open the panel view on startup
+- Whether the panel view displays notes in one or two columns
+- Whether to show titles in card notes
+
+## Installation
+
+### Method 1: Install from Obsidian Community (Recommended)
+1. Open Obsidian settings
+2. Find "Third-party plugins"
 3. Turn off "Safe mode"
 4. Click "Browse", search for "Banyan"
-5. Click install and enable the plugin
+5. Install and enable
 
-### Manual Installation
+### Method 2: Manual Installation
+1. Download the package from the releases page
+2. Extract to `.obsidian/plugins/` directory
+3. Enable the plugin in Obsidian settings
 
-1. Download the latest version of the release package
-2. Extract the files, copy the resulting `banyan/` directory to your Obsidian vault's `.obsidian/plugins/` directory
-3. Restart Obsidian and enable the plugin in settings
+## Questions?
 
-## Usage Guide
+Feel free to ask questions or make suggestions on GitHub!
 
-### Basic Operations
-
-- **Open Note Panel**: Click the "Card" icon in the left sidebar, or execute the "Open Note Panel" command through the command palette
-- **Add Card Note**: Click the "Bulb" icon in the left sidebar, or execute the "Add Card Note" command through the command palette
-- **Open Random Note**: Click the "Dice" icon in the left sidebar, or execute the "Open Random Note" command through the command palette
-
-### Card Operations
-
-Right-click on a card to perform the following operations:
-- Open note
-- Add to view/Remove from current view
-- Pin/Unpin
-- Copy link
-- Delete note
-
-### Filter Notes
-
-1. In the note panel, use the filtering options in the left sidebar
-2. You can precisely filter through tag combinations, date ranges, and other conditions
-3. Save commonly used filtering conditions as filter plans for quick access
-
-### View Management
-
-1. In the note panel, switch to the "View" tab
-2. Create a new view and add the required notes
-3. Switch freely between different views
-
-## Configuration Options
-
-In the plugin settings panel, you can customize the following options:
-
-- **Note Directory**: Set the default note directory displayed in the card panel
-- **Auto-open on Startup**: When enabled, the note panel will automatically open when Obsidian starts
-- **Display Columns**: Set the number of note display columns in the card panel (1 column or 2 columns)
-- **Random Note Scope**: Set tag filtering conditions for the random note function
-
-## Contributing
-
-Welcome to submit issue reports and feature suggestions! If you want to contribute code to the project, feel free to submit a Pull Request.
+Or join this project's Discord: https://discord.gg/HGCmK8YzaX
 
 ## License
 
-This project is licensed under the GPLv3 License. See the [LICENSE](LICENSE) file for details.
+GPLv3 - See [LICENSE](LICENSE) file for details

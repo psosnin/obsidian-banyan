@@ -64,8 +64,49 @@
 .tag-input-tag-remove-btn {
     margin-left: 4px;
     cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--text-muted);
+    font-size: 16px;
+    font-weight: bold;
+    line-height: 1;
+    transition: all 0.2s ease;
+    user-select: none;
+    -webkit-user-select: none;
+    position: relative;
 }
 
+.tag-input-tag-remove-btn::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    border-radius: 50%;
+    background: transparent;
+    transition: background 0.2s ease;
+}
+
+.tag-input-tag-remove-btn:hover {
+    background: var(--background-modifier-hover);
+    color: var(--text-normal);
+    transform: scale(1.1);
+}
+
+.tag-input-tag-remove-btn:hover::before {
+    background: var(--background-modifier-hover);
+}
+
+.tag-input-tag-remove-btn:active {
+    background: var(--background-modifier-active);
+    transform: scale(0.95);
+}
 
 .tag-input-suggest {
     position: absolute;

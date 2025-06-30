@@ -6,10 +6,12 @@ import { i18n } from 'src/utils/i18n';
 import { useCombineStore } from 'src/store';
 import { SearchFilterScheme } from 'src/models/FilterScheme';
 import { useMemo } from 'react';
+import { SidebarButton } from './SidebarButton';
 
 export const SidebarContent = () => {
     const setCurScheme = useCombineStore((state) => state.setCurScheme);
-    
+    const plugin = useCombineStore((state) => state.plugin);
+
     const handleClickDate = (date: string) => {
         setCurScheme({ ...SearchFilterScheme, name: date, dateRange: { from: date, to: date } });
     }
@@ -18,6 +20,11 @@ export const SidebarContent = () => {
         <div className="sidebar-content-container">
             <StatisticsInfo />
             <Heatmap onCickDate={handleClickDate} />
+            <div className="sidebar-btn-create-note">
+                <SidebarButton leftIconName="lightbulb"
+                    label={i18n.t('create_note')}
+                    onClick={async () => await plugin.fileUtils.addFile()} />
+            </div>
             <div className="sidebar-section-container">
                 <RandomReviewInfo />
                 <FilterSchemesInfo />
@@ -30,7 +37,7 @@ const StatisticsInfo = () => {
     const allFiles = useCombineStore((state) => state.allFiles);
     const allTags = useCombineStore((state) => state.allTags);
     const settings = useCombineStore((state) => state.settings);
-    
+
     const usedDays = useMemo(() => {
         if (!settings.firstUseDate) return 0;
         const firstUseDate = new Date(settings.firstUseDate);

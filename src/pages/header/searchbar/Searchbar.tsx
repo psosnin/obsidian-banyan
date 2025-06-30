@@ -1,21 +1,25 @@
 import { Icon } from "src/components/Icon";
 import { SearchView } from "./SearchView";
 import { useState, useEffect, useRef } from "react";
-import { createEmptySearchFilterScheme, SearchFilterScheme, SearchFilterSchemeID } from "src/models/FilterScheme";
+import { SearchFilterScheme, SearchFilterSchemeID } from "src/models/FilterScheme";
 import { Platform } from "obsidian";
 import { i18n } from "src/utils/i18n";
 import { useCombineStore } from "src/store";
+import { isEmptyDateRange } from "src/models/DateRange";
+import { isEmptyTagFilter } from "src/models/TagFilter";
 
 export const Searchbar = () => {
 
     const allTags = useCombineStore((state) => state.allTags);
     const setCurScheme = useCombineStore((state) => state.setCurScheme);
-    const curSchemeIsSearch = useCombineStore((state) => state.curScheme.type === 'ViewScheme' && state.curScheme.id === SearchFilterSchemeID);
+    const curScheme = useCombineStore((state) => state.curScheme);
 
-    const [tempFilterScheme, setTempFilterScheme] = useState(curSchemeIsSearch ? { ...SearchFilterScheme } : createEmptySearchFilterScheme());
+    const [tempFilterScheme, setTempFilterScheme] = useState(SearchFilterScheme);
     const [showFilterBox, setShowFilterBox] = useState(false);
-    const filterBoxRef = useRef<HTMLDivElement>(null);
-    const filterButtonRef = useRef<HTMLDivElement>(null);
+    const searchBarRef = useRef<HTMLDivElement>(null);
+
+    const isSearchAndFilterNotEmpty = curScheme.type === 'FilterScheme' && curScheme.id === SearchFilterSchemeID && (!isEmptyDateRange(curScheme.dateRange) || !isEmptyTagFilter(curScheme.tagFilter));
+    const filterColor = isSearchAndFilterNotEmpty ? "var(--color-accent)" : "var(--icon-color)";
 
     const handleSearch = () => {
         setCurScheme(tempFilterScheme);
@@ -27,36 +31,34 @@ export const Searchbar = () => {
     };
 
     const handleCancel = () => {
-        setTempFilterScheme(SearchFilterScheme);
         setShowFilterBox(false);
     }
-    
+
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             // 防止事件处理期间搜索框已经关闭的情况
             if (!showFilterBox) return;
-            
+
             const targetElement = event.target as HTMLElement;
-            
+
             // 如果点击的是过滤框内部或者是触发按钮，则不关闭
             if (
-                (filterBoxRef.current && filterBoxRef.current.contains(targetElement)) ||
-                (filterButtonRef.current && filterButtonRef.current.contains(targetElement))
+                (searchBarRef.current && searchBarRef.current.contains(targetElement))
             ) {
                 return;
             }
-            
+
             // 检查是否点击的是标签选择器的下拉菜单、标签元素或其他浮动元素
             // 这些元素可能在DOM中不是filterBoxRef的子元素，但在UI上是属于搜索框的一部分
             if (
-                targetElement.closest('.tag-input-tag') 
+                targetElement.closest('.tag-input-tag')
                 || targetElement.closest('.tag-input-container')
                 || targetElement.closest('.tag-input-inputarea')
                 || targetElement.closest('.tag-input-suggest')
             ) {
                 return;
             }
-            
+
             // 否则关闭过滤框
             handleCancel();
         };
@@ -77,10 +79,10 @@ export const Searchbar = () => {
 
     if (Platform.isMobile) {
         return (
-            <div className="searchbar-mobile-container">
-                <div ref={filterButtonRef} onClick={() => setShowFilterBox(v => !v)} className="searchbar-mobile-button"><Icon name="search" /></div>
+            <div ref={searchBarRef} className="searchbar-mobile-container">
+                <div onClick={() => setShowFilterBox(v => !v)} className="searchbar-mobile-button"><Icon name="search" /></div>
                 {showFilterBox && (
-                    <div ref={filterBoxRef} className="searchbar-mobile-filter-box">
+                    <div className="searchbar-mobile-filter-box">
                         <div className="searchbar-mobile-filter-box-title">{i18n.t('search_view_title')}</div>
                         <input
                             type="text"
@@ -102,7 +104,7 @@ export const Searchbar = () => {
                             filterScheme={tempFilterScheme}
                             setFilterScheme={setTempFilterScheme}
                         />
-                        <div className="searchbar-action-buttons">                            
+                        <div className="searchbar-action-buttons">
                             <button onClick={handleReset}>{i18n.t('general_reset')}</button>
                             <div className="searchbar-action-buttons-spacer"></div>
                             <button onClick={handleSearch} className="mod-cta">{i18n.t('general_search')}</button>
@@ -114,7 +116,7 @@ export const Searchbar = () => {
     }
 
     return (
-        <div className="searchbar-desktop-container">
+        <div ref={searchBarRef} className="searchbar-desktop-container">
             <Icon name="search" />
             <input
                 type="text"
@@ -130,16 +132,16 @@ export const Searchbar = () => {
                     }
                 }}
             />
-            <div ref={filterButtonRef} onClick={() => setShowFilterBox(v => !v)} className="searchbar-desktop-filter-button"><Icon name="sliders-horizontal" /></div>
+            <div onClick={() => setShowFilterBox(v => !v)} className="searchbar-desktop-filter-button"><Icon name="sliders-horizontal" color={filterColor} /></div>
             {showFilterBox && (
-                <div ref={filterBoxRef} className="searchbar-desktop-filter-box">
+                <div className="searchbar-desktop-filter-box">
                     <div className="searchbar-desktop-filter-box-title">{i18n.t('search_view_title')}</div>
                     <SearchView
                         allTags={allTags}
                         filterScheme={tempFilterScheme}
                         setFilterScheme={setTempFilterScheme}
                     />
-                    <div className="searchbar-action-buttons">                        
+                    <div className="searchbar-action-buttons">
                         <button onClick={handleReset}>{i18n.t('general_reset')}</button>
                         <div className="searchbar-action-buttons-spacer"></div>
                         <button onClick={handleSearch} className="mod-cta">{i18n.t('general_search')}</button>

@@ -23,3 +23,7 @@ export const emptyDateRange = () => {
         to: ""
     }
 };
+
+export const isEmptyDateRange = (dateRange: DateRange) => {
+    return dateRange.from === "" && dateRange.to === "";
+}

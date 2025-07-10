@@ -75,6 +75,9 @@ export default {
     setting_random_review_name: "Range of random review",
     setting_random_review_desc: "Random review notes in the note directory",
 
+    setting_show_backlinks_name: "Show backlinks",
+    setting_show_backlinks_desc: "Whether to show backlinks (which notes reference this) in card view.",
+
     /* 命令和ribbon */
     add_card_note: "Add card note",
     open_dashboard: "Open dashboard",

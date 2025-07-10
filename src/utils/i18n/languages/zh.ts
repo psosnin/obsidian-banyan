@@ -75,6 +75,9 @@ export default {
     setting_random_review_name: "随机笔记的范围",
     setting_random_review_desc: "随机回顾「笔记目录」下的笔记",
 
+    setting_show_backlinks_name: "显示反向链接",
+    setting_show_backlinks_desc: "是否在卡片视图中显示反向链接（被哪些笔记引用）",
+
     /* 命令和ribbon */
     add_card_note: "添加卡片笔记",
     open_dashboard: "打开笔记面板",

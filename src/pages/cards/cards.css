@@ -129,6 +129,54 @@
   text-overflow: ellipsis;
 }
 
+/* 反向链接区域 */
+.card-note-backlinks {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--background-modifier-border);
+}
+.card-note-backlinks-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  max-width: 100%;
+}
+.card-note-backlink-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 4px;
+  width: 100%;
+}
+.card-note-backlink-link {
+  display: block;
+  flex: 1 1 0%;
+  min-width: 0;
+  max-width: 100%;
+  color: var(--text-muted);
+  background: none;
+  border-radius: 4px;
+  padding: 2px 0;
+  font-size: var(--font-ui-smaller);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.card-note-backlink-link:hover {
+  color: var(--text-accent);
+  text-decoration: underline;
+}
+.card-note-backlink-link:hover .card-note-backlink-icon {
+  color: var(--text-accent) !important;
+}
+.card-note-backlink-icon {
+  display: inline-block;
+  margin-right: 4px;
+  vertical-align: middle;
+  transition: color 0.15s;
+}
+
 /* 编辑器 */
 
 .card-note-content .workspace-leaf {
@@ -180,6 +228,7 @@
   display: none;
 }
 
+/* 隐藏 底部显示当前笔记的反向链接 */
 .card-note-content .mod-footer {
   display: none;
 }

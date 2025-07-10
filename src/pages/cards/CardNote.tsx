@@ -5,6 +5,7 @@ import { i18n } from "src/utils/i18n";
 import { useCombineStore } from "src/store";
 import { FileInfo } from "src/models/FileInfo";
 import { createEmptySearchFilterScheme } from "src/models/FilterScheme";
+import { Icon } from "src/components/Icon";
 
 const NoteContentView = ({ app, fileInfo }: { app: App, fileInfo: FileInfo }) => {
   const ref = React.useRef<HTMLDivElement>(null);
@@ -46,6 +47,27 @@ const NoteContentView = ({ app, fileInfo }: { app: App, fileInfo: FileInfo }) =>
   return <div ref={ref} className={"card-note-content" + (overflow ? " card-note-content--overflow" : "")} />;
 };
 
+const BacklinksView = ({ app, fileInfo }: { app: App, fileInfo: FileInfo }) => {
+  const backlinksMap = useCombineStore((state) => state.backlinksMap);
+  const backlinks = backlinksMap[fileInfo.file.path] || [];
+  if (backlinks.length === 0) return null;
+
+  return (
+    <div className="card-note-backlinks">
+      <div className="card-note-backlinks-list">
+        {backlinks.map((path) => (
+          <div className="card-note-backlink-item" key={path}>
+            <span className="card-note-backlink-link" onClick={() => app.workspace.openLinkText(path, '', false)}>
+              <Icon name="file-symlink" size="xs" color="var(--text-muted)" className="card-note-backlink-icon" />
+              {path}
+            </span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
 const CardNote = ({ fileInfo }: { fileInfo: FileInfo }) => {
 
   const plugin = useCombineStore((state) => state.plugin);
@@ -79,6 +101,11 @@ const CardNote = ({ fileInfo }: { fileInfo: FileInfo }) => {
         </div>
       </div>
       <NoteContentView app={app} fileInfo={fileInfo} />
+      <div className="card-note-footer">
+        {settings.showBacklinksInCardNote && (
+          <BacklinksView app={app} fileInfo={fileInfo} />
+        )}
+      </div>
     </div>
   );
 };

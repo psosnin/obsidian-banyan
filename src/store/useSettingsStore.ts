@@ -16,6 +16,7 @@ export interface SettingsState {
     updateSortType: (sortType: 'created' | 'modified') => void;
     updateFirstUseDate: (date: string) => void;
     updateRandomNoteTagFilter: (tagFilter: any) => void;
+    updateShowBacklinksInCardNote: (show: boolean) => void;
 }
 
 export const useSettingsStore: StateCreator<CombineState, [], [], SettingsState> = (set, get) => ({
@@ -55,5 +56,9 @@ export const useSettingsStore: StateCreator<CombineState, [], [], SettingsState>
 
     updateRandomNoteTagFilter: (tagFilter: any) => {
         get().updateSettings({ randomNoteTagFilter: tagFilter });
+    },
+
+    updateShowBacklinksInCardNote: (show: boolean) => {
+        get().updateSettings({ showBacklinksInCardNote: show });
     },
 }); 

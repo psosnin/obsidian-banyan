@@ -16,6 +16,7 @@ export interface BanyanPluginSettings {
 	filterSchemes: FilterScheme[];
 	viewSchemes: ViewScheme[];
 	randomReviewFilters: RandomReviewFilter[];
+	showBacklinksInCardNote?: boolean;
 }
 
 export const CUR_SETTINGS_VERSION = 3;
@@ -38,4 +39,5 @@ export const DEFAULT_SETTINGS: BanyanPluginSettings = {
 	cardsColumns: 1,
 	firstUseDate: getToday(),
 	randomReviewFilters: [DefaultRandomReviewFilter],
+	showBacklinksInCardNote: false,
 }

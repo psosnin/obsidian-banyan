@@ -18,6 +18,7 @@ export class BanyanSettingTab extends PluginSettingTab {
 		this.setupCardsDirectorySetting(containerEl);		
 		this.setupShowTitleSetting(containerEl);
 		this.setupCardsColumnsSetting(containerEl);
+        this.setupShowBacklinksSetting(containerEl);
 	}
 
 	setupCardsDirectorySetting(containerEl: HTMLElement) {
@@ -78,5 +79,18 @@ export class BanyanSettingTab extends PluginSettingTab {
 					});
 			});
 	}
+
+    setupShowBacklinksSetting(containerEl: HTMLElement) {
+        const settings = useCombineStore.getState().settings;
+        new Setting(containerEl)
+            .setName(i18n.t('setting_show_backlinks_name'))
+            .setDesc(i18n.t('setting_show_backlinks_desc'))
+            .addToggle(toggle => {
+                toggle.setValue(settings.showBacklinksInCardNote ?? false)
+                    .onChange(async (value) => {
+                        useCombineStore.getState().updateShowBacklinksInCardNote(value);
+                    });
+            });
+    }
 
 }

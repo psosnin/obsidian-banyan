@@ -45,17 +45,15 @@
 }
 
 .add-note-send-button {
-    padding: 12px 20px;
-}
-
-.add-note-send-button-focused {
+    padding: 6px 15px;
     background: var(--interactive-accent);
+    color: var(--text-on-accent);
 }
-
-.add-note-send-button-unfocused {
-    background: var(--background-modifier-hover);
+.add-note-send-button:hover {
+    background: var(--interactive-accent);
+    opacity: 1.2;
+    filter: brightness(1.1);
 }
-
 /* 编辑器 */
 
 .add-note-content .workspace-leaf {

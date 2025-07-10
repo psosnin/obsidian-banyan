@@ -95,7 +95,7 @@ const AddNoteView: React.FC<AddNoteViewProps> = ({ app, plugin, onAdd }) => {
       <div className="add-note-footer">
         <div className="add-note-tag-input-container"><TagInput tags={tags} onChange={setTags} allTags={allTags} placeholder={i18n.t('editor_tags_placeholder')} allowCreate={true}
         /></div>
-        <button className={`add-note-send-button ${focused ? 'add-note-send-button-focused' : 'add-note-send-button-unfocused'}`}
+        <button className={`add-note-send-button ${focused ? 'clickable-icon' : ''}`}
           onClick={async () => {
             const file = await plugin.fileUtils.getPlaceholderFile();
             const body = await plugin.fileUtils.readFileContent(file);
@@ -104,7 +104,7 @@ const AddNoteView: React.FC<AddNoteViewProps> = ({ app, plugin, onAdd }) => {
             await plugin.fileUtils.modifyFileContent(file, '');
             setTags([]);
             onAdd();
-          }}><Icon name="send-horizontal" size="l" /></button>
+          }}><Icon name="send-horizontal" size="l" color="var(--text-on-accent)" /></button>
       </div>
     </div>
   );

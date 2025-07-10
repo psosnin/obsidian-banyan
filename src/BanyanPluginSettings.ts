@@ -31,7 +31,7 @@ export const DEFAULT_SETTINGS: BanyanPluginSettings = {
 	cardsDirectory: 'cards',
 	sortType: 'created',
 	openWhenStartObsidian: true,
-	showTitle: true,
+	showTitle: false,
 	filterSchemes: [getDefaultFilterScheme([])],
 	viewSchemes: [],
 	randomNoteTagFilter: emptyTagFilter(),

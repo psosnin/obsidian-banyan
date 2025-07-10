@@ -10,10 +10,10 @@ export default class FolderSuggest extends AbstractInputSuggest<string> {
     }
 
     getSuggestions(input: string): string[] {
-        const inputLowerCase = input.toLocaleLowerCase();
+        const inputLowerCase = input.toLowerCase();
         return this.app.vault.getAllFolders(true)
-            .map(f => f.path.toLocaleLowerCase())
-            .filter(name => name.includes(inputLowerCase));
+            .map(f => f.path)
+            .filter(name => name.toLowerCase().includes(inputLowerCase));
     }
 
     renderSuggestion(item: string, el: HTMLElement) {

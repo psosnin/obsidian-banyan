@@ -11,7 +11,7 @@ export interface SettingsState {
     // 单个设置项的更新方法
     updateCardsDirectory: (directory: string) => void;
     updateOpenWhenStartObsidian: (open: boolean) => void;
-    updateShowTitle: (show: boolean) => void;
+    updateTitleDisplayMode: (mode: 'propertyOrNone' | 'propertyThenFile' | 'fileOnly' | 'none') => void;
     updateCardsColumns: (columns: number) => void;
     updateSortType: (sortType: 'created' | 'modified') => void;
     updateFirstUseDate: (date: string) => void;
@@ -39,8 +39,8 @@ export const useSettingsStore: StateCreator<CombineState, [], [], SettingsState>
         get().updateSettings({ openWhenStartObsidian: open });
     },
 
-    updateShowTitle: (show: boolean) => {
-        get().updateSettings({ showTitle: show });
+    updateTitleDisplayMode: (mode: 'propertyOrNone' | 'propertyThenFile' | 'fileOnly' | 'none') => {
+        get().updateSettings({ titleDisplayMode: mode });
     },
 
     updateCardsColumns: (columns: number) => {

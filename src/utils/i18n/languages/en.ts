@@ -64,8 +64,12 @@ export default {
     setting_on_open_name: "Open after start",
     setting_on_open_desc: "Enable this to open the plugin when obsidian starts",
 
-    setting_show_title_name: "Show title",
-    setting_show_title_desc: "Whether to show the title in card note",
+    setting_title_display_mode_name: "Title display mode",
+    setting_title_display_mode_desc: "Choose how to display titles in card view",
+    setting_title_display_mode_property_or_none: "Property title or no title",
+    setting_title_display_mode_property_then_file: "Property title or file title",
+    setting_title_display_mode_file_only: "File title",
+    setting_title_display_mode_none: "No title",
 
     setting_col_nums_name: "Number of columns",
     setting_col_nums_desc: "When the panel is wide enough, how many columns to show",

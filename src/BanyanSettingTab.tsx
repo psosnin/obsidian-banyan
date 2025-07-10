@@ -16,7 +16,7 @@ export class BanyanSettingTab extends PluginSettingTab {
 		containerEl.empty();
 		this.setupOpenWhenStartObsidianSetting(containerEl);
 		this.setupCardsDirectorySetting(containerEl);		
-		this.setupShowTitleSetting(containerEl);
+		this.setupTitleDisplayModeSetting(containerEl);
 		this.setupCardsColumnsSetting(containerEl);
         this.setupShowBacklinksSetting(containerEl);
         this.setupUseCardNote2Setting(containerEl); // 新增
@@ -52,15 +52,19 @@ export class BanyanSettingTab extends PluginSettingTab {
 			});
 	}
 
-	setupShowTitleSetting(containerEl: HTMLElement) {
+	setupTitleDisplayModeSetting(containerEl: HTMLElement) {
 		const settings = useCombineStore.getState().settings;
 		new Setting(containerEl)
-			.setName(i18n.t('setting_show_title_name'))
-			.setDesc(i18n.t('setting_show_title_desc'))
-			.addToggle(toggle => {
-				toggle.setValue(settings.showTitle)
+			.setName(i18n.t('setting_title_display_mode_name'))
+			.setDesc(i18n.t('setting_title_display_mode_desc'))
+			.addDropdown(dropdown => {
+				dropdown.addOption('propertyOrNone', i18n.t('setting_title_display_mode_property_or_none'))
+					.addOption('propertyThenFile', i18n.t('setting_title_display_mode_property_then_file'))
+					.addOption('fileOnly', i18n.t('setting_title_display_mode_file_only'))
+					.addOption('none', i18n.t('setting_title_display_mode_none'))
+					.setValue(settings.titleDisplayMode)
 					.onChange(async (value) => {
-						useCombineStore.getState().updateShowTitle(value);
+						useCombineStore.getState().updateTitleDisplayMode(value as 'propertyOrNone' | 'propertyThenFile' | 'fileOnly' | 'none');
 					});
 			});
 	}

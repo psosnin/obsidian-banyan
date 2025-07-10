@@ -64,8 +64,12 @@ export default {
     setting_on_open_name: "启动时自动打开面板",
     setting_on_open_desc: "启用后，Obsidian 启动时会自动打开「卡片面板」",
 
-    setting_show_title_name: "显示标题",
-    setting_show_title_desc: "是否显示卡片视图的标题",
+    setting_title_display_mode_name: "标题显示模式",
+    setting_title_display_mode_desc: "卡片笔记中标题的显示方式",
+    setting_title_display_mode_property_or_none: "属性标题或不显示",
+    setting_title_display_mode_property_then_file: "属性标题先于文件标题",
+    setting_title_display_mode_file_only: "文件标题",
+    setting_title_display_mode_none: "不显示",
 
     setting_col_nums_name: "笔记列数",
     setting_col_nums_desc: "当面板足够宽时，最多显示多少列笔记",

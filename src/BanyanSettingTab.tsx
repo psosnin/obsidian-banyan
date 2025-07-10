@@ -19,6 +19,7 @@ export class BanyanSettingTab extends PluginSettingTab {
 		this.setupShowTitleSetting(containerEl);
 		this.setupCardsColumnsSetting(containerEl);
         this.setupShowBacklinksSetting(containerEl);
+        this.setupUseCardNote2Setting(containerEl); // 新增
 	}
 
 	setupCardsDirectorySetting(containerEl: HTMLElement) {
@@ -89,6 +90,20 @@ export class BanyanSettingTab extends PluginSettingTab {
                 toggle.setValue(settings.showBacklinksInCardNote ?? false)
                     .onChange(async (value) => {
                         useCombineStore.getState().updateShowBacklinksInCardNote(value);
+                    });
+            });
+    }
+
+    setupUseCardNote2Setting(containerEl: HTMLElement) {
+        if (Platform.isMobile) return; // 移动端不显示此设置
+        const settings = useCombineStore.getState().settings;
+        new Setting(containerEl)
+            .setName(i18n.t('setting_use_cardnote2_name'))
+            .setDesc(i18n.t('setting_use_cardnote2_desc'))
+            .addToggle(toggle => {
+                toggle.setValue(settings.useCardNote2 ?? false)
+                    .onChange(async (value) => {
+                        useCombineStore.getState().updateUseCardNote2(value);
                     });
             });
     }

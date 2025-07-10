@@ -77,6 +77,8 @@ export default {
 
     setting_show_backlinks_name: "Show backlinks",
     setting_show_backlinks_desc: "Whether to show backlinks (which notes reference this) in card view.",
+    setting_use_cardnote2_name: "Card note double click to edit (PC only)",
+    setting_use_cardnote2_desc: "In editing mode, changes are saved immediately, and the confirm button is only used to return to reading mode.",
 
     /* 命令和ribbon */
     add_card_note: "Add card note",

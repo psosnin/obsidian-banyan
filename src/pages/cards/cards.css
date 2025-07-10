@@ -25,7 +25,6 @@
   margin-bottom: 16px;
   position: relative;
   box-shadow: 0 2px 8px #0002;
-  cursor: pointer;
   width: 100%;
   max-width: 600px;
 }
@@ -69,20 +68,6 @@
   position: absolute;
   top: 12px;
   right: 16px;
-}
-
-.card-note-more-btn {
-  cursor: pointer;
-  padding: 2px 8px;
-}
-
-.card-note-more-menu {
-  position: absolute;
-  background: var(--background-secondary-alt);
-  color: var(--text-normal);
-  padding: 8px 12px;
-  border-radius: 6px;
-  box-shadow: 0 2px 8px var(--shadow-strong);
 }
 
 .card-note-tags {
@@ -324,4 +309,131 @@
     line-height: 1.2;
   }
 
+}
+
+/* 编辑模式下内容区 */
+.card-note-container--edit {
+  border: 1px solid var(--interactive-accent-hover);
+}
+
+.card-note-edit-content {
+  background: transparent;
+  margin-top: 8px;
+  position: relative;
+  width: 100%;
+}
+
+.card-note-edit-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 10px;
+  padding-bottom: 2px;
+}
+
+.card-note-edit-taginput {
+  flex: 1 1 auto;
+  min-width: 0;
+  max-width: 400px;
+}
+
+.card-note-edit-btn {
+  padding: 6px 15px;
+  border-radius: 6px;
+  cursor: pointer;
+  background: var(--interactive-accent);
+}
+.card-note-edit-btn:hover {
+  background: var(--interactive-accent);
+  opacity: 1.2;
+  filter: brightness(1.1);
+}
+.card-note-edit-btn:active {
+  opacity: 0.85;
+}
+
+/* 编辑器 */
+
+.card-note-edit-content .workspace-leaf {
+  contain: initial !important;
+  height: 100%;
+}
+
+.card-note-edit-content .workspace-leaf-resize-handle {
+  display: none;
+}
+
+.card-note-edit-content .view-header {
+  display: none;
+}
+
+.card-note-edit-content .view-content {
+  flex: 1;
+  overflow: hidden;
+  background-color: transparent !important;
+}
+
+.card-note-edit-content .markdown-preview-view {
+  padding: 0;
+  overflow: hidden !important;
+}
+
+.card-note-edit-content .modal-content {
+  margin: 0;
+}
+
+.card-note-edit-content .mod-header {
+  display: none;
+}
+
+.card-note-edit-content .embedded-backlinks {
+  display: none;
+}
+
+/* 显示属性的属性区域 */
+.card-note-edit-content .metadata-container {
+  /* display: none !important; */
+}
+
+/* 暂时不知道是做什么的 */
+.card-note-edit-content .inline-title {
+  /* display: none; */
+}
+
+.card-note-edit-content .markdown-preview-sizer {
+  min-height: 0 !important;
+  padding: 0 !important;
+  margin: 0;
+}
+
+.card-note-edit-content .markdown-preview-section {
+  min-height: 0 !important;
+  padding: 0 !important;
+  margin: 0;
+}
+
+.card-note-edit-content .cm-scroller {
+  padding: 0 0 0 12px !important;
+  margin: 0 !important;
+}
+
+.card-note-edit-content .cm-gutters {
+  display: none;
+}
+
+.card-note-edit-content .cm-content {
+  padding: 0 !important;
+}
+
+.card-note-edit-content .cm-active.cm-line {
+  background-color: transparent !important;
+}
+
+.card-note-edit-content .view-content .empty-state {
+  display: none;
+}
+
+.card-note-edit-content .workspace-leaf {
+  background-color: transparent !important;
 }

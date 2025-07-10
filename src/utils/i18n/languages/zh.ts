@@ -77,6 +77,8 @@ export default {
 
     setting_show_backlinks_name: "显示反向链接",
     setting_show_backlinks_desc: "是否在卡片视图中显示反向链接（被哪些笔记引用）",
+    setting_use_cardnote2_name: "卡片视图双击进入编辑模式（仅限桌面端）",
+    setting_use_cardnote2_desc: "编辑模式下改动立即保存，确认按钮仅用于恢复阅读模式。",
 
     /* 命令和ribbon */
     add_card_note: "添加卡片笔记",

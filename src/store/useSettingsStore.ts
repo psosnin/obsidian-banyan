@@ -17,6 +17,7 @@ export interface SettingsState {
     updateFirstUseDate: (date: string) => void;
     updateRandomNoteTagFilter: (tagFilter: any) => void;
     updateShowBacklinksInCardNote: (show: boolean) => void;
+    updateUseCardNote2: (use: boolean) => void; // 新增
 }
 
 export const useSettingsStore: StateCreator<CombineState, [], [], SettingsState> = (set, get) => ({
@@ -60,5 +61,8 @@ export const useSettingsStore: StateCreator<CombineState, [], [], SettingsState>
 
     updateShowBacklinksInCardNote: (show: boolean) => {
         get().updateSettings({ showBacklinksInCardNote: show });
+    },
+    updateUseCardNote2: (use: boolean) => {
+        get().updateSettings({ useCardNote2: use });
     },
 }); 

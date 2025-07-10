@@ -5,33 +5,39 @@ import { i18n } from "src/utils/i18n";
 import { useCombineStore } from "src/store";
 import { FileInfo } from "src/models/FileInfo";
 import { createEmptySearchFilterScheme } from "src/models/FilterScheme";
+import { Icon } from "src/components/Icon";
 import CardNoteBacklinksView from "./CardNoteBacklinksView";
 
-const NoteContentView = ({ app, fileInfo }: { app: App, fileInfo: FileInfo }) => {
+const NoteContentView = ({ app, fileInfo, editMode, setEditMode }: { app: App, fileInfo: FileInfo, editMode: boolean, setEditMode: (v: boolean) => void }) => {
   const ref = React.useRef<HTMLDivElement>(null);
-  const leaf = new (WorkspaceLeaf as any)(app);
+  const leaf = React.useRef<any>(null);
   const [overflow, setOverflow] = React.useState(false);
 
   React.useEffect(() => {
     const setupView = async () => {
       if (!ref.current) return;
       try {
-        await (leaf as WorkspaceLeaf).openFile(fileInfo.file);
-        if (!(leaf.view instanceof MarkdownView)) {
+        if (!leaf.current) leaf.current = new (WorkspaceLeaf as any)(app);
+        await (leaf.current as WorkspaceLeaf).openFile(fileInfo.file);
+        if (!(leaf.current.view instanceof MarkdownView)) {
           console.log('视图初始化失败或类型不正确', fileInfo.file.name);
           return;
         }
-        await leaf.view.setState(
-          { ...leaf.view.getState(), mode: 'preview' },
+        await leaf.current.view.setState(
+          { ...leaf.current.view.getState(), mode: editMode ? 'source' : 'preview' },
           { history: false })
         ref.current?.empty();
-        ref.current?.appendChild(leaf.containerEl);
+        ref.current?.appendChild(leaf.current.containerEl);
       } catch (e) { console.log('打开文件失败', e, fileInfo) };
     };
     setupView();
-  }, [fileInfo.file.path]);
+  }, [fileInfo.file.path, editMode]);
 
   React.useEffect(() => {
+    if (editMode) {
+      setOverflow(false);
+      return;
+    }
     const observer = new ResizeObserver(() => {
       const ele = ref.current?.querySelector('.view-content');
       if (ele) {
@@ -42,12 +48,31 @@ const NoteContentView = ({ app, fileInfo }: { app: App, fileInfo: FileInfo }) =>
       observer.observe(ref.current);
     }
     return () => observer.disconnect();
-  }, []);
+  }, [editMode]);
 
-  return <div ref={ref} className={"card-note-content" + (overflow ? " card-note-content--overflow" : "")} />;
+  if (editMode) {
+    return (
+      <div className="card-note-edit-content" onDoubleClick={e => e.preventDefault()}>
+        <div ref={ref} />
+        <div className="card-note-edit-footer">
+          <button
+            className="card-note-edit-btn clickable-icon"
+            onClick={() => setEditMode(false)}
+          ><Icon name="send-horizontal" size="l" color="var(--text-on-accent)" /></button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div
+      ref={ref}
+      className={"card-note-content" + (overflow ? " card-note-content--overflow" : "")}
+    />
+  );
 };
 
-const CardNote = ({ fileInfo }: { fileInfo: FileInfo }) => {
+const CardNote2 = ({ fileInfo }: { fileInfo: FileInfo }) => {
 
   const plugin = useCombineStore((state) => state.plugin);
   const settings = useCombineStore((state) => state.settings);
@@ -57,16 +82,21 @@ const CardNote = ({ fileInfo }: { fileInfo: FileInfo }) => {
   const isCreated = settings.sortType === 'created';
   const tags = fileInfo.tags;
 
+  const [editMode, setEditMode] = React.useState(false);
+
   return (
-    <div className="card-note-container" onDoubleClick={(e) => {
-      plugin.fileUtils.openFile(fileInfo.file);
-      e.preventDefault();
-    }}>
-      <div className="card-note-header">
+    <div
+      className={"card-note-container" + (editMode ? " card-note-container--edit" : "")}
+      onDoubleClick={e => {
+        setEditMode(true);
+        e.preventDefault();
+      }}
+    >
+      {!editMode && <div className="card-note-header">
         <div className="card-note-time">{isPinned ? `${i18n.t('general_pin')} · ` : ""}{isCreated ? i18n.t('created_at') : i18n.t('updated_at')} {new Date(isCreated ? fileInfo.file.stat.ctime : fileInfo.file.stat.mtime).toLocaleString()}</div>
         {settings.showTitle && <div className="card-note-title"><h3>{fileInfo.file.basename}</h3></div>}
         {tags.length > 0 && <div className="card-note-tags"> {tags.map((tag) =>
-          <div className="card-note-tag" key={tag} onClick={()=>{
+          <div className="card-note-tag" key={tag} onClick={() => {
             const fs = createEmptySearchFilterScheme();
             fs.tagFilter.or = [[tag]];
             fs.name = '#' + tag;
@@ -78,15 +108,13 @@ const CardNote = ({ fileInfo }: { fileInfo: FileInfo }) => {
         <div className="card-note-more">
           <CardNoteMenuButton fileInfo={fileInfo} isPinned={isPinned} />
         </div>
-      </div>
-      <NoteContentView app={app} fileInfo={fileInfo} />
-      <div className="card-note-footer">
-        {settings.showBacklinksInCardNote && (
-          <CardNoteBacklinksView app={app} fileInfo={fileInfo} />
-        )}
-      </div>
+      </div>}
+      <NoteContentView app={app} fileInfo={fileInfo} editMode={editMode} setEditMode={setEditMode} />
+      {!editMode && settings.showBacklinksInCardNote && <div className="card-note-footer">
+        <CardNoteBacklinksView app={app} fileInfo={fileInfo} />
+      </div>}
     </div>
   );
 };
 
-export default CardNote;
+export default CardNote2;

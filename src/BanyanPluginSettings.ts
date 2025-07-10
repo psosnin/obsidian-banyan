@@ -17,6 +17,7 @@ export interface BanyanPluginSettings {
 	viewSchemes: ViewScheme[];
 	randomReviewFilters: RandomReviewFilter[];
 	showBacklinksInCardNote?: boolean;
+	useCardNote2?: boolean; // 新增，是否使用新版CardNote2
 }
 
 export const CUR_SETTINGS_VERSION = 3;
@@ -40,4 +41,5 @@ export const DEFAULT_SETTINGS: BanyanPluginSettings = {
 	firstUseDate: getToday(),
 	randomReviewFilters: [DefaultRandomReviewFilter],
 	showBacklinksInCardNote: false,
+	useCardNote2: false,
 }

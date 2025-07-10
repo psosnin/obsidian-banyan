@@ -4,6 +4,7 @@ import { StrictMode, useEffect, useState, useRef, useCallback } from 'react';
 import { Root, createRoot } from 'react-dom/client';
 import * as React from "react";
 import CardNote from "./cards/CardNote";
+import CardNote2 from "./cards/CardNote2";
 import { Icon } from "src/components/Icon";
 import Sidebar from "./sidebar/Sidebar";
 import { DefaultFilterSchemeID, getDefaultFilterScheme } from "src/models/FilterScheme";
@@ -181,7 +182,7 @@ const CardDashboardView = ({ plugin }: { plugin: BanyanPlugin }) => {
     const isLastCard = index === displayFiles.length - 1;
     return (
       <div ref={isLastCard ? lastCardElementRef : null} key={f.id}>
-        <CardNote fileInfo={f} />
+        {(!Platform.isMobile && settings.useCardNote2) ? <CardNote2 fileInfo={f} /> : <CardNote fileInfo={f} />}
       </div>
     );
   });

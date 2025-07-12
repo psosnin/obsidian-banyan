@@ -16,6 +16,7 @@ import { createFileWatcher } from 'src/utils/fileWatcher';
 import AddNoteView from "./header/AddNoteView";
 import { i18n } from "src/utils/i18n";
 import { useCombineStore } from "src/store";
+import { SortType } from "src/models/Enum";
 
 export const CARD_DASHBOARD_VIEW_TYPE = "dashboard-view";
 
@@ -72,7 +73,7 @@ const CardDashboardView = ({ plugin }: { plugin: BanyanPlugin }) => {
   const settings = useCombineStore((state) => state.settings);
   const updateSortType = useCombineStore((state) => state.updateSortType);
   const [showSidebar, setShowSidebar] = useState<'normal' | 'hide' | 'show'>(Platform.isMobile ? 'hide' : 'normal');
-  const [sortType, setSortType] = useState<'created' | 'modified'>(settings.sortType || 'created');
+  const [sortType, setSortType] = useState<SortType>(settings.sortType || 'created');
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const notesPerPage = 10; // 每页显示的笔记数量
@@ -249,7 +250,7 @@ const CardDashboardView = ({ plugin }: { plugin: BanyanPlugin }) => {
   );
 }
 
-const SortFilesButton = ({ plugin, sortType, setSortType }: { plugin: BanyanPlugin, sortType: 'created' | 'modified', setSortType: (st: 'created' | 'modified') => void }) => {
+const SortFilesButton = ({ plugin, sortType, setSortType }: { plugin: BanyanPlugin, sortType: SortType, setSortType: (st: SortType) => void }) => {
   const updateSortType = useCombineStore((state) => state.updateSortType);
 
   const sortMenu = (event: MouseEvent) => {

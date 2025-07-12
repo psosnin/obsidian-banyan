@@ -2,6 +2,7 @@ import { FilterScheme, getDefaultFilterScheme } from "./models/FilterScheme";
 import { ViewScheme } from "./models/ViewScheme";
 import { emptyTagFilter, TagFilter } from "./models/TagFilter";
 import { DefaultRandomReviewFilter, RandomReviewFilter } from "./models/RandomReviewFilters";
+import { SortType } from "./models/Enum";
 
 export interface BanyanPluginSettings {
 	settingsVersion: number;
@@ -12,7 +13,7 @@ export interface BanyanPluginSettings {
 	randomNoteTagFilter: TagFilter;
 	firstUseDate: string;
 
-	sortType: 'created' | 'modified';
+	sortType: SortType;
 	filterSchemes: FilterScheme[];
 	viewSchemes: ViewScheme[];
 	randomReviewFilters: RandomReviewFilter[];

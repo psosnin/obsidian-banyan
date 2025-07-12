@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import CalendarHeatmap from 'react-calendar-heatmap';
 import { Tooltip } from 'react-tooltip'
+import { SortType } from 'src/models/Enum';
 import { FileInfo } from 'src/models/FileInfo';
 import { useCombineStore } from 'src/store';
 import { i18n } from 'src/utils/i18n';
@@ -60,7 +61,7 @@ const shiftDate = (date: Date, numDays: number) => {
     return newDate;
 }
 
-export const getHeatmapValues = (fileInfos: FileInfo[], sortType: 'created' | 'modified') => {
+export const getHeatmapValues = (fileInfos: FileInfo[], sortType: SortType) => {
     const valueMap = fileInfos
         .map(f => f.file.stat)
         .map(stat => {

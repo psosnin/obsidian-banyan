@@ -1,6 +1,7 @@
 import { BanyanPluginSettings } from "src/BanyanPluginSettings";
 import { StateCreator } from "zustand";
 import { CombineState } from ".";
+import { SortType } from "src/models/Enum";
 
 export interface SettingsState {
     settings: BanyanPluginSettings;
@@ -13,7 +14,7 @@ export interface SettingsState {
     updateOpenWhenStartObsidian: (open: boolean) => void;
     updateTitleDisplayMode: (mode: 'propertyOrNone' | 'propertyThenFile' | 'fileOnly' | 'none') => void;
     updateCardsColumns: (columns: number) => void;
-    updateSortType: (sortType: 'created' | 'modified') => void;
+    updateSortType: (sortType: SortType) => void;
     updateFirstUseDate: (date: string) => void;
     updateRandomNoteTagFilter: (tagFilter: any) => void;
     updateShowBacklinksInCardNote: (show: boolean) => void;
@@ -47,7 +48,7 @@ export const useSettingsStore: StateCreator<CombineState, [], [], SettingsState>
         get().updateSettings({ cardsColumns: columns });
     },
 
-    updateSortType: (sortType: 'created' | 'modified') => {
+    updateSortType: (sortType: SortType) => {
         get().updateSettings({ sortType });
     },
 

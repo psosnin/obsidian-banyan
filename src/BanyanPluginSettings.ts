@@ -14,6 +14,7 @@ export interface BanyanPluginSettings {
 	firstUseDate: string;
 
 	sortType: SortType;
+	randomBrowse: boolean; // 新增：乱序浏览开关
 	filterSchemes: FilterScheme[];
 	viewSchemes: ViewScheme[];
 	randomReviewFilters: RandomReviewFilter[];
@@ -40,6 +41,7 @@ export const DEFAULT_SETTINGS: BanyanPluginSettings = {
 	randomNoteTagFilter: emptyTagFilter(),
 	cardsColumns: 1,
 	firstUseDate: getToday(),
+	randomBrowse: false, // 新增：默认关闭乱序浏览
 	randomReviewFilters: [DefaultRandomReviewFilter],
 	showBacklinksInCardNote: false,
 	useCardNote2: false,

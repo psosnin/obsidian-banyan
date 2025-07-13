@@ -36,6 +36,7 @@ export const useDashBoardStore: StateCreator<CombineState, [], [], DashBoardStat
         const plugin = get().plugin;
         const settings = get().settings;
         const sortType = settings.sortType;
+        const randomBrowse = settings.randomBrowse;
         const allFiles = plugin.fileUtils.getAllFiles();
         const allTags = plugin.fileUtils.getAllFilesTags();
         const curScheme = get().curScheme;
@@ -60,8 +61,15 @@ export const useDashBoardStore: StateCreator<CombineState, [], [], DashBoardStat
         } else if (curScheme.type == 'ViewScheme') {
             filtered = filtered.filter(fileInfo => curScheme.files.includes(fileInfo.id));
         }
-        filtered.sort((a, b) => sortType === 'created' ? b.file.stat.ctime - a.file.stat.ctime : b.file.stat.mtime - a.file.stat.mtime);
-        // console.log('requestData', allFiles.length, filtered.length);
+        
+        // 根据乱序浏览设置决定排序方式
+        if (randomBrowse) {
+            // 打乱数组顺序
+            filtered.sort(() => Math.random() - 0.5);
+        } else {
+            // 按原来的方式排序
+            filtered.sort((a, b) => sortType === 'created' ? b.file.stat.ctime - a.file.stat.ctime : b.file.stat.mtime - a.file.stat.mtime);
+        }
         set({ allFiles, allTags, curSchemeFiles: filtered });
     },
     updateDisplayFiles: (endIndex: number) => {

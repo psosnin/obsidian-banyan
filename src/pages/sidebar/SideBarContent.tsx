@@ -5,8 +5,9 @@ import { RandomReviewInfo } from './randomReview/RandomReviewInfo';
 import { i18n } from 'src/utils/i18n';
 import { useCombineStore } from 'src/store';
 import { SearchFilterScheme } from 'src/models/FilterScheme';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { SidebarButton } from './SidebarButton';
+import { SidebarSwitchButton } from './SidebarSwitchButton';
 
 export const SidebarContent = () => {
     const setCurScheme = useCombineStore((state) => state.setCurScheme);
@@ -25,6 +26,7 @@ export const SidebarContent = () => {
                     label={i18n.t('create_note')}
                     onClick={async () => await plugin.fileUtils.addFile()} />
             </div>
+            <RandomBrowseSwitch />
             <div className="sidebar-section-container">
                 <RandomReviewInfo />
                 <FilterSchemesInfo />
@@ -66,4 +68,22 @@ const StatisticsInfo = () => {
             </div>
         </div>
     );
+}
+
+const RandomBrowseSwitch = () => {
+    const settings = useCombineStore((state) => state.settings);
+    const updateRandomBrowse = useCombineStore((state) => state.updateRandomBrowse);
+
+    const [isRandomBrowseOn, setIsRandomBrowseOn] = useState(settings.randomBrowse);
+
+    const handleRandomBrowseToggle = () => {
+        const newValue = !isRandomBrowseOn;
+        setIsRandomBrowseOn(newValue);
+        updateRandomBrowse(newValue);
+    }
+    return <SidebarSwitchButton
+        leftIconName='shuffle'
+        label={i18n.t('random_browse')}
+        isOn={isRandomBrowseOn}
+        onSwitch={handleRandomBrowseToggle} />;
 }

@@ -135,7 +135,8 @@ export default {
     notes_modified_at: "notes modified at",
 
     create_note: "Create note",
-
+    random_browse: "Random browse",
+    
     all_notes: "All notes",
 
     random_review: "Random review",

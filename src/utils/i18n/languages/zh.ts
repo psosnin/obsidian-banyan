@@ -135,6 +135,7 @@ export default {
     notes_modified_at: "条笔记更新于",
 
     create_note: "创建笔记",
+    random_browse: "乱序浏览",
     
     all_notes: "所有笔记",
 

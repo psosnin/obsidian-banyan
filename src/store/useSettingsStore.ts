@@ -19,6 +19,7 @@ export interface SettingsState {
     updateRandomNoteTagFilter: (tagFilter: any) => void;
     updateShowBacklinksInCardNote: (show: boolean) => void;
     updateUseCardNote2: (use: boolean) => void; // 新增
+    updateRandomBrowse: (randomBrowse: boolean) => void; // 新增：乱序浏览开关
 }
 
 export const useSettingsStore: StateCreator<CombineState, [], [], SettingsState> = (set, get) => ({
@@ -65,5 +66,8 @@ export const useSettingsStore: StateCreator<CombineState, [], [], SettingsState>
     },
     updateUseCardNote2: (use: boolean) => {
         get().updateSettings({ useCardNote2: use });
+    },
+    updateRandomBrowse: (randomBrowse: boolean) => {
+        get().updateSettings({ randomBrowse });
     },
 }); 

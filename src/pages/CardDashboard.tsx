@@ -71,7 +71,6 @@ const CardDashboardView = ({ plugin }: { plugin: BanyanPlugin }) => {
   const curSchemeNotesLength = useCombineStore((state) => state.curSchemeFiles.length);
 
   const settings = useCombineStore((state) => state.settings);
-  const updateSortType = useCombineStore((state) => state.updateSortType);
   const [showSidebar, setShowSidebar] = useState<'normal' | 'hide' | 'show'>(Platform.isMobile ? 'hide' : 'normal');
   const [sortType, setSortType] = useState<SortType>(settings.sortType || 'created');
   const [currentPage, setCurrentPage] = useState(1);
@@ -106,7 +105,7 @@ const CardDashboardView = ({ plugin }: { plugin: BanyanPlugin }) => {
       setIsLoading(false);
     }
     requestFiles();
-  }, [sortType, curScheme, refreshFlag, settings.cardsDirectory]);
+  }, [sortType, curScheme, refreshFlag, settings.cardsDirectory, settings.randomBrowse]);
 
   useEffect(() => {
     updateDisplayFiles(currentPage * notesPerPage);

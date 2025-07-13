@@ -104,6 +104,7 @@
 .sidebar-btn-normal {
     color: var(--text-muted);
     background-color: transparent;
+    cursor: default;
 }
 
 .sidebar-btn-left-icon-clickable {
@@ -147,4 +148,8 @@
 
 .sidebar-btn-right-icon {
     margin-right: 4px;
+}
+
+.sidebar-btn-right .checkbox-container {
+    cursor: pointer;
 }

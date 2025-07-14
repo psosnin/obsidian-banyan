@@ -1,6 +1,6 @@
-import { App, WorkspaceLeaf, MarkdownView } from "obsidian";
+import { App, WorkspaceLeaf, MarkdownView, Platform } from "obsidian";
 import * as React from "react";
-import { CardNoteMenuButton } from "./CardNoteMenu";
+import { CardNoteMenuButton, openCardNoteMoreMenu } from "./CardNoteMenu";
 import { i18n } from "src/utils/i18n";
 import { useCombineStore } from "src/store";
 import { FileInfo } from "src/models/FileInfo";
@@ -68,10 +68,18 @@ const CardNote = ({ fileInfo }: { fileInfo: FileInfo }) => {
   }, [app, fileInfo.file, settings.titleDisplayMode]);
 
   return (
-    <div className="card-note-container" onDoubleClick={(e) => {
-      plugin.fileUtils.openFile(fileInfo.file);
-      e.preventDefault();
-    }}>
+    <div className="card-note-container"
+      onDoubleClick={(e) => {
+        plugin.fileUtils.openFile(fileInfo.file);
+        e.preventDefault();
+      }}
+      onContextMenu={(e) => {
+        if (!Platform.isMobile) {
+          e.preventDefault();
+          openCardNoteMoreMenu({ event: e.nativeEvent, fileInfo, isPinned });
+        }
+      }}
+    >
       <div className="card-note-header">
         <div className="card-note-time">{isPinned ? `${i18n.t('general_pin')} · ` : ""}{isCreated ? i18n.t('created_at') : i18n.t('updated_at')} {new Date(isCreated ? fileInfo.file.stat.ctime : fileInfo.file.stat.mtime).toLocaleString()}</div>
         {displayTitle && <div className="card-note-title"><h3>{displayTitle}</h3></div>}

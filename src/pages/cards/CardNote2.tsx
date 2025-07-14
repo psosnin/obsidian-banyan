@@ -1,6 +1,6 @@
-import { App, WorkspaceLeaf, MarkdownView } from "obsidian";
+import { App, WorkspaceLeaf, MarkdownView, Platform } from "obsidian";
 import * as React from "react";
-import { CardNoteMenuButton } from "./CardNoteMenu";
+import { CardNoteMenuButton, openCardNoteMoreMenu } from "./CardNoteMenu";
 import { i18n } from "src/utils/i18n";
 import { useCombineStore } from "src/store";
 import { FileInfo } from "src/models/FileInfo";
@@ -100,6 +100,12 @@ const CardNote2 = ({ fileInfo }: { fileInfo: FileInfo }) => {
       onDoubleClick={e => {
         setEditMode(true);
         e.preventDefault();
+      }}
+      onContextMenu={e => {
+        if (!Platform.isMobile) {
+          e.preventDefault();
+          openCardNoteMoreMenu({ event: e.nativeEvent, fileInfo, isPinned });
+        }
       }}
     >
       {!editMode && <div className="card-note-header">

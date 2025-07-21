@@ -8,6 +8,7 @@ import { SearchFilterScheme } from 'src/models/FilterScheme';
 import { useMemo, useState } from 'react';
 import { SidebarButton } from './SidebarButton';
 import { SidebarSwitchButton } from './SidebarSwitchButton';
+import { Platform } from 'obsidian';
 
 export const SidebarContent = () => {
     const setCurScheme = useCombineStore((state) => state.setCurScheme);
@@ -21,12 +22,14 @@ export const SidebarContent = () => {
         <div className="sidebar-content-container">
             <StatisticsInfo />
             <Heatmap onCickDate={handleClickDate} />
-            <div className="sidebar-btn-create-note">
+            <div className="sidebar-margin-top" />
+            {!Platform.isMobile && (
                 <SidebarButton leftIconName="lightbulb"
                     label={i18n.t('create_note')}
                     onClick={async () => await plugin.fileUtils.addFile()} />
-            </div>
+            )}
             <RandomBrowseSwitch />
+            <div className="sidebar-margin-top" />
             <div className="sidebar-section-container">
                 <RandomReviewInfo />
                 <FilterSchemesInfo />

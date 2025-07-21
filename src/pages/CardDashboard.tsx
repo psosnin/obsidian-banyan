@@ -87,7 +87,7 @@ const CardDashboardView = ({ plugin }: { plugin: BanyanPlugin }) => {
       if (type === 'delete') {
         setRefreshFlag(f => f + 1);
       }
-      if (type === 'create' ||  type === 'modify' || type === 'meta-change') {
+      if (type === 'create' || type === 'modify' || type === 'meta-change') {
         setRefreshFlag(f => f + 1);
       }
     });
@@ -244,6 +244,18 @@ const CardDashboardView = ({ plugin }: { plugin: BanyanPlugin }) => {
           {isLoading && <div>{i18n.t('loading_text')}</div>}
           {!isLoading && displayFiles.length >= curSchemeNotesLength && cardNodes.length > 0 && <div>{i18n.t('reached_bottom')}</div>}
         </div>
+        {/* 手机端悬浮添加按钮 */}
+        {Platform.isMobile && (
+          <>
+            <button
+              className="fab-add-note clickable-icon"
+              onClick={() => plugin.fileUtils.addFile()}
+              title={i18n.t('create_note')}
+            >
+              <Icon name="plus" size="xl" />
+            </button>
+          </>
+        )}
       </div>
     </div>
   );

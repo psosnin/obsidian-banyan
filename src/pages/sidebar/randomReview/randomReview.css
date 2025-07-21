@@ -2,10 +2,6 @@
  * 列表部分
  */
 
-.random-review-container {
-  margin-top: 16px;
-}
-
 .random-review-header {
   display: flex;
   flex-direction: row;

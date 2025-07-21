@@ -192,3 +192,21 @@
     margin-left: 4px;
     margin-right: 12px;
 }
+
+/* 手机端悬浮添加按钮 */
+.fab-add-note {
+  position: fixed;
+  right: 30px;
+  bottom: 20px;
+  z-index: 1001;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--interactive-accent);
+  color: var(--text-on-accent);
+  border: none;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+  font-size: 26px;
+  cursor: pointer;
+  transition: box-shadow 0.2s, background 0.2s;
+}

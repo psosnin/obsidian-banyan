@@ -3,6 +3,7 @@ import BanyanPlugin from "src/main";
 import { createFileInfo, FileInfo, generateFileId } from "src/models/FileInfo";
 import { TagFilter, isOKWithTagFilter } from "src/models/TagFilter";
 import { i18n } from "./i18n";
+import moment from "moment";
 
 const PlaceholderFileName = "banyan_editor_placeholder.md";
 
@@ -60,18 +61,47 @@ export class FileUtils {
     return res;
   }
 
+  private getZkPrefixerFormat(): string | undefined {
+    if (!this.plugin.settings.useZkPrefixerFormat) return undefined;
+    const internalPlugins = (this.app as any).internalPlugins;
+    if (!internalPlugins) return undefined;
+    const zk = internalPlugins.getPluginById("zk-prefixer");
+    if (!zk || !zk.enabled) return undefined;
+    const format = zk.instance.options.format;
+    if (format && format.trim() === "") return undefined;
+    return format;
+  }
+
+  public legalFileName(fileName: string) {
+    return !/[\[\]#^|]/.test(fileName);
+  }
+
   private async getNewNoteFilePath() {
     const now = new Date();
     const year = now.getFullYear().toString();
     const quarter = Math.floor((now.getMonth() + 3) / 3).toString();
     const month = (now.getMonth() + 1).toString().padStart(2, '0').toString();
     const day = now.getDate().toString().padStart(2, '0').toString();
-    const hour = now.getHours().toString().padStart(2, '0');
-    const minute = now.getMinutes().toString().padStart(2, '0');
-    const second = now.getSeconds().toString().padStart(2, '0');
     const folderPath = `${this.dir}/${i18n.t('create_note_folder_path', { year, quarter, month, day })}`;
     await this.ensureDirectoryExists(folderPath);
-    const fileName = `${year}-${month}-${day} ${hour}-${minute}-${second}.md`;
+    const formatStr = this.getZkPrefixerFormat();
+    let fileName: string = "";
+    if (formatStr) {
+      const name = `${moment().format(formatStr)}.md`;
+      if (this.legalFileName(name)) {
+        fileName = name;
+        console.log("formated file name:", fileName);
+      } else {
+        new Notice(i18n.t('illegal_unique_prefix_format'));
+        console.log("formated illegal:", formatStr);
+      }
+    }
+    if (fileName === "") {
+      const hour = now.getHours().toString().padStart(2, '0');
+      const minute = now.getMinutes().toString().padStart(2, '0');
+      const second = now.getSeconds().toString().padStart(2, '0');
+      fileName = `${year}-${month}-${day} ${hour}-${minute}-${second}.md`;
+    }
     const filePath = normalizePath(`${folderPath}/${fileName}`);
     return filePath;
   }

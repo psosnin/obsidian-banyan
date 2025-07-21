@@ -83,11 +83,14 @@ export default {
     setting_show_backlinks_desc: "Whether to show backlinks (which notes reference this) in card view.",
     setting_use_cardnote2_name: "Card note double click to edit (PC only)",
     setting_use_cardnote2_desc: "In editing mode, changes are saved immediately, and the confirm button is only used to return to reading mode.",
+    setting_use_zk_prefixer_format_name: "Use the format in Unique note creator for new notes name",
+    setting_use_zk_prefixer_format_desc: "If enabled, new notes will use the naming format from the plugin Unique note creator if available. Use the default format else.",
 
     /* 命令和ribbon */
     add_card_note: "Add card note",
     open_dashboard: "Open dashboard",
     open_random_note: "Random open a note",
+    illegal_unique_prefix_format: "Illegal unique note creator format, use default format instead",
 
     /* 首页 */
     notice_note_to_trash: "The note has been deleted.",

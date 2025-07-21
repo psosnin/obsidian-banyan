@@ -83,11 +83,14 @@ export default {
     setting_show_backlinks_desc: "是否在卡片视图中显示反向链接（被哪些笔记引用）",
     setting_use_cardnote2_name: "卡片视图双击进入编辑模式（仅限桌面端）",
     setting_use_cardnote2_desc: "编辑模式下改动立即保存，确认按钮仅用于恢复阅读模式。",
+    setting_use_zk_prefixer_format_name: "新建笔记使用时间戳插件格式",
+    setting_use_zk_prefixer_format_desc: "开启后，新建笔记时会使用时间戳笔记插件的命名格式。关闭则始终使用默认格式。",
 
     /* 命令和ribbon */
     add_card_note: "添加卡片笔记",
     open_dashboard: "打开笔记面板",
     open_random_note: "随机打开笔记",
+    illegal_unique_prefix_format: "时间戳格式非法，改用默认格式",
 
     /* 首页 */
     notice_error_when_load_notes: "加载笔记内容时出错",

@@ -20,6 +20,7 @@ export class BanyanSettingTab extends PluginSettingTab {
 		this.setupCardsColumnsSetting(containerEl);
         this.setupShowBacklinksSetting(containerEl);
         this.setupUseCardNote2Setting(containerEl); // 新增
+        this.setupUseZkPrefixerFormatSetting(containerEl); // 新增
 	}
 
 	setupCardsDirectorySetting(containerEl: HTMLElement) {
@@ -108,6 +109,20 @@ export class BanyanSettingTab extends PluginSettingTab {
                 toggle.setValue(settings.useCardNote2 ?? false)
                     .onChange(async (value) => {
                         useCombineStore.getState().updateUseCardNote2(value);
+                    });
+            });
+    }
+
+    setupUseZkPrefixerFormatSetting(containerEl: HTMLElement) {
+        const settings = this.plugin.settings;
+        new Setting(containerEl)
+            .setName(i18n.t('setting_use_zk_prefixer_format_name'))
+            .setDesc(i18n.t('setting_use_zk_prefixer_format_desc'))
+            .addToggle(toggle => {
+                toggle.setValue(settings.useZkPrefixerFormat ?? true)
+                    .onChange(async (value) => {
+                        this.plugin.settings.useZkPrefixerFormat = value;
+                        await this.plugin.saveSettings();
                     });
             });
     }

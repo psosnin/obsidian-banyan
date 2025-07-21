@@ -14,12 +14,13 @@ export interface BanyanPluginSettings {
 	firstUseDate: string;
 
 	sortType: SortType;
-	randomBrowse: boolean; // 新增：乱序浏览开关
+	randomBrowse: boolean;
 	filterSchemes: FilterScheme[];
 	viewSchemes: ViewScheme[];
 	randomReviewFilters: RandomReviewFilter[];
 	showBacklinksInCardNote?: boolean;
-	useCardNote2?: boolean; // 新增，是否使用新版CardNote2
+	useCardNote2?: boolean;
+	useZkPrefixerFormat?: boolean;
 }
 
 export const CUR_SETTINGS_VERSION = 3;
@@ -41,8 +42,9 @@ export const DEFAULT_SETTINGS: BanyanPluginSettings = {
 	randomNoteTagFilter: emptyTagFilter(),
 	cardsColumns: 1,
 	firstUseDate: getToday(),
-	randomBrowse: false, // 新增：默认关闭乱序浏览
+	randomBrowse: false,
 	randomReviewFilters: [DefaultRandomReviewFilter],
 	showBacklinksInCardNote: false,
 	useCardNote2: false,
+	useZkPrefixerFormat: false,
 }

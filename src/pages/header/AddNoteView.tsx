@@ -18,6 +18,7 @@ const AddNoteView: React.FC<AddNoteViewProps> = ({ app, plugin, onAdd }) => {
   const [hasContent, setHasContent] = useState(false);
   const [showPlaceholder, setShowPlaceholder] = useState(false);
   const [editor, setEditor] = useState<Editor | null>(null);
+  const [showThis, setShowThis] = useState(true);
 
   const updateHasContent = useCallback(() => {
     const ele = leaf.view.containerEl.querySelector('.cm-content') as HTMLElement;
@@ -31,9 +32,10 @@ const AddNoteView: React.FC<AddNoteViewProps> = ({ app, plugin, onAdd }) => {
       try {
         const file = await plugin.fileUtils.getPlaceholderFile();
         await (leaf as WorkspaceLeaf).openFile(file);
+        setShowThis(true);
         updateHasContent();
         if (!(leaf.view instanceof MarkdownView)) {
-          console.log('添加笔记视图初始化失败');
+          console.warn('添加笔记编辑区初始化失败');
           return;
         }
         setEditor(leaf.view.editor);
@@ -42,7 +44,10 @@ const AddNoteView: React.FC<AddNoteViewProps> = ({ app, plugin, onAdd }) => {
           { history: false })
         ref.current?.empty();
         ref.current?.appendChild(leaf.view.containerEl);
-      } catch (e) { console.log('打开文件失败', e) };
+      } catch (e) { 
+        console.warn('打开占位文件失败', e); 
+        setShowThis(false);
+      };
     };
     setupView();
   }, []);
@@ -81,6 +86,8 @@ const AddNoteView: React.FC<AddNoteViewProps> = ({ app, plugin, onAdd }) => {
   useEffect(() => {
     setShowPlaceholder(!focused && !hasContent); // 只有在没有焦点且没有内容时显示占位符，否则隐藏占位符
   }, [focused, hasContent]);
+
+  if (!showThis) return null;
 
   return (
     <div className={"add-note-container" + (focused ? " add-note-container--focusd" : "")} onClick={(e) => {

@@ -261,7 +261,7 @@ const CardDashboardView = ({ plugin }: { plugin: BanyanPlugin }) => {
               onClick={() => plugin.fileUtils.addFile()}
               title={i18n.t('create_note')}
             >
-              <Icon name="plus" size="xl" />
+              <Icon name="plus" size="xl" color="var(--text-on-accent)" />
             </button>
           </>
         )}

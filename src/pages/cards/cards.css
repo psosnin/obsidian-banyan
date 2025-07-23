@@ -1,14 +1,4 @@
 /* 列表 */
-.main-cards {
-  display: flex;
-  gap: 16px;
-  flex: 1;
-}
-
-.main-cards-column {
-  width: 100%;
-  min-width: 500px;
-}
 
 .main-cards-loading {
   text-align: center;
@@ -222,16 +212,8 @@
 @media (max-width: 767px) {
 
   .main-cards-column {
-    min-width: auto;
-  }
-
-  .card-note-container {
-    border-radius: 8px;
-    padding: 16px;
-    margin-bottom: 16px;
     width: 100%;
-    min-width: auto;
-    max-width: 100%;
+    min-width: calc(100vw - 24px);
   }
 
   .card-note-header {
@@ -258,6 +240,17 @@
 
 /* 宽屏设备 */
 @media (min-width: 768px) {
+
+  .main-cards {
+    display: flex;
+    gap: 16px;
+    flex: 1;
+  }
+  
+  .main-cards-column {
+    width: 100%;
+    min-width: 500px;
+  }
 
   .card-note-content p {
     font-size: 0.85rem;

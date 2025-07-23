@@ -20,7 +20,6 @@ export class FileWatcher {
   private vault: Vault;
   private metadataCache: MetadataCache;
   private callbacks: Set<FileChangeCallback> = new Set();
-  private fileCache: Map<string, number> = new Map();
 
   constructor(plugin: BanyanPlugin) {
     this.plugin = plugin;
@@ -30,15 +29,8 @@ export class FileWatcher {
     this.handleDelete = this.handleDelete.bind(this);
     this.handleModify = this.handleModify.bind(this);
     this.handleMetaChange = this.handleMetaChange.bind(this);
-    this.initFileCache();
     this.registerEvents();
     this.updateBacklinksMapIfNeeded();
-  }
-
-  private initFileCache() {
-    this.plugin.fileUtils.getAllFiles().forEach(fileInfo => {
-      this.fileCache.set(fileInfo.file.path, fileInfo.file.stat.mtime);
-    });
   }
 
   private registerEvents() {
@@ -51,7 +43,6 @@ export class FileWatcher {
 
   private async handleCreate(file: TFile) {
     if (!this || !this.plugin.fileUtils.isLegalMarkdownFile(file)) return;
-    this.fileCache.set(file.path, file.stat.mtime);
     await ensureFileID(file, this.plugin.app);
     const fileInfo = createFileInfo(file, this.plugin.app);
     if (!fileInfo) return;
@@ -60,7 +51,6 @@ export class FileWatcher {
 
   private handleDelete(file: TFile) {
     if (!this || !this.plugin.fileUtils.isLegalMarkdownFile(file)) return;
-    this.fileCache.delete(file.path);
     this.emit({ type: 'delete', fileInfo: file });
   }
 
@@ -68,7 +58,6 @@ export class FileWatcher {
     if (!this || !this.plugin.fileUtils.isLegalMarkdownFile(file)) return;
     const fileInfo = createFileInfo(file, this.plugin.app);
     if (!fileInfo) return;
-    this.fileCache.set(file.path, file.stat.mtime);
     this.emit({ type: 'modify', fileInfo });
   }
 
@@ -76,8 +65,6 @@ export class FileWatcher {
     if (!this || !this.plugin.fileUtils.isLegalMarkdownFile(file)) return;
     const fileInfo = createFileInfo(file, this.plugin.app);
     if (!fileInfo) return;
-    this.fileCache.set(file.path, this.fileCache.get(oldPath)!);
-    this.fileCache.delete(oldPath);
     this.emit({ type: 'rename', fileInfo });
   }
 
@@ -126,7 +113,6 @@ export class FileWatcher {
     this.vault.off('rename', this.handleRename);
     this.metadataCache.off('changed', this.handleMetaChange);
     this.callbacks.clear();
-    this.fileCache.clear();
   }
 }
 

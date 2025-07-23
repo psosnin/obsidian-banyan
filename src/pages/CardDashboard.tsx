@@ -69,6 +69,8 @@ const CardDashboardView = ({ plugin }: { plugin: BanyanPlugin }) => {
   const setCurScheme = useCombineStore((state) => state.setCurScheme);
   const updateViewScheme = useCombineStore((state) => state.updateViewScheme);
   const curSchemeNotesLength = useCombineStore((state) => state.curSchemeFiles.length);
+  const needRefresh = useCombineStore((state) => state.needRefresh);
+  const resetEditingFiles = useCombineStore((state) => state.resetEditingFiles);
 
   const settings = useCombineStore((state) => state.settings);
   const [showSidebar, setShowSidebar] = useState<'normal' | 'hide' | 'show'>(Platform.isMobile ? 'hide' : 'normal');
@@ -84,11 +86,11 @@ const CardDashboardView = ({ plugin }: { plugin: BanyanPlugin }) => {
   useEffect(() => {
     const watcher = createFileWatcher(plugin);
     const unsubscribe = watcher.onChange(({ type }) => {
-      if (type === 'delete') {
+      if (type === 'create' || type === 'delete') {
         setRefreshFlag(f => f + 1);
       }
-      if (type === 'create' || type === 'modify' || type === 'meta-change') {
-        setRefreshFlag(f => f + 1);
+      if (type === 'modify' || type === 'meta-change') {
+        // do nothing 
       }
     });
     return () => {
@@ -99,6 +101,7 @@ const CardDashboardView = ({ plugin }: { plugin: BanyanPlugin }) => {
 
   useEffect(() => {
     const requestFiles = async () => {
+      resetEditingFiles();
       setIsLoading(true);
       await requestData();
       setCurrentPage(1);
@@ -106,6 +109,12 @@ const CardDashboardView = ({ plugin }: { plugin: BanyanPlugin }) => {
     }
     requestFiles();
   }, [sortType, curScheme, refreshFlag, settings.cardsDirectory, settings.randomBrowse]);
+
+  useEffect(() => {
+    if (needRefresh) {
+      setRefreshFlag(f => f + 1);
+    }
+  }, [needRefresh]);
 
   useEffect(() => {
     updateDisplayFiles(currentPage * notesPerPage);

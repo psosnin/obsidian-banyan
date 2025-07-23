@@ -18,6 +18,11 @@ export interface DashBoardState {
     updateDisplayFiles: (endIndex: number) => void;
     pinFile: (f: FileInfo, isPinned: boolean) => void;
 
+    needRefresh: boolean;
+    editingFilesID: number[];
+    addEditingFile: (id: number) => void;
+    deleteEditingFile: (id: number) => void;
+    resetEditingFiles: () => void;
 }
 
 export const useDashBoardStore: StateCreator<CombineState, [], [], DashBoardState> = (set, get) => ({
@@ -102,6 +107,18 @@ export const useDashBoardStore: StateCreator<CombineState, [], [], DashBoardStat
             get().updateFilterSchemeList(newSchemes);
         }
     },
+
+    needRefresh: false,
+    editingFilesID: [],
+    addEditingFile: (id: number) => set(state => ({ editingFilesID: [...state.editingFilesID, id] })),
+    deleteEditingFile: (id: number) => {
+        const res = get().editingFilesID.filter(i => i !== id);
+        set({ editingFilesID: res });
+        if (res.length === 0) {
+            set({ needRefresh: true });
+        }
+    },
+    resetEditingFiles: () => set({ editingFilesID: [], needRefresh: false }),
 });
 
 const stripMarkdown = (mdStr: string) => {

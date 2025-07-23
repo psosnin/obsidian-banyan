@@ -9,7 +9,7 @@ import { Icon } from "src/components/Icon";
 import CardNoteBacklinksView from "./CardNoteBacklinksView";
 import { getDisplayTitle } from "src/utils/frontmatterUtils";
 
-const NoteContentView = ({ app, fileInfo, editMode, setEditMode }: { app: App, fileInfo: FileInfo, editMode: boolean, setEditMode: (v: boolean) => void }) => {
+const NoteContentView = ({ app, fileInfo, editMode, endEdit }: { app: App, fileInfo: FileInfo, editMode: boolean, endEdit: () => void }) => {
   const ref = React.useRef<HTMLDivElement>(null);
   const leaf = React.useRef<any>(null);
   const [overflow, setOverflow] = React.useState(false);
@@ -58,7 +58,7 @@ const NoteContentView = ({ app, fileInfo, editMode, setEditMode }: { app: App, f
         <div className="card-note-edit-footer">
           <button
             className="card-note-edit-btn clickable-icon"
-            onClick={() => setEditMode(false)}
+            onClick={() => endEdit()}
           ><Icon name="send-horizontal" size="l" color="var(--text-on-accent)" /></button>
         </div>
       </div>
@@ -83,6 +83,9 @@ const CardNote2 = ({ fileInfo }: { fileInfo: FileInfo }) => {
   const isCreated = settings.sortType === 'created';
   const tags = fileInfo.tags;
 
+  const addEditingFile = useCombineStore((state) => state.addEditingFile);
+  const deleteEditingFile = useCombineStore((state) => state.deleteEditingFile);
+
   const [editMode, setEditMode] = React.useState(false);
   const [displayTitle, setDisplayTitle] = React.useState<string | null>(null);
 
@@ -94,11 +97,21 @@ const CardNote2 = ({ fileInfo }: { fileInfo: FileInfo }) => {
     loadTitle();
   }, [app, fileInfo.file, settings.titleDisplayMode, editMode]);
 
+  const handleEditStart = React.useCallback(() => {
+    addEditingFile(fileInfo.id);
+    setEditMode(true);
+  }, [addEditingFile]);
+
+  const handleEditEnd = React.useCallback(() => {
+    deleteEditingFile(fileInfo.id);
+    setEditMode(false);
+  }, [deleteEditingFile]);
+
   return (
     <div
       className={"card-note-container" + (editMode ? " card-note-container--edit" : "")}
       onDoubleClick={e => {
-        setEditMode(true);
+        handleEditStart();
         e.preventDefault();
       }}
       onContextMenu={e => {
@@ -125,7 +138,7 @@ const CardNote2 = ({ fileInfo }: { fileInfo: FileInfo }) => {
           <CardNoteMenuButton fileInfo={fileInfo} isPinned={isPinned} />
         </div>
       </div>}
-      <NoteContentView app={app} fileInfo={fileInfo} editMode={editMode} setEditMode={setEditMode} />
+      <NoteContentView app={app} fileInfo={fileInfo} editMode={editMode} endEdit={handleEditEnd} />
       {!editMode && settings.showBacklinksInCardNote && <div className="card-note-footer">
         <CardNoteBacklinksView app={app} fileInfo={fileInfo} />
       </div>}

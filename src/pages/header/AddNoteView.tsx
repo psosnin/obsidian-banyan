@@ -31,7 +31,9 @@ const AddNoteView: React.FC<AddNoteViewProps> = ({ app, plugin, onAdd }) => {
       if (!ref.current) return;
       try {
         const file = await plugin.fileUtils.getPlaceholderFile();
+        console.log('打开占位文件 before', file.path);
         await (leaf as WorkspaceLeaf).openFile(file);
+        console.log('打开占位文件 after', file.path);
         setShowThis(true);
         updateHasContent();
         if (!(leaf.view instanceof MarkdownView)) {

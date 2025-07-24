@@ -57,8 +57,18 @@ export class FileUtils {
     const path = this.getPlaceholderFilePath();
     const file = this.app.vault.getFileByPath(path);
     if (file) return file;
-    const res = await this.app.vault.create(path, "");
-    return res;
+    await this.ensureDirectoryExists(this.dir);
+    const exists1 = await this.app.vault.adapter.exists(path);
+    console.log('占位文件', exists1, "创建", path);
+    try {
+      const res = await this.app.vault.create(path, "");
+      const exists2 = await this.app.vault.adapter.exists(path);
+      console.log('占位文件创建后', exists2);
+      return res;
+    } catch (e) {
+      console.error('创建占位文件失败', e);
+      throw e;
+    }    
   }
 
   private getZkPrefixerFormat(): string | undefined {

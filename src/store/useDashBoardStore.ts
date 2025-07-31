@@ -20,6 +20,7 @@ export interface DashBoardState {
 
     needRefresh: boolean;
     editingFilesID: number[];
+    hasEditingFiles: () => boolean;
     addEditingFile: (id: number) => void;
     deleteEditingFile: (id: number) => void;
     resetEditingFiles: () => void;
@@ -110,6 +111,7 @@ export const useDashBoardStore: StateCreator<CombineState, [], [], DashBoardStat
 
     needRefresh: false,
     editingFilesID: [],
+    hasEditingFiles: () => get().editingFilesID.length > 0,
     addEditingFile: (id: number) => set(state => ({ editingFilesID: [...state.editingFilesID, id] })),
     deleteEditingFile: (id: number) => {
         const res = get().editingFilesID.filter(i => i !== id);

@@ -70,6 +70,7 @@ const CardDashboardView = ({ plugin }: { plugin: BanyanPlugin }) => {
   const updateViewScheme = useCombineStore((state) => state.updateViewScheme);
   const curSchemeNotesLength = useCombineStore((state) => state.curSchemeFiles.length);
   const needRefresh = useCombineStore((state) => state.needRefresh);
+  const hasEditingFiles = useCombineStore((state) => state.hasEditingFiles);
   const resetEditingFiles = useCombineStore((state) => state.resetEditingFiles);
 
   const settings = useCombineStore((state) => state.settings);
@@ -90,7 +91,9 @@ const CardDashboardView = ({ plugin }: { plugin: BanyanPlugin }) => {
         setRefreshFlag(f => f + 1);
       }
       if (type === 'modify' || type === 'meta-change') {
-        // do nothing 
+        if (!hasEditingFiles()) {
+          setRefreshFlag(f => f + 1);
+        }
       }
     });
     return () => {

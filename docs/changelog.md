@@ -1,5 +1,20 @@
 ### Changelog
 
+#### 1.3.1
+
+Improvements:​​
+
+- Added a refresh button.
+- The "Random Review" buttons can now be configured to show/hide in the sidebar function area.
+- Adjusted modal dialog paddings for mobile devices.  
+
+​
+​Bug Fixes:​​
+
+- Fixed not refreshed when adding/editing notes.
+- Fixed highlight state not reverted after clicking for some buttons on mobile.
+
+
 #### 1.3.0
 
 New Features:

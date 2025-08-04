@@ -69,6 +69,13 @@ const RandomReviewEditContainer = ({ props, close }: { props: RandomReviewEditMo
                     showLabel={!Platform.isMobile}
                 />
             </div>
+            <div className="random-review-ribbon-container">
+                <label>{i18n.t('random_review_show_in_ribbon')}</label>                
+                <div className={'checkbox-container ' + (editingFilter.showInRibbon ? 'is-enabled' : '')}
+                    onClick={() => setEditingFilter({ ...editingFilter, showInRibbon: !editingFilter.showInRibbon })}>
+                    <input type='checkbox' />
+                </div>
+            </div>
         </div>
         <div className="random-review-button-container">
             <button onClick={handleCancel}>{i18n.t('general_cancel')}</button>

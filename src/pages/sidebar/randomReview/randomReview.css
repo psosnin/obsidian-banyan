@@ -52,7 +52,7 @@
 .random-review-modal-content {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 12px;
   margin-bottom: 0.5em;
   flex-wrap: wrap;
 }
@@ -82,4 +82,14 @@
   justify-content: flex-end;
   gap: 8px;
   margin-top: 16px;
+}
+
+.random-review-ribbon-container .checkbox-container {
+  cursor: pointer;
+  vertical-align: middle;
+}
+
+.random-review-ribbon-container label {
+  margin-right: 20px;
+  display: inline-block;
 }

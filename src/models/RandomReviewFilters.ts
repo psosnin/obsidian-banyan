@@ -5,19 +5,22 @@ export type RandomReviewFilter = {
     id: number;
     name: string;
     tagFilter: TagFilter;
+    showInRibbon: boolean;
 };
 
 export const DefaultRandomReviewFilterID = 0;
 
-export const createEmptyRandomReviewFilter = (id: number = -1, name: string = ''): RandomReviewFilter => {
+export const createEmptyRandomReviewFilter = (id: number = -1, name: string = '', showInRibbon: boolean = true): RandomReviewFilter => {
     return {
         id,
         name,
-        tagFilter: emptyTagFilter()
+        tagFilter: emptyTagFilter(),
+        showInRibbon
     };
 };
 
 export const DefaultRandomReviewFilter = createEmptyRandomReviewFilter(
     DefaultRandomReviewFilterID,
-    i18n.t('random_review')
+    i18n.t('random_review'),
+    true
 );

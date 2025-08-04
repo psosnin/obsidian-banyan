@@ -148,6 +148,7 @@ export default {
     random_review_title_update: "Update random review",
     random_review_name_label: "Name",
     random_reivew_no_match: "No notes match the filter rules",
+    random_review_show_in_ribbon: "Show in ribbon",
 
     filter_schemes: "Filter schemes",
     create_copy: "Create copy",

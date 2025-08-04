@@ -66,9 +66,15 @@ export default class BanyanPlugin extends Plugin {
 		// do nothing
 	}
 
+	randomRibbonIcons: HTMLElement[] = [];
+
 	resetRandomReview = () => {
 		// 移除所有现有的随机回顾命令和功能区图标
 		(this.app.workspace.leftRibbon as any).items = (this.app.workspace.leftRibbon as any).items.filter((item: any) => !item.id.startsWith(`banyan:${i18n.t('open_random_note')}`));
+		this.randomRibbonIcons.forEach((ele) => {
+			ele.remove();
+		});
+		this.randomRibbonIcons = [];
 		this.settings.randomReviewFilters.forEach((filter) => {
 			this.removeCommand(`open-random-note-${filter.id}`);
 		});
@@ -77,7 +83,8 @@ export default class BanyanPlugin extends Plugin {
 	setupRandomReview = () => {
 		const icons = ['dice', 'shuffle', 'dices', 'dice-6',
 			'dice-5', 'dice-4', 'dice-3', 'dice-2', 'dice-1'];
-		this.settings.randomReviewFilters.forEach((filter) => {
+		this.randomRibbonIcons = [];
+		this.settings.randomReviewFilters.forEach((filter) => {	
 			const name = `${i18n.t('open_random_note')} - ${filter.name}`;
 			const icon = icons[filter.id % icons.length];
 			this.addCommand({
@@ -87,9 +94,12 @@ export default class BanyanPlugin extends Plugin {
 					this.fileUtils.openRandomFile(filter.tagFilter);
 				}
 			});
-			this.addRibbonIcon(icon, name, () => {
-				this.fileUtils.openRandomFile(filter.tagFilter);
-			});
+			if (filter.showInRibbon) {
+				const ele = this.addRibbonIcon(icon, name, () => {
+					this.fileUtils.openRandomFile(filter.tagFilter);
+				});
+				this.randomRibbonIcons.push(ele);
+			}
 		});
 	}
 
@@ -104,11 +114,20 @@ export default class BanyanPlugin extends Plugin {
 			})];
 			this.settings.randomNoteTagFilter = getNewFilterIfNeeded(this.settings.randomNoteTagFilter);
 		};
-		if (this.settings.settingsVersion < CUR_SETTINGS_VERSION) { // CUR_SETTINGS_VERSION is 3
+		if (this.settings.settingsVersion < 3) {
 			this.settings.filterSchemes = [...this.settings.filterSchemes.map((scheme) => {
 				return scheme.parentId === undefined ? { ...scheme, parentId: null } : scheme;
 			})];
 		};
+		if (this.settings.settingsVersion < 4) {
+			// 为现有的随机回顾过滤器添加showInRibbon字段
+			this.settings.randomReviewFilters = [...this.settings.randomReviewFilters.map((filter) => {
+				return {
+					...filter,
+					showInRibbon: filter.showInRibbon === undefined ? true : filter.showInRibbon
+				};
+			})];
+		}
 		// *** 版本更新时，在以上添加更新逻辑 ***
 		this.settings.settingsVersion = CUR_SETTINGS_VERSION;
 		await this.ensureAllFileID();

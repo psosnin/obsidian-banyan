@@ -23,7 +23,7 @@ export interface BanyanPluginSettings {
 	useZkPrefixerFormat?: boolean;
 }
 
-export const CUR_SETTINGS_VERSION = 3;
+export const CUR_SETTINGS_VERSION = 4;
 
 const getToday = () => {
 	const today = new Date();

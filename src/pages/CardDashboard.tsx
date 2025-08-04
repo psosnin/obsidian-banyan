@@ -235,6 +235,10 @@ const CardDashboardView = ({ plugin }: { plugin: BanyanPlugin }) => {
         {!Platform.isMobile && <div className="main-header-add-note-container"><AddNoteView app={app} plugin={plugin} onAdd={() => setRefreshFlag(f => f + 1)} /></div>}
         <div className="main-subheader-container">
           <div className="main-subheader-info">
+            <button className="clickable-icon"
+              children={<Icon name="refresh-ccw" />}
+              onClick={() => setRefreshFlag(f => f + 1)}
+            />
             <span className="main-subheader-loaded-notes">{i18n.t('loaded_notes', { count: `${displayFiles.length}`, total: `${curSchemeNotesLength}` })}</span>
             {cardNodes.length > 0 && <SortFilesButton plugin={plugin} sortType={sortType} setSortType={setSortType} />}
           </div>

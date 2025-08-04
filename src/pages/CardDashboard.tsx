@@ -235,7 +235,7 @@ const CardDashboardView = ({ plugin }: { plugin: BanyanPlugin }) => {
         {!Platform.isMobile && <div className="main-header-add-note-container"><AddNoteView app={app} plugin={plugin} onAdd={() => setRefreshFlag(f => f + 1)} /></div>}
         <div className="main-subheader-container">
           <div className="main-subheader-info">
-            <button className="clickable-icon"
+            <div className="refresh-btn"
               children={<Icon name="refresh-ccw" />}
               onClick={() => setRefreshFlag(f => f + 1)}
             />

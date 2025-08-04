@@ -93,10 +93,20 @@
   text-overflow: ellipsis;
 }
 
-.card-note-tag:hover {
-  background-color: var(--tag-background);
-  border: var(--tag-border-width) solid var(--tag-border-color);
-  color: var(--tag-color);
+@media (hover: hover) {
+  .card-note-tag:hover {
+    background-color: var(--tag-background);
+    border: var(--tag-border-width) solid var(--tag-border-color);
+    color: var(--tag-color);
+  }
+}
+
+@media (hover: none) {
+  .card-note-tag:active {
+    background-color: var(--tag-background);
+    border: var(--tag-border-width) solid var(--tag-border-color);
+    color: var(--tag-color);
+  }
 }
 
 .card-note-tag-content {
@@ -110,18 +120,21 @@
   padding-top: 8px;
   border-top: 1px solid var(--background-modifier-border);
 }
+
 .card-note-backlinks-list {
   display: flex;
   flex-direction: column;
   gap: 0;
   max-width: 100%;
 }
+
 .card-note-backlink-item {
   display: flex;
   align-items: center;
   margin-bottom: 4px;
   width: 100%;
 }
+
 .card-note-backlink-link {
   display: block;
   flex: 1 1 0%;
@@ -138,13 +151,16 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
 .card-note-backlink-link:hover {
   color: var(--text-accent);
   text-decoration: underline;
 }
+
 .card-note-backlink-link:hover .card-note-backlink-icon {
   color: var(--text-accent) !important;
 }
+
 .card-note-backlink-icon {
   display: inline-block;
   margin-right: 4px;
@@ -232,7 +248,7 @@
   }
 
   .card-note-title h3 {
-    overflow: hidden; 
+    overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
@@ -246,7 +262,7 @@
     gap: 16px;
     flex: 1;
   }
-  
+
   .main-cards-column {
     width: 100%;
     min-width: 500px;
@@ -336,11 +352,13 @@
   cursor: pointer;
   background: var(--interactive-accent);
 }
+
 .card-note-edit-btn:hover {
   background: var(--interactive-accent);
   opacity: 1.2;
   filter: brightness(1.1);
 }
+
 .card-note-edit-btn:active {
   opacity: 0.85;
 }

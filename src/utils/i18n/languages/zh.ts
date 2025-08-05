@@ -110,6 +110,7 @@ export default {
     // 编辑区
     editor_content_placeholder: "此刻的想法是...",
     editor_tags_placeholder: "在这里输入标签",
+    new_note_added: "笔记添加成功",
 
     // 副标题栏
     loaded_notes: "已加载 {{count}}/{{total}} 条笔记",

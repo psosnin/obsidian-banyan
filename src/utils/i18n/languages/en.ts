@@ -110,6 +110,7 @@ export default {
     // 编辑区
     editor_content_placeholder: "Your thoughts...",
     editor_tags_placeholder: "Input tags here",
+    new_note_added: "New note added",
 
     // 副标题栏
     loaded_notes: "{{count}}/{{total}} notes loaded",

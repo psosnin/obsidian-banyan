@@ -1,4 +1,4 @@
-import { App, WorkspaceLeaf, MarkdownView, Editor } from "obsidian";
+import { App, WorkspaceLeaf, MarkdownView, Editor, Notice } from "obsidian";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Icon } from "src/components/Icon";
 import TagInput from "src/components/TagInput";
@@ -111,6 +111,7 @@ const AddNoteView: React.FC<AddNoteViewProps> = ({ app, plugin, onAdd }) => {
             await plugin.fileUtils.modifyFileContent(file, '');
             setTags([]);
             onAdd();
+            new Notice(i18n.t('new_note_added'));
           }}><Icon name="send-horizontal" size="l" color="var(--text-on-accent)" /></button>
       </div>
     </div>

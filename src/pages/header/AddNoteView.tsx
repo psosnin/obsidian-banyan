@@ -4,6 +4,7 @@ import { Icon } from "src/components/Icon";
 import TagInput from "src/components/TagInput";
 import BanyanPlugin from "src/main";
 import { i18n } from "src/utils/i18n";
+import { useCombineStore } from "src/store";
 
 interface AddNoteViewProps {
   app: App;
@@ -14,11 +15,19 @@ interface AddNoteViewProps {
 const AddNoteView: React.FC<AddNoteViewProps> = ({ app, plugin, onAdd }) => {
   const ref = useRef<HTMLDivElement>(null);
   const leaf: WorkspaceLeaf = new (WorkspaceLeaf as any)(app);
+  const [titleFocused, setTitleFocused] = useState(false);
+  const [contentFocused, setContentFocused] = useState(false);
+  const [tagsFocused, setTagsFocused] = useState(false);
   const [focused, setFocused] = useState(false);
   const [hasContent, setHasContent] = useState(false);
   const [showPlaceholder, setShowPlaceholder] = useState(false);
   const [editor, setEditor] = useState<Editor | null>(null);
   const [showThis, setShowThis] = useState(true);
+  const [tags, setTags] = useState<string[]>([]);
+  const [title, setTitle] = useState<string>('');
+  const [isTitleInvalid, setIsTitleInvalid] = useState<boolean>(false);
+  const settings = useCombineStore((state) => state.settings);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const updateHasContent = useCallback(() => {
     const ele = leaf.view.containerEl.querySelector('.cm-content') as HTMLElement;
@@ -44,8 +53,8 @@ const AddNoteView: React.FC<AddNoteViewProps> = ({ app, plugin, onAdd }) => {
           { history: false })
         ref.current?.empty();
         ref.current?.appendChild(leaf.view.containerEl);
-      } catch (e) { 
-        console.warn('打开占位文件失败', e); 
+      } catch (e) {
+        console.warn('打开占位文件失败', e);
         setShowThis(false);
       };
     };
@@ -58,7 +67,7 @@ const AddNoteView: React.FC<AddNoteViewProps> = ({ app, plugin, onAdd }) => {
         if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
           const targetElement = mutation.target as HTMLElement;
           if (targetElement.classList.contains('cm-editor')) {
-            setFocused(targetElement.classList.contains('cm-focused'));
+            setContentFocused(targetElement.classList.contains('cm-focused'));
             updateHasContent();
           }
         }
@@ -77,39 +86,82 @@ const AddNoteView: React.FC<AddNoteViewProps> = ({ app, plugin, onAdd }) => {
     return () => observer.disconnect(); // 组件卸载时销毁监听
   }, []);
 
-  const [tags, setTags] = useState<string[]>([]);
   const allTags = useMemo(() => {
     const tags = plugin.fileUtils.getAllFilesTags();
     return tags;
   }, [app, plugin]);
 
   useEffect(() => {
-    setShowPlaceholder(!focused && !hasContent); // 只有在没有焦点且没有内容时显示占位符，否则隐藏占位符
-  }, [focused, hasContent]);
+    setFocused(titleFocused || contentFocused || tagsFocused);
+  }, [titleFocused, contentFocused, tagsFocused]);
+
+  useEffect(() => {
+    setShowPlaceholder(!contentFocused && !hasContent); // 只有在没有焦点且没有内容时显示占位符，否则隐藏占位符
+  }, [contentFocused, hasContent]);
+
+  useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto';
+      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+    }
+  }, [title]);
 
   if (!showThis) return null;
 
   return (
-    <div className={"add-note-container" + (focused ? " add-note-container--focusd" : "")} onClick={(e) => {
-      if (!(e.target instanceof HTMLElement)) return;
-      const tagName = e.target.tagName.toUpperCase();
-      if (tagName !== 'INPUT' && tagName!== 'BUTTON' && tagName !== 'SVG' ) { // 分别是标签输入框、按钮、按钮上的图标
+    <div className={"add-note-container" + (focused ? " add-note-container--focusd" : "")} >
+      {settings.editorTitleMode !== 'none' && (
+        <div className={`add-note-title ${isTitleInvalid ? 'add-note-title-input--invalid' : ''}`}>
+          <textarea
+            ref={textareaRef}
+            onFocus={() => setTitleFocused(true)}
+            onBlur={() => setTitleFocused(false)}
+            placeholder={i18n.t('editor_title_placeholder')}
+            value={title}
+            rows={1}
+            onChange={(e) => {
+              const newTitle = e.target.value.trim();
+              setTitle(newTitle);
+              setIsTitleInvalid(newTitle.length > 0 && !plugin.fileUtils.legalFileName(newTitle));
+            }}
+            onKeyDown={(e) => {
+              // 防止用户在标题输入换行符
+              if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                editor?.focus();
+              }
+            }}
+          />
+        </div>
+      )}
+      <div className="add-note-content-container" onClick={(e) => {
         editor?.focus();
-      }
-    } } >
-      {showPlaceholder && <div className="add-note-placeholder">{i18n.t('editor_content_placeholder')}</div>}
-      <div ref={ref} className="add-note-content" />
+      }}>
+        {showPlaceholder && <div className="add-note-placeholder">{i18n.t('editor_content_placeholder')}</div>}
+        <div ref={ref} className="add-note-content" />
+      </div>
       <div className="add-note-footer">
         <div className="add-note-tag-input-container"><TagInput tags={tags} onChange={setTags} allTags={allTags} placeholder={i18n.t('editor_tags_placeholder')} allowCreate={true}
+          onFocus={() => setTagsFocused(true)}
+          onBlur={() => setTagsFocused(false)}
         /></div>
         <button className={`add-note-send-button ${focused ? 'clickable-icon' : ''}`}
           onClick={async () => {
             const file = await plugin.fileUtils.getPlaceholderFile();
             const body = await plugin.fileUtils.readFileContent(file);
-            if (body.trim().length === 0 && tags.length === 0) return;
-            await plugin.fileUtils.addFile(body, tags, false);
+            const _title = title.trim();
+            if (body.trim().length === 0 && tags.length === 0 && _title.length === 0) return;
+            
+            // 检查标题合法性
+            if (_title && !plugin.fileUtils.legalFileName(_title)) {
+              new Notice(i18n.t('illegal_title_chars'));
+              return;
+            } 
+            
+            await plugin.fileUtils.addFile(_title, body, tags, false);
             await plugin.fileUtils.modifyFileContent(file, '');
             setTags([]);
+            setTitle('');
             onAdd();
             new Notice(i18n.t('new_note_added'));
           }}><Icon name="send-horizontal" size="l" color="var(--text-on-accent)" /></button>

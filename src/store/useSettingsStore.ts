@@ -13,6 +13,7 @@ export interface SettingsState {
     updateCardsDirectory: (directory: string) => void;
     updateOpenWhenStartObsidian: (open: boolean) => void;
     updateTitleDisplayMode: (mode: 'propertyOrNone' | 'propertyThenFile' | 'fileOnly' | 'none') => void;
+    updateEditorTitleMode: (mode: 'none' | 'filename' | 'property') => void;
     updateCardsColumns: (columns: number) => void;
     updateSortType: (sortType: SortType) => void;
     updateFirstUseDate: (date: string) => void;
@@ -43,6 +44,10 @@ export const useSettingsStore: StateCreator<CombineState, [], [], SettingsState>
 
     updateTitleDisplayMode: (mode: 'propertyOrNone' | 'propertyThenFile' | 'fileOnly' | 'none') => {
         get().updateSettings({ titleDisplayMode: mode });
+    },
+
+    updateEditorTitleMode: (mode: 'none' | 'filename' | 'property') => {
+        get().updateSettings({ editorTitleMode: mode });
     },
 
     updateCardsColumns: (columns: number) => {

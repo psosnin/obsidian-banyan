@@ -85,12 +85,18 @@ export default {
     setting_use_cardnote2_desc: "In editing mode, changes are saved immediately, and the confirm button is only used to return to reading mode.",
     setting_use_zk_prefixer_format_name: "Use the format in Unique note creator for new notes name",
     setting_use_zk_prefixer_format_desc: "If enabled, new notes will use the naming format from the plugin Unique note creator if available. Use the default format else.",
+    setting_editor_title_mode_name: "Show editor title",
+    setting_editor_title_mode_desc: "Whether to show the title input field in add note editor, and whether to use it as a filename or property title",
+    setting_editor_title_mode_none: "Don't show",
+    setting_editor_title_mode_filename: "As filename",
+    setting_editor_title_mode_property: "As property title",
 
     /* 命令和ribbon */
     add_card_note: "Add card note",
     open_dashboard: "Open dashboard",
     open_random_note: "Random open a note",
     illegal_unique_prefix_format: "Illegal unique note creator format, use default format instead",
+    illegal_title_chars: "Title cannot contain the following characters: [ ] # ^ |",
 
     /* 首页 */
     notice_note_to_trash: "The note has been deleted.",
@@ -108,6 +114,7 @@ export default {
     expand_sidebar: "Expand sidebar",
 
     // 编辑区
+    editor_title_placeholder: "Title (optional)",
     editor_content_placeholder: "Your thoughts...",
     editor_tags_placeholder: "Input tags here",
     new_note_added: "New note added",

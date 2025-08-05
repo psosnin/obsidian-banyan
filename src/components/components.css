@@ -33,13 +33,6 @@
 
 /* 标签输入框 */
 
-.tag-input-container {
-    padding: 6px 12px;
-    border-radius: 8px;
-    position: relative;
-    background: var(--background-secondary);
-}
-
 .tag-input-inputarea {
     display: flex;
     flex-wrap: wrap;
@@ -166,6 +159,13 @@
 .tag-filter-row {
     display: flex;
     align-items: center;
+}
+
+.tag-filter-row-input {
+    background-color: var(--background-secondary);
+    padding: 6px 12px;
+    border-radius: 8px;
+    position: relative;
 }
 
 .tag-filter-label {

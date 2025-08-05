@@ -86,7 +86,7 @@ export class FileUtils {
     return !/[\[\]#^|]/.test(fileName);
   }
 
-  private async getNewNoteFilePath() {
+  private async getNewNoteFilePath(title?: string) {
     const now = new Date();
     const year = now.getFullYear().toString();
     const quarter = Math.floor((now.getMonth() + 3) / 3).toString();
@@ -96,7 +96,11 @@ export class FileUtils {
     await this.ensureDirectoryExists(folderPath);
     const formatStr = this.getZkPrefixerFormat();
     let fileName: string = "";
-    if (formatStr) {
+    
+    // 如果有标题且标题合法，使用标题作为文件名
+    if (title && title.trim() && this.legalFileName(title.trim())) {
+      fileName = `${title.trim()}.md`;
+    } else if (formatStr) {
       const name = `${moment().format(formatStr)}.md`;
       if (this.legalFileName(name)) {
         fileName = name;
@@ -106,6 +110,7 @@ export class FileUtils {
         console.log("formated illegal:", formatStr);
       }
     }
+    
     if (fileName === "") {
       const hour = now.getHours().toString().padStart(2, '0');
       const minute = now.getMinutes().toString().padStart(2, '0');
@@ -147,14 +152,34 @@ export class FileUtils {
     // this.app.workspace.openLinkText(randomFile.path, '', false);
   }
 
-  async addFile(content?: string, tags: string[] = [], open: boolean = true) {
-    const filePath = await this.getNewNoteFilePath();
+  async addFile(title?: string, content?: string, tags: string[] = [], open: boolean = true) {
+    const editorTitleMode = this.plugin.settings.editorTitleMode;
+    
+    // 根据设置决定如何处理标题
+    let finalTitle: string | undefined;
+    let useAsFilename = false;
+    let useAsProperty = false;
+    
+    if (editorTitleMode === 'none') {
+      finalTitle = undefined;
+    } else if (editorTitleMode === 'filename') {
+      finalTitle = title?.trim();
+      useAsFilename = true;
+    } else if (editorTitleMode === 'property') {
+      finalTitle = title?.trim();
+      useAsProperty = true;
+    }
+    
+    const filePath = await this.getNewNoteFilePath(useAsFilename ? finalTitle : undefined);
     const file = await this.app.vault.create(filePath, content ?? '');
 
     await this.app.fileManager.processFrontMatter(file, (frontmatter) => {
       const id = generateFileId((new Date()).getTime());
       frontmatter.tags = tags; 
-      frontmatter.id = id;      
+      frontmatter.id = id;
+      if (useAsProperty && finalTitle) {
+        frontmatter.title = finalTitle;
+      }
     });
 
     if (!open) return;

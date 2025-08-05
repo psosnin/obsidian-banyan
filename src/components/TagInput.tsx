@@ -1,5 +1,5 @@
 import { useState, useRef, useLayoutEffect } from "react";
-import { i18n } from "src/utils/i18n"; 
+import { i18n } from "src/utils/i18n";
 import { Notice } from "obsidian";
 
 interface TagInputProps {
@@ -8,9 +8,11 @@ interface TagInputProps {
   allTags: string[];
   placeholder?: string;
   allowCreate?: boolean;
+  onFocus?: () => void;
+  onBlur?: () => void;
 }
 
-const TagInput: React.FC<TagInputProps> = ({ tags, onChange, allTags, placeholder, allowCreate = false }) => {
+const TagInput: React.FC<TagInputProps> = ({ tags, onChange, allTags, placeholder, allowCreate = false, onFocus, onBlur }) => {
 
   const [input, setInput] = useState("");
 
@@ -73,6 +75,13 @@ const TagInput: React.FC<TagInputProps> = ({ tags, onChange, allTags, placeholde
 
   const handleBlur = () => {
     setTimeout(() => setShowSuggest(false), 100);
+    onBlur?.();
+  };
+
+  const handleFocus = () => {
+    setShowSuggest(true);
+    setHighlight(-1);
+    onFocus?.();
   };
 
   const handleRemoveTag = (idx: number) => {
@@ -95,7 +104,7 @@ const TagInput: React.FC<TagInputProps> = ({ tags, onChange, allTags, placeholde
           onChange={e => { handleInputChange(e); setShowSuggest(true); setHighlight(-1); }}
           onKeyDown={handleKeyDown}
           onBlur={handleBlur}
-          onFocus={() => { setShowSuggest(true); setHighlight(-1); }}
+          onFocus={handleFocus}
           placeholder={placeholder}
         />
       </div>

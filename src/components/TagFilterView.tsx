@@ -35,12 +35,14 @@ export const TagFilterView: React.FC<TagFilterViewProps> = ({ allTags, value, on
       {value.or.map((tags, idx) => (
         <div key={idx} className="tag-filter-row">
           {showLabel && <label className="tag-filter-label">{idx == 0 ? i18n.t('tag_group_label_include') : i18n.t('tag_group_label_or_include')}</label>}
-          <TagInput
-            tags={tags}
-            onChange={t => handleAndTagChange(idx, t)}
-            allTags={allTags}
-            placeholder={idx == 0 ? i18n.t('tag_group_placeholder_include') : i18n.t('tag_group_placeholder_or_include')}
-          />
+          <div className="tag-filter-row-input">
+            <TagInput
+              tags={tags}
+              onChange={t => handleAndTagChange(idx, t)}
+              allTags={allTags}
+              placeholder={idx == 0 ? i18n.t('tag_group_placeholder_include') : i18n.t('tag_group_placeholder_or_include')}
+            />
+          </div>
           {value.or.length > 1 && idx != 0 && (
             <button onClick={() => handleRemoveAndRow(idx)} className="tag-filter-button">-</button>
           )}
@@ -51,15 +53,17 @@ export const TagFilterView: React.FC<TagFilterViewProps> = ({ allTags, value, on
       ))}
       <div className="tag-filter-row">
         {showLabel && <label className="tag-filter-label">{i18n.t('tag_group_label_exclude')}</label>}
-        <TagInput
-          tags={value.not}
-          onChange={handleNotTagChange}
-          allTags={allTags}
-          placeholder={i18n.t('tag_group_placeholder_exclude')}
-        />
+        <div className="tag-filter-row-input">
+          <TagInput
+            tags={value.not}
+            onChange={handleNotTagChange}
+            allTags={allTags}
+            placeholder={i18n.t('tag_group_placeholder_exclude')}
+          />
+        </div>
       </div>
       <div className="tag-filter-notag-container">
-      <label className="tag-filter-label">{i18n.t('tag_group_label_notag')}</label>
+        <label className="tag-filter-label">{i18n.t('tag_group_label_notag')}</label>
         <label>
           <input type="checkbox" className="tag-filter-checkbox" checked={value.noTag == 'unlimited'} onChange={(e) => {
             if (!e.target.checked || value.noTag == 'unlimited') return;

@@ -10,6 +10,7 @@ export interface BanyanPluginSettings {
 	openWhenStartObsidian: boolean;
 	cardsColumns: number;
 	titleDisplayMode: 'propertyOrNone' | 'propertyThenFile' | 'fileOnly' | 'none';
+	editorTitleMode: 'none' | 'filename' | 'property';
 	randomNoteTagFilter: TagFilter;
 	firstUseDate: string;
 
@@ -37,6 +38,7 @@ export const DEFAULT_SETTINGS: BanyanPluginSettings = {
 	sortType: 'created',
 	openWhenStartObsidian: true,
 	titleDisplayMode: 'none',
+	editorTitleMode: 'filename',
 	filterSchemes: [getDefaultFilterScheme([])],
 	viewSchemes: [],
 	randomNoteTagFilter: emptyTagFilter(),

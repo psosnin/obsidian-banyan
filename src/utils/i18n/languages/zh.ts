@@ -85,12 +85,18 @@ export default {
     setting_use_cardnote2_desc: "编辑模式下改动立即保存，确认按钮仅用于恢复阅读模式。",
     setting_use_zk_prefixer_format_name: "新建笔记使用时间戳插件格式",
     setting_use_zk_prefixer_format_desc: "开启后，新建笔记时会使用时间戳笔记插件的命名格式。关闭则始终使用默认格式。",
+    setting_editor_title_mode_name: "编辑区显示标题",
+    setting_editor_title_mode_desc: "添加笔记编辑区是否显示标题，以及标题作为文件名还是属性",
+    setting_editor_title_mode_none: "不显示",
+    setting_editor_title_mode_filename: "作为文件名",
+    setting_editor_title_mode_property: "作为属性标题",
 
     /* 命令和ribbon */
     add_card_note: "添加卡片笔记",
     open_dashboard: "打开笔记面板",
     open_random_note: "随机打开笔记",
     illegal_unique_prefix_format: "时间戳格式非法，改用默认格式",
+    illegal_title_chars: "标题不能包含以下字符：[ ] # ^ |",
 
     /* 首页 */
     notice_error_when_load_notes: "加载笔记内容时出错",
@@ -108,6 +114,7 @@ export default {
     expand_sidebar: "展开侧边栏",
 
     // 编辑区
+    editor_title_placeholder: "标题（可选）",
     editor_content_placeholder: "此刻的想法是...",
     editor_tags_placeholder: "在这里输入标签",
     new_note_added: "笔记添加成功",

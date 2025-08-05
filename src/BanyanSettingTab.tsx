@@ -17,6 +17,7 @@ export class BanyanSettingTab extends PluginSettingTab {
 		this.setupOpenWhenStartObsidianSetting(containerEl);
 		this.setupCardsDirectorySetting(containerEl);		
 		this.setupTitleDisplayModeSetting(containerEl);
+		this.setupEditorTitleModeSetting(containerEl);
 		this.setupCardsColumnsSetting(containerEl);
         this.setupShowBacklinksSetting(containerEl);
         this.setupUseCardNote2Setting(containerEl); // 新增
@@ -66,6 +67,22 @@ export class BanyanSettingTab extends PluginSettingTab {
 					.setValue(settings.titleDisplayMode)
 					.onChange(async (value) => {
 						useCombineStore.getState().updateTitleDisplayMode(value as 'propertyOrNone' | 'propertyThenFile' | 'fileOnly' | 'none');
+					});
+			});
+	}
+
+	setupEditorTitleModeSetting(containerEl: HTMLElement) {
+		const settings = useCombineStore.getState().settings;
+		new Setting(containerEl)
+			.setName(i18n.t('setting_editor_title_mode_name'))
+			.setDesc(i18n.t('setting_editor_title_mode_desc'))
+			.addDropdown(dropdown => {
+				dropdown.addOption('none', i18n.t('setting_editor_title_mode_none'))
+					.addOption('filename', i18n.t('setting_editor_title_mode_filename'))
+					.addOption('property', i18n.t('setting_editor_title_mode_property'))
+					.setValue(settings.editorTitleMode)
+					.onChange(async (value) => {
+						useCombineStore.getState().updateEditorTitleMode(value as 'none' | 'filename' | 'property');
 					});
 			});
 	}

@@ -100,9 +100,7 @@ export class FileWatcher {
           backlinksMap[link].push(key);
         }
       });
-      try {
-        useCombineStore.getState().setBacklinksMap(backlinksMap);
-      } catch (e) { /* SSR/非React环境下忽略 */ }
+      useCombineStore.getState().setBacklinksMap(backlinksMap);
     }, 200);
   }
 

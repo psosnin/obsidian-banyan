@@ -1,7 +1,7 @@
 import { BanyanPluginSettings } from "src/BanyanPluginSettings";
 import { StateCreator } from "zustand";
 import { CombineState } from ".";
-import { CardContentMaxHeightType, SortType } from "src/models/Enum";
+import { CardContentMaxHeightType, SortType, TitleDisplayMode } from "src/models/Enum";
 
 export interface SettingsState {
     settings: BanyanPluginSettings;
@@ -12,7 +12,7 @@ export interface SettingsState {
     // 单个设置项的更新方法
     updateCardsDirectory: (directory: string) => void;
     updateOpenWhenStartObsidian: (open: boolean) => void;
-    updateTitleDisplayMode: (mode: 'propertyOrNone' | 'propertyThenFile' | 'fileOnly' | 'none') => void;
+    updateTitleDisplayMode: (mode: TitleDisplayMode) => void;
     updateEditorTitleMode: (mode: 'none' | 'filename' | 'property') => void;
     updateCardsColumns: (columns: number) => void;
     updateSortType: (sortType: SortType) => void;
@@ -43,7 +43,7 @@ export const useSettingsStore: StateCreator<CombineState, [], [], SettingsState>
         get().updateSettings({ openWhenStartObsidian: open });
     },
 
-    updateTitleDisplayMode: (mode: 'propertyOrNone' | 'propertyThenFile' | 'fileOnly' | 'none') => {
+    updateTitleDisplayMode: (mode: TitleDisplayMode) => {
         get().updateSettings({ titleDisplayMode: mode });
     },
 

@@ -1,4 +1,5 @@
 import { App, TFile } from "obsidian";
+import { TitleDisplayMode } from "src/models/Enum";
 
 /**
  * 获取文件的frontmatter属性标题
@@ -32,7 +33,7 @@ export const getFrontmatterProperty = async (app: App, file: TFile, propertyName
 export const getDisplayTitle = async (
     app: App,
     file: TFile,
-    mode: 'propertyOrNone' | 'propertyThenFile' | 'fileOnly' | 'none'
+    mode: TitleDisplayMode
 ): Promise<string | null> => {
     if (mode === 'none') {
         return null;

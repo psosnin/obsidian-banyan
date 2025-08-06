@@ -3,7 +3,7 @@ import BanyanPlugin from './main';
 import { i18n } from './utils/i18n';
 import FolderSuggest from './components/FolderSuggest';
 import { useCombineStore } from './store';
-import { CardContentMaxHeightType } from './models/Enum';
+import { CardContentMaxHeightType, TitleDisplayMode } from './models/Enum';
 
 export class BanyanSettingTab extends PluginSettingTab {
 	plugin: BanyanPlugin;
@@ -77,7 +77,7 @@ export class BanyanSettingTab extends PluginSettingTab {
 					.addOption('none', i18n.t('setting_title_display_mode_none'))
 					.setValue(settings.titleDisplayMode)
 					.onChange(async (value) => {
-						useCombineStore.getState().updateTitleDisplayMode(value as 'propertyOrNone' | 'propertyThenFile' | 'fileOnly' | 'none');
+						useCombineStore.getState().updateTitleDisplayMode(value as TitleDisplayMode);
 					});
 			});
 	}

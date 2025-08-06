@@ -2,14 +2,14 @@ import { FilterScheme, getDefaultFilterScheme } from "./models/FilterScheme";
 import { ViewScheme } from "./models/ViewScheme";
 import { emptyTagFilter, TagFilter } from "./models/TagFilter";
 import { DefaultRandomReviewFilter, RandomReviewFilter } from "./models/RandomReviewFilters";
-import { CardContentMaxHeightType, SortType } from "./models/Enum";
+import { CardContentMaxHeightType, SortType, TitleDisplayMode } from "./models/Enum";
 
 export interface BanyanPluginSettings {
 	settingsVersion: number;
 	cardsDirectory: string;
 	openWhenStartObsidian: boolean;
 	cardsColumns: number;
-	titleDisplayMode: 'propertyOrNone' | 'propertyThenFile' | 'fileOnly' | 'none';
+	titleDisplayMode: TitleDisplayMode;
 	editorTitleMode: 'none' | 'filename' | 'property';
 	randomNoteTagFilter: TagFilter;
 	firstUseDate: string;

@@ -59,6 +59,10 @@ export default {
     select_view_to_import: "Select view to import",
 
     /* 设置 */
+    setting_header_basic: "Basic settings",
+    setting_header_cards: "Cards view",
+    setting_header_editor: "New note",
+
     setting_note_directory_name: "Note directory",
     setting_note_directory_desc: "Directory this plugin works on",
     setting_note_directory_placeholder: "Please input the path of the directory",
@@ -83,20 +87,20 @@ export default {
 
     setting_show_backlinks_name: "Show backlinks",
     setting_show_backlinks_desc: "Whether to show backlinks (which notes reference this) in card view.",
-    setting_use_cardnote2_name: "Card note double click to edit (PC only)",
+    setting_use_cardnote2_name: "Double click to edit (PC only)",
     setting_use_cardnote2_desc: "In editing mode, changes are saved immediately, and the confirm button is only used to return to reading mode.",
     setting_use_zk_prefixer_format_name: "Use the format in Unique note creator for new notes name",
     setting_use_zk_prefixer_format_desc: "If enabled, new notes will use the naming format from the plugin Unique note creator if available. Use the default format else.",
-    setting_editor_title_mode_name: "Show editor title",
+    setting_editor_title_mode_name: "Show title",
     setting_editor_title_mode_desc: "Whether to show the title input field in add note editor, and whether to use it as a filename or property title",
     setting_editor_title_mode_none: "Don't show",
     setting_editor_title_mode_filename: "As filename",
     setting_editor_title_mode_property: "As property title",
 
-    setting_card_content_max_height_name: "Card content max height",
+    setting_card_content_max_height_name: "Content max height",
     setting_card_content_max_height_desc: "The maximum display height of card content area (excluding title), fold extra content",
-    setting_card_content_max_height_short: "short",
-    setting_card_content_max_height_normal: "normal",
+    setting_card_content_max_height_short: "Short",
+    setting_card_content_max_height_normal: "Normal",
     setting_card_content_max_height_expand: "Expand",
 
     /* 命令和ribbon */

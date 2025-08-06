@@ -59,6 +59,10 @@ export default {
     select_view_to_import: "选择要导入的视图",
 
     /* 设置 */
+    setting_header_basic: "基础设置",
+    setting_header_cards: "卡片视图",
+    setting_header_editor: "新建笔记",
+
     setting_note_directory_name: "笔记目录",
     setting_note_directory_desc: "「卡片面板」的笔记目录",
     setting_note_directory_placeholder: "请输入目录的路径",
@@ -67,7 +71,7 @@ export default {
     setting_on_open_desc: "启用后，Obsidian 启动时会自动打开「卡片面板」",
 
     setting_title_display_mode_name: "标题显示模式",
-    setting_title_display_mode_desc: "卡片笔记中标题的显示方式",
+    setting_title_display_mode_desc: "可以显示文件名、title属性或不显示",
     setting_title_display_mode_property_or_none: "属性标题或不显示",
     setting_title_display_mode_property_then_file: "属性标题先于文件标题",
     setting_title_display_mode_file_only: "文件标题",
@@ -83,18 +87,21 @@ export default {
 
     setting_show_backlinks_name: "显示反向链接",
     setting_show_backlinks_desc: "是否在卡片视图中显示反向链接（被哪些笔记引用）",
-    setting_use_cardnote2_name: "卡片视图双击进入编辑模式（仅限桌面端）",
+
+    setting_use_cardnote2_name: "双击进入编辑模式（仅限桌面端）",
     setting_use_cardnote2_desc: "编辑模式下改动立即保存，确认按钮仅用于恢复阅读模式。",
-    setting_use_zk_prefixer_format_name: "新建笔记使用时间戳插件格式",
-    setting_use_zk_prefixer_format_desc: "开启后，新建笔记时会使用时间戳笔记插件的命名格式。关闭则始终使用默认格式。",
-    setting_editor_title_mode_name: "编辑区显示标题",
-    setting_editor_title_mode_desc: "添加笔记编辑区是否显示标题，以及标题作为文件名还是属性",
+    
+    setting_use_zk_prefixer_format_name: "默认标题使用「时间戳笔记生成器」的格式",
+    setting_use_zk_prefixer_format_desc: "开启后，新建笔记时会使用时间戳笔记插件的命名格式。关闭则使用默认格式。",
+    
+    setting_editor_title_mode_name: "显示标题",
+    setting_editor_title_mode_desc: "新建笔记编辑区是否显示标题，及标题作为文件名还是title属性",
     setting_editor_title_mode_none: "不显示",
     setting_editor_title_mode_filename: "作为文件名",
     setting_editor_title_mode_property: "作为属性标题",
 
-    setting_card_content_max_height_name: "卡片内容最大高度",
-    setting_card_content_max_height_desc: "卡片内容区(不包括标题)的最大显示高度，折叠过长内容",
+    setting_card_content_max_height_name: "内容最大高度",
+    setting_card_content_max_height_desc: "内容区(不包括标题)的最大显示高度，折叠过长内容",
     setting_card_content_max_height_short: "较短",
     setting_card_content_max_height_normal: "一般",
     setting_card_content_max_height_expand: "不折叠",

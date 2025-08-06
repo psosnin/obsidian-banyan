@@ -15,15 +15,24 @@ export class BanyanSettingTab extends PluginSettingTab {
 	display(): void {
 		const { containerEl } = this;
 		containerEl.empty();
+
+		// 基础设置
+		new Setting(containerEl).setName(i18n.t('setting_header_basic')).setHeading();
 		this.setupOpenWhenStartObsidianSetting(containerEl);
-		this.setupCardsDirectorySetting(containerEl);		
-		this.setupTitleDisplayModeSetting(containerEl);
-		this.setupEditorTitleModeSetting(containerEl);
+		this.setupCardsDirectorySetting(containerEl);
 		this.setupCardsColumnsSetting(containerEl);
-        this.setupShowBacklinksSetting(containerEl);
-        this.setupUseCardNote2Setting(containerEl); // 新增
-        this.setupUseZkPrefixerFormatSetting(containerEl); // 新增
-        this.setupCardContentMaxHeightSetting(containerEl); // 新增
+
+		// 卡片视图
+		new Setting(containerEl).setName(i18n.t('setting_header_cards')).setHeading();
+		this.setupTitleDisplayModeSetting(containerEl);		
+		this.setupCardContentMaxHeightSetting(containerEl);
+		this.setupShowBacklinksSetting(containerEl);
+		this.setupUseCardNote2Setting(containerEl);
+
+		// 编辑
+		new Setting(containerEl).setName(i18n.t('setting_header_editor')).setHeading();
+		this.setupEditorTitleModeSetting(containerEl);
+		this.setupUseZkPrefixerFormatSetting(containerEl);
 	}
 
 	setupCardsDirectorySetting(containerEl: HTMLElement) {
@@ -105,61 +114,61 @@ export class BanyanSettingTab extends PluginSettingTab {
 			});
 	}
 
-    setupShowBacklinksSetting(containerEl: HTMLElement) {
-        const settings = useCombineStore.getState().settings;
-        new Setting(containerEl)
-            .setName(i18n.t('setting_show_backlinks_name'))
-            .setDesc(i18n.t('setting_show_backlinks_desc'))
-            .addToggle(toggle => {
-                toggle.setValue(settings.showBacklinksInCardNote ?? false)
-                    .onChange(async (value) => {
-                        useCombineStore.getState().updateShowBacklinksInCardNote(value);
-                    });
-            });
-    }
+	setupShowBacklinksSetting(containerEl: HTMLElement) {
+		const settings = useCombineStore.getState().settings;
+		new Setting(containerEl)
+			.setName(i18n.t('setting_show_backlinks_name'))
+			.setDesc(i18n.t('setting_show_backlinks_desc'))
+			.addToggle(toggle => {
+				toggle.setValue(settings.showBacklinksInCardNote ?? false)
+					.onChange(async (value) => {
+						useCombineStore.getState().updateShowBacklinksInCardNote(value);
+					});
+			});
+	}
 
-    setupUseCardNote2Setting(containerEl: HTMLElement) {
-        if (Platform.isMobile) return; // 移动端不显示此设置
-        const settings = useCombineStore.getState().settings;
-        new Setting(containerEl)
-            .setName(i18n.t('setting_use_cardnote2_name'))
-            .setDesc(i18n.t('setting_use_cardnote2_desc'))
-            .addToggle(toggle => {
-                toggle.setValue(settings.useCardNote2 ?? false)
-                    .onChange(async (value) => {
-                        useCombineStore.getState().updateUseCardNote2(value);
-                    });
-            });
-    }
+	setupUseCardNote2Setting(containerEl: HTMLElement) {
+		if (Platform.isMobile) return; // 移动端不显示此设置
+		const settings = useCombineStore.getState().settings;
+		new Setting(containerEl)
+			.setName(i18n.t('setting_use_cardnote2_name'))
+			.setDesc(i18n.t('setting_use_cardnote2_desc'))
+			.addToggle(toggle => {
+				toggle.setValue(settings.useCardNote2 ?? false)
+					.onChange(async (value) => {
+						useCombineStore.getState().updateUseCardNote2(value);
+					});
+			});
+	}
 
-    setupUseZkPrefixerFormatSetting(containerEl: HTMLElement) {
-        const settings = this.plugin.settings;
-        new Setting(containerEl)
-            .setName(i18n.t('setting_use_zk_prefixer_format_name'))
-            .setDesc(i18n.t('setting_use_zk_prefixer_format_desc'))
-            .addToggle(toggle => {
-                toggle.setValue(settings.useZkPrefixerFormat ?? true)
-                    .onChange(async (value) => {
-                        this.plugin.settings.useZkPrefixerFormat = value;
-                        await this.plugin.saveSettings();
-                    });
-            });
-    }
+	setupUseZkPrefixerFormatSetting(containerEl: HTMLElement) {
+		const settings = this.plugin.settings;
+		new Setting(containerEl)
+			.setName(i18n.t('setting_use_zk_prefixer_format_name'))
+			.setDesc(i18n.t('setting_use_zk_prefixer_format_desc'))
+			.addToggle(toggle => {
+				toggle.setValue(settings.useZkPrefixerFormat ?? true)
+					.onChange(async (value) => {
+						this.plugin.settings.useZkPrefixerFormat = value;
+						await this.plugin.saveSettings();
+					});
+			});
+	}
 
-    setupCardContentMaxHeightSetting(containerEl: HTMLElement) {
-        const settings = useCombineStore.getState().settings;
-        new Setting(containerEl)
-            .setName(i18n.t('setting_card_content_max_height_name'))
-            .setDesc(i18n.t('setting_card_content_max_height_desc'))
-            .addDropdown(dropdown => {
-                dropdown.addOption('short', i18n.t('setting_card_content_max_height_short'))
-                    .addOption('normal', i18n.t('setting_card_content_max_height_normal'))
-                    .addOption('expand', i18n.t('setting_card_content_max_height_expand'))
-                    .setValue(settings.cardContentMaxHeight ?? 'normal')
-                    .onChange(async (value) => {
-                        useCombineStore.getState().updateCardContentMaxHeight(value as CardContentMaxHeightType);
-                    });
-            });
-    }
+	setupCardContentMaxHeightSetting(containerEl: HTMLElement) {
+		const settings = useCombineStore.getState().settings;
+		new Setting(containerEl)
+			.setName(i18n.t('setting_card_content_max_height_name'))
+			.setDesc(i18n.t('setting_card_content_max_height_desc'))
+			.addDropdown(dropdown => {
+				dropdown.addOption('short', i18n.t('setting_card_content_max_height_short'))
+					.addOption('normal', i18n.t('setting_card_content_max_height_normal'))
+					.addOption('expand', i18n.t('setting_card_content_max_height_expand'))
+					.setValue(settings.cardContentMaxHeight ?? 'normal')
+					.onChange(async (value) => {
+						useCombineStore.getState().updateCardContentMaxHeight(value as CardContentMaxHeightType);
+					});
+			});
+	}
 
 }

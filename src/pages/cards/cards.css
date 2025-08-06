@@ -25,6 +25,24 @@
   position: relative;
   word-break: break-word;
   margin-top: 8px;
+  transition: max-height 0.3s ease;
+}
+
+.card-note-content.card-note-content--short {
+  max-height: 160px;
+}
+
+.card-note-content.card-note-content--normal {
+  max-height: 300px;
+}
+
+.card-note-content.card-note-content--expand {
+  max-height: none;
+}
+
+.card-note-content.card-note-content--expanded {
+  max-height: none !important;
+  overflow: visible;
 }
 
 .card-note-content::after {
@@ -40,6 +58,26 @@
   left: 0;
   bottom: 0;
   background-image: linear-gradient(rgba(41, 41, 41, 0), var(--background-secondary));
+}
+
+.card-note-expand-button {
+  position: relative;
+  left: -8px;
+  bottom: 0;
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-size: var(--font-ui-smaller);
+  color: var(--text-accent);
+  cursor: pointer;
+  z-index: 10;
+  transition: all 0.2s ease;
+  margin-top: 8px;
+  display: inline-block;
+  width: fit-content;
+}
+
+.card-note-expand-button:hover {
+  background: var(--background-modifier-hover);
 }
 
 .card-note-time {

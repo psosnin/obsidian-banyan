@@ -13,6 +13,8 @@ const NoteContentView = ({ app, fileInfo, editMode, endEdit }: { app: App, fileI
   const ref = React.useRef<HTMLDivElement>(null);
   const leaf = React.useRef<any>(null);
   const [overflow, setOverflow] = React.useState(false);
+  const [isExpanded, setIsExpanded] = React.useState(false);
+  const settings = useCombineStore((state) => state.settings);
 
   React.useEffect(() => {
     const setupView = async () => {
@@ -42,14 +44,40 @@ const NoteContentView = ({ app, fileInfo, editMode, endEdit }: { app: App, fileI
     const observer = new ResizeObserver(() => {
       const ele = ref.current?.querySelector('.view-content');
       if (ele) {
-        setOverflow(ele.scrollHeight > 500);
+        const maxHeight = settings.cardContentMaxHeight === 'expand' ? Infinity : 
+                         settings.cardContentMaxHeight === 'short' ? 160 : 300;
+        setOverflow(ele.scrollHeight > maxHeight);
       }
     });
     if (ref.current) {
       observer.observe(ref.current);
     }
     return () => observer.disconnect();
-  }, [editMode]);
+  }, [editMode, settings.cardContentMaxHeight]);
+
+  const handleExpandToggle = () => {
+    setIsExpanded(!isExpanded);
+  };
+
+  const getContentClassName = () => {
+    let className = "card-note-content";
+    
+    if (isExpanded) {
+      className += " card-note-content--expanded";
+    } else if (settings.cardContentMaxHeight === 'expand') {
+      className += " card-note-content--expand";
+    } else if (settings.cardContentMaxHeight === 'short') {
+      className += " card-note-content--short";
+    } else {
+      className += " card-note-content--normal";
+    }
+    
+    if (overflow && !isExpanded && settings.cardContentMaxHeight !== 'expand') {
+      className += " card-note-content--overflow";
+    }
+    
+    return className;
+  };
 
   if (editMode) {
     return (
@@ -66,10 +94,25 @@ const NoteContentView = ({ app, fileInfo, editMode, endEdit }: { app: App, fileI
   }
 
   return (
-    <div
-      ref={ref}
-      className={"card-note-content" + (overflow ? " card-note-content--overflow" : "")}
-    />
+    <div style={{ position: 'relative' }}>
+      <div ref={ref} className={getContentClassName()} />
+      {overflow && !isExpanded && settings.cardContentMaxHeight !== 'expand' && (
+        <div 
+          className="card-note-expand-button"
+          onClick={handleExpandToggle}
+        >
+          {i18n.t('general_expand')}
+        </div>
+      )}
+      {isExpanded && settings.cardContentMaxHeight !== 'expand' && (
+        <div 
+          className="card-note-expand-button"
+          onClick={handleExpandToggle}
+        >
+          {i18n.t('general_collapse')}
+        </div>
+      )}
+    </div>
   );
 };
 

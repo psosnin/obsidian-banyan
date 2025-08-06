@@ -1,7 +1,7 @@
 import { BanyanPluginSettings } from "src/BanyanPluginSettings";
 import { StateCreator } from "zustand";
 import { CombineState } from ".";
-import { SortType } from "src/models/Enum";
+import { CardContentMaxHeightType, SortType } from "src/models/Enum";
 
 export interface SettingsState {
     settings: BanyanPluginSettings;
@@ -21,6 +21,7 @@ export interface SettingsState {
     updateShowBacklinksInCardNote: (show: boolean) => void;
     updateUseCardNote2: (use: boolean) => void; // 新增
     updateRandomBrowse: (randomBrowse: boolean) => void; // 新增：乱序浏览开关
+    updateCardContentMaxHeight: (height: CardContentMaxHeightType) => void; // 新增：卡片内容最大高度
 }
 
 export const useSettingsStore: StateCreator<CombineState, [], [], SettingsState> = (set, get) => ({
@@ -74,5 +75,8 @@ export const useSettingsStore: StateCreator<CombineState, [], [], SettingsState>
     },
     updateRandomBrowse: (randomBrowse: boolean) => {
         get().updateSettings({ randomBrowse });
+    },
+    updateCardContentMaxHeight: (height: CardContentMaxHeightType) => {
+        get().updateSettings({ cardContentMaxHeight: height });
     },
 }); 

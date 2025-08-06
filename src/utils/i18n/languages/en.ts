@@ -15,6 +15,8 @@ export default {
     general_pin: "Pin",
     general_unpin: "Unpin",
     general_copy: "copy", // used in phrase
+    general_expand: "Expand",
+    general_collapse: "Collapse",
 
     create_note_folder_path: "Year{{year}}/Quarter{{quarter}}/Month{{month}}/Day{{day}}",
 
@@ -90,6 +92,12 @@ export default {
     setting_editor_title_mode_none: "Don't show",
     setting_editor_title_mode_filename: "As filename",
     setting_editor_title_mode_property: "As property title",
+
+    setting_card_content_max_height_name: "Card content max height",
+    setting_card_content_max_height_desc: "The maximum display height of card content area (excluding title), fold extra content",
+    setting_card_content_max_height_short: "short",
+    setting_card_content_max_height_normal: "normal",
+    setting_card_content_max_height_expand: "Expand",
 
     /* 命令和ribbon */
     add_card_note: "Add card note",

@@ -15,6 +15,8 @@ export default {
     general_pin: "置顶",
     general_unpin: "取消置顶",
     general_copy: "副本",
+    general_expand: "展开",
+    general_collapse: "折叠",
 
     create_note_folder_path: "{{year}}年/{{quarter}}季度/{{month}}月/{{day}}日",
 
@@ -90,6 +92,12 @@ export default {
     setting_editor_title_mode_none: "不显示",
     setting_editor_title_mode_filename: "作为文件名",
     setting_editor_title_mode_property: "作为属性标题",
+
+    setting_card_content_max_height_name: "卡片内容最大高度",
+    setting_card_content_max_height_desc: "卡片内容区(不包括标题)的最大显示高度，折叠过长内容",
+    setting_card_content_max_height_short: "较短",
+    setting_card_content_max_height_normal: "一般",
+    setting_card_content_max_height_expand: "不折叠",
 
     /* 命令和ribbon */
     add_card_note: "添加卡片笔记",

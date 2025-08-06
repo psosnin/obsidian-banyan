@@ -2,7 +2,7 @@ import { FilterScheme, getDefaultFilterScheme } from "./models/FilterScheme";
 import { ViewScheme } from "./models/ViewScheme";
 import { emptyTagFilter, TagFilter } from "./models/TagFilter";
 import { DefaultRandomReviewFilter, RandomReviewFilter } from "./models/RandomReviewFilters";
-import { SortType } from "./models/Enum";
+import { CardContentMaxHeightType, SortType } from "./models/Enum";
 
 export interface BanyanPluginSettings {
 	settingsVersion: number;
@@ -22,6 +22,7 @@ export interface BanyanPluginSettings {
 	showBacklinksInCardNote?: boolean;
 	useCardNote2?: boolean;
 	useZkPrefixerFormat?: boolean;
+	cardContentMaxHeight?: CardContentMaxHeightType;
 }
 
 export const CUR_SETTINGS_VERSION = 4;
@@ -49,4 +50,5 @@ export const DEFAULT_SETTINGS: BanyanPluginSettings = {
 	showBacklinksInCardNote: false,
 	useCardNote2: false,
 	useZkPrefixerFormat: false,
+	cardContentMaxHeight: 'normal',
 }

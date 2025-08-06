@@ -3,6 +3,7 @@ import BanyanPlugin from './main';
 import { i18n } from './utils/i18n';
 import FolderSuggest from './components/FolderSuggest';
 import { useCombineStore } from './store';
+import { CardContentMaxHeightType } from './models/Enum';
 
 export class BanyanSettingTab extends PluginSettingTab {
 	plugin: BanyanPlugin;
@@ -22,6 +23,7 @@ export class BanyanSettingTab extends PluginSettingTab {
         this.setupShowBacklinksSetting(containerEl);
         this.setupUseCardNote2Setting(containerEl); // 新增
         this.setupUseZkPrefixerFormatSetting(containerEl); // 新增
+        this.setupCardContentMaxHeightSetting(containerEl); // 新增
 	}
 
 	setupCardsDirectorySetting(containerEl: HTMLElement) {
@@ -140,6 +142,22 @@ export class BanyanSettingTab extends PluginSettingTab {
                     .onChange(async (value) => {
                         this.plugin.settings.useZkPrefixerFormat = value;
                         await this.plugin.saveSettings();
+                    });
+            });
+    }
+
+    setupCardContentMaxHeightSetting(containerEl: HTMLElement) {
+        const settings = useCombineStore.getState().settings;
+        new Setting(containerEl)
+            .setName(i18n.t('setting_card_content_max_height_name'))
+            .setDesc(i18n.t('setting_card_content_max_height_desc'))
+            .addDropdown(dropdown => {
+                dropdown.addOption('short', i18n.t('setting_card_content_max_height_short'))
+                    .addOption('normal', i18n.t('setting_card_content_max_height_normal'))
+                    .addOption('expand', i18n.t('setting_card_content_max_height_expand'))
+                    .setValue(settings.cardContentMaxHeight ?? 'normal')
+                    .onChange(async (value) => {
+                        useCombineStore.getState().updateCardContentMaxHeight(value as CardContentMaxHeightType);
                     });
             });
     }

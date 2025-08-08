@@ -58,7 +58,9 @@ export const useDashBoardStore: StateCreator<CombineState, [], [], DashBoardStat
                     content = stripMarkdown(content);
                     return { fileInfo, content };
                 }));
-                filtered = allLoadedContents.filter(({ content }) => content.toLowerCase().includes(keyword)).map(({ fileInfo }) => fileInfo);
+                filtered = allLoadedContents
+                    .filter(({ content, fileInfo }) => content.toLowerCase().includes(keyword) || fileInfo.file.basename.toLowerCase().includes(keyword))
+                    .map(({ fileInfo }) => fileInfo);
             }
             // tag filter
             filtered = filtered.filter((fileInfo) => {

@@ -67,9 +67,15 @@ export class BanyanSettingTab extends PluginSettingTab {
 
 	setupTitleDisplayModeSetting(containerEl: HTMLElement) {
 		const settings = useCombineStore.getState().settings;
+		const desc = document.createDocumentFragment();
+		desc.appendText(i18n.t('setting_title_display_mode_desc_1'));
+		desc.createEl('br');  
+		desc.appendText(i18n.t('setting_title_display_mode_desc_2'));
+		desc.createEl('br');  
+		desc.appendText(i18n.t('setting_title_display_mode_desc_3'));
 		new Setting(containerEl)
 			.setName(i18n.t('setting_title_display_mode_name'))
-			.setDesc(i18n.t('setting_title_display_mode_desc'))
+			.setDesc(desc)
 			.addDropdown(dropdown => {
 				dropdown.addOption('propertyOrNone', i18n.t('setting_title_display_mode_property_or_none'))
 					.addOption('propertyThenFile', i18n.t('setting_title_display_mode_property_then_file'))

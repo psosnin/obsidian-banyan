@@ -112,7 +112,6 @@ export default class BanyanPlugin extends Plugin {
 			this.settings.filterSchemes = [...this.settings.filterSchemes.map((scheme) => {
 				return { ...scheme, tagFilter: getNewFilterIfNeeded(scheme.tagFilter) };
 			})];
-			this.settings.randomNoteTagFilter = getNewFilterIfNeeded(this.settings.randomNoteTagFilter);
 		};
 		if (this.settings.settingsVersion < 3) {
 			this.settings.filterSchemes = [...this.settings.filterSchemes.map((scheme) => {

@@ -1,7 +1,7 @@
 import { BanyanPluginSettings } from "src/BanyanPluginSettings";
 import { StateCreator } from "zustand";
 import { CombineState } from ".";
-import { CardContentMaxHeightType, SortType, TitleDisplayMode } from "src/models/Enum";
+import { CardContentMaxHeightType, EditorTitleMode, SortType, TitleDisplayMode } from "src/models/Enum";
 
 export interface SettingsState {
     settings: BanyanPluginSettings;
@@ -13,11 +13,10 @@ export interface SettingsState {
     updateCardsDirectory: (directory: string) => void;
     updateOpenWhenStartObsidian: (open: boolean) => void;
     updateTitleDisplayMode: (mode: TitleDisplayMode) => void;
-    updateEditorTitleMode: (mode: 'none' | 'filename' | 'property') => void;
+    updateEditorTitleMode: (mode: EditorTitleMode) => void;
     updateCardsColumns: (columns: number) => void;
     updateSortType: (sortType: SortType) => void;
     updateFirstUseDate: (date: string) => void;
-    updateRandomNoteTagFilter: (tagFilter: any) => void;
     updateShowBacklinksInCardNote: (show: boolean) => void;
     updateUseCardNote2: (use: boolean) => void; // 新增
     updateRandomBrowse: (randomBrowse: boolean) => void; // 新增：乱序浏览开关
@@ -47,7 +46,7 @@ export const useSettingsStore: StateCreator<CombineState, [], [], SettingsState>
         get().updateSettings({ titleDisplayMode: mode });
     },
 
-    updateEditorTitleMode: (mode: 'none' | 'filename' | 'property') => {
+    updateEditorTitleMode: (mode: EditorTitleMode) => {
         get().updateSettings({ editorTitleMode: mode });
     },
 
@@ -61,10 +60,6 @@ export const useSettingsStore: StateCreator<CombineState, [], [], SettingsState>
 
     updateFirstUseDate: (date: string) => {
         get().updateSettings({ firstUseDate: date });
-    },
-
-    updateRandomNoteTagFilter: (tagFilter: any) => {
-        get().updateSettings({ randomNoteTagFilter: tagFilter });
     },
 
     updateShowBacklinksInCardNote: (show: boolean) => {

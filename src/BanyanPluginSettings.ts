@@ -1,28 +1,32 @@
 import { FilterScheme, getDefaultFilterScheme } from "./models/FilterScheme";
 import { ViewScheme } from "./models/ViewScheme";
-import { emptyTagFilter, TagFilter } from "./models/TagFilter";
 import { DefaultRandomReviewFilter, RandomReviewFilter } from "./models/RandomReviewFilters";
-import { CardContentMaxHeightType, SortType, TitleDisplayMode } from "./models/Enum";
+import { CardContentMaxHeightType, EditorTitleMode, SortType, TitleDisplayMode } from "./models/Enum";
 
 export interface BanyanPluginSettings {
+	// basic
 	settingsVersion: number;
-	cardsDirectory: string;
 	openWhenStartObsidian: boolean;
+	cardsDirectory: string;
 	cardsColumns: number;
-	titleDisplayMode: TitleDisplayMode;
-	editorTitleMode: 'none' | 'filename' | 'property';
-	randomNoteTagFilter: TagFilter;
-	firstUseDate: string;
 
-	sortType: SortType;
-	randomBrowse: boolean;
-	filterSchemes: FilterScheme[];
-	viewSchemes: ViewScheme[];
-	randomReviewFilters: RandomReviewFilter[];
+	// card note
+	titleDisplayMode: TitleDisplayMode;
+	cardContentMaxHeight?: CardContentMaxHeightType;
 	showBacklinksInCardNote?: boolean;
 	useCardNote2?: boolean;
+
+	// add note 
+	editorTitleMode: EditorTitleMode;
 	useZkPrefixerFormat?: boolean;
-	cardContentMaxHeight?: CardContentMaxHeightType;
+
+	// in app
+	sortType: SortType;
+	firstUseDate: string;
+	randomBrowse: boolean;
+	randomReviewFilters: RandomReviewFilter[];
+	filterSchemes: FilterScheme[];
+	viewSchemes: ViewScheme[];	
 }
 
 export const CUR_SETTINGS_VERSION = 4;
@@ -34,21 +38,27 @@ const getToday = () => {
 }
 
 export const DEFAULT_SETTINGS: BanyanPluginSettings = {
+	// basic
 	settingsVersion: CUR_SETTINGS_VERSION,
-	cardsDirectory: 'cards',
-	sortType: 'created',
 	openWhenStartObsidian: true,
-	titleDisplayMode: 'none',
-	editorTitleMode: 'filename',
-	filterSchemes: [getDefaultFilterScheme([])],
-	viewSchemes: [],
-	randomNoteTagFilter: emptyTagFilter(),
+	cardsDirectory: 'cards',
 	cardsColumns: 1,
+
+	// card note	
+	titleDisplayMode: 'propertyOrNone',
+	cardContentMaxHeight: 'normal',
+	showBacklinksInCardNote: false,
+	useCardNote2: false,
+
+	// add note
+	editorTitleMode: 'property',
+	useZkPrefixerFormat: false,	
+
+	// in app
+	sortType: 'created',
 	firstUseDate: getToday(),
 	randomBrowse: false,
 	randomReviewFilters: [DefaultRandomReviewFilter],
-	showBacklinksInCardNote: false,
-	useCardNote2: false,
-	useZkPrefixerFormat: false,
-	cardContentMaxHeight: 'normal',
+	filterSchemes: [getDefaultFilterScheme([])],
+	viewSchemes: [],
 }

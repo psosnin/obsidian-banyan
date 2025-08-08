@@ -3,7 +3,7 @@ import BanyanPlugin from './main';
 import { i18n } from './utils/i18n';
 import FolderSuggest from './components/FolderSuggest';
 import { useCombineStore } from './store';
-import { CardContentMaxHeightType, TitleDisplayMode } from './models/Enum';
+import { CardContentMaxHeightType, EditorTitleMode, TitleDisplayMode } from './models/Enum';
 
 export class BanyanSettingTab extends PluginSettingTab {
 	plugin: BanyanPlugin;
@@ -93,7 +93,7 @@ export class BanyanSettingTab extends PluginSettingTab {
 					.addOption('property', i18n.t('setting_editor_title_mode_property'))
 					.setValue(settings.editorTitleMode)
 					.onChange(async (value) => {
-						useCombineStore.getState().updateEditorTitleMode(value as 'none' | 'filename' | 'property');
+						useCombineStore.getState().updateEditorTitleMode(value as EditorTitleMode);
 					});
 			});
 	}

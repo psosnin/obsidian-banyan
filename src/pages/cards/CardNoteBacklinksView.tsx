@@ -1,6 +1,6 @@
 import { App } from "obsidian";
 import { Icon } from "src/components/Icon";
-import { FileInfo } from "src/models/FileInfo";
+import { createFileInfo, FileInfo } from "src/models/FileInfo";
 import { useCombineStore } from "src/store";
 import { getFrontmatterProperty } from "src/utils/frontmatterUtils";
 import * as React from "react";
@@ -54,17 +54,30 @@ const getShortestUniquePaths = (paths: string[]): Backlink[] => {
     return backlinks;
 }
 
-const getTitles = async (app: App, paths: string[], mode: TitleDisplayMode) => {
-    let backlinks = getShortestUniquePaths(paths);
-    if (mode === 'propertyOrNone' || mode === 'propertyThenFile') {
-        backlinks = await Promise.all(backlinks.map(async (backlink) => {
-            const file = app.vault.getFileByPath(backlink.path);
-            if (file) {
-                backlink.displayTitle = await getFrontmatterProperty(app, file) || backlink.displayTitle;
-            }
-            return backlink;
-        }));
+const getTitles = (app: App, paths: string[], mode: TitleDisplayMode) => {
+    const useProperty = mode === 'propertyOrNone' || mode === 'propertyThenFile';
+    if (!useProperty) {
+        return getShortestUniquePaths(paths);
     }
+    const getFileProperty = (path: string) => {
+        const file = app.vault.getFileByPath(path);
+        if (!file) return undefined;
+        const fileInfo = createFileInfo(file, app);
+        if (fileInfo?.propertyTitle && fileInfo.propertyTitle.trim().length > 0){
+            return fileInfo.propertyTitle;
+        }
+        return undefined;
+    }
+    const fileNamePaths = paths.filter(path => !getFileProperty(path));
+    const backlinks = paths
+        .map(path => {
+            const displayTitle = getFileProperty(path);
+            if (displayTitle) return {path, displayTitle};
+            return undefined;
+        })
+        .filter(item => item !== undefined)
+        .map(item => item!)
+        .concat(getShortestUniquePaths(fileNamePaths));
     return backlinks;
 };
 
@@ -75,11 +88,8 @@ const CardNoteBacklinksView = ({ app, fileInfo }: { app: App, fileInfo: FileInfo
     const [backlinks, setBacklinks] = React.useState<Backlink[]>([]);
 
     React.useEffect(() => {
-        const fetch = async () => {
-            const res = await getTitles(app, paths, mode);
-            setBacklinks(res);
-        }
-        fetch();
+        const res = getTitles(app, paths, mode);
+        setBacklinks(res);
     }, [paths.join(','), app, mode]);
 
     if (backlinks.length === 0) return null;

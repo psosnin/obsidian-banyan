@@ -1,9 +1,46 @@
+/* --- 整个面板 --- */
 .dashboard-container {
   display: flex;
   flex-direction: row;
   justify-content: center;
 }
 
-.main-container {
-  max-width: 100%;
+/* --- 主内容区 --- */
+
+/* 桌面设备 */
+@media (min-width: 768px) {
+  .main-container {
+    max-width: 100%;
+    min-width: 620px;
+  }
+
+  .main-cards {
+    display: flex;
+    gap: 16px;
+    flex: 1;
+  }
+
+  .main-cards-column {
+    width: 100%;
+    min-width: 620px;
+  }
+}
+
+/* 移动设备 */
+@media (max-width: 767px) {
+
+  .main-container {
+    width: 100%;
+  }
+
+  .main-cards-column {
+    width: 100%;
+    min-width: calc(100vw - 24px);
+  }
+}
+
+.main-cards-loading {
+  text-align: center;
+  padding: 20px;
+  color: var(--text-muted);
 }

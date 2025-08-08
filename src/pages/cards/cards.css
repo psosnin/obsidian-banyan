@@ -1,12 +1,3 @@
-/* 列表 */
-
-.main-cards-loading {
-  text-align: center;
-  padding: 20px;
-  color: var(--text-muted);
-}
-
-/* 卡片 */
 .card-note-container {
   background: var(--background-secondary);
   color: var(--text-normal);
@@ -16,7 +7,7 @@
   position: relative;
   box-shadow: 0 2px 8px #0002;
   width: 100%;
-  max-width: 600px;
+  max-width: 620px;
 }
 
 .card-note-content {
@@ -265,11 +256,6 @@
 /* 移动设备 */
 @media (max-width: 767px) {
 
-  .main-cards-column {
-    width: 100%;
-    min-width: calc(100vw - 24px);
-  }
-
   .card-note-header {
     display: flex;
     flex-direction: column;
@@ -294,17 +280,6 @@
 
 /* 宽屏设备 */
 @media (min-width: 768px) {
-
-  .main-cards {
-    display: flex;
-    gap: 16px;
-    flex: 1;
-  }
-
-  .main-cards-column {
-    width: 100%;
-    min-width: 500px;
-  }
 
   .card-note-content p {
     font-size: 0.85rem;

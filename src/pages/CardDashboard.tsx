@@ -149,7 +149,7 @@ const CardDashboardView = ({ plugin }: { plugin: BanyanPlugin }) => {
       }
       if (!dashboardRef.current) return;
       const containerWidth = dashboardRef.current.clientWidth;
-      const _showSidebar = containerWidth >= 900 ? 'normal' : 'hide';
+      const _showSidebar = containerWidth >= 920 ? 'normal' : 'hide'; // 920 是试验效果得来的
       setShowSidebar(_showSidebar);
       const currentSettings = useCombineStore.getState().settings;
       const cardsColumns = currentSettings.cardsColumns;
@@ -158,7 +158,7 @@ const CardDashboardView = ({ plugin }: { plugin: BanyanPlugin }) => {
         return;
       }
       const mainWidth = containerWidth - (_showSidebar == 'normal' ? 400 : 0);
-      const cardWidth = 500; // 使用固定的最小宽度，与CSS中的min-width保持一致
+      const cardWidth = 620;
       const cardsPadding = 24;
       const widthFor2Cols = cardWidth + cardsPadding + cardWidth;
       const cnt = mainWidth >= widthFor2Cols ? 2 : 1;

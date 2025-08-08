@@ -120,7 +120,7 @@ const AddNoteView: React.FC<AddNoteViewProps> = ({ app, plugin, onAdd }) => {
             value={title}
             rows={1}
             onChange={(e) => {
-              const newTitle = e.target.value.trim();
+              const newTitle = e.target.value;
               setTitle(newTitle);
               setIsTitleInvalid(newTitle.length > 0 && !plugin.fileUtils.legalFileName(newTitle));
             }}

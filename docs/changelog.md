@@ -1,5 +1,20 @@
 ### Changelog
 
+### 1.3.2
+
+​​Changes​​
+
+- Removed the "title" property related logic and provided a one-click migration feature to change it to the filename
+​​
+
+Optimizations​​
+
+- ​​Card View​​ - Content that is too long will now be collapsed by default and can be expanded. Users can also choose not to collapse it.
+​- ​Card View​​ - Backlinks now display filenames instead of the full path names.
+​​- Note Editor​​ - Added a title bar, which uses a default timestamp format as the title when no content is present.
+​​- Settings​​ - Improved layout and text descriptions.
+
+
 #### 1.3.1
 
 Improvements:​​

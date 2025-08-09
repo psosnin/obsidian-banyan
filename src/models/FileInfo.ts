@@ -5,7 +5,6 @@ export interface FileInfo {
   file: TFile;
   tags: string[];
   id: number;
-  propertyTitle?: string;
 }
 
 export const generateFileId = (createTime: number, randomNum?: number) => {
@@ -20,8 +19,7 @@ export const createFileInfo = (file: TFile, app: App): FileInfo | null => {
   const tags = Array.from(new Set(fileTags));
   const id = cache.frontmatter?.id;
   if (!id) return null;
-  const propertyTitle = cache.frontmatter?.title;
-  return { file, tags, id, propertyTitle } as FileInfo;
+  return { file, tags, id } as FileInfo;
 }
 
 export const ensureFileID = async (file: TFile, app: App, random?: number) => {

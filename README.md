@@ -32,6 +32,7 @@ Create custom random reviews to rediscover forgotten notes.
 ### 🎲 Random Review - Rediscover Old Notes
 - Randomly open notes to rediscover forgotten good content
 - Can limit scope, such as only notes with the `reading` tag
+You can even use random browsing to meet your past selves from different periods again
 
 ### 📊 Heat Map Statistics - Understand Your Writing Habits
 - Shows when you write the most notes using a heat map
@@ -43,7 +44,7 @@ Create custom random reviews to rediscover forgotten notes.
 - Click the icon in the left sidebar, or use `Ctrl/Cmd + P` command to open the note panel
 
 ### Add New Notes
-- In the desktop panel, there's an editing area for adding card notes where you can fill in content and tags to create notes.
+- In the desktop panel, you can create notes via the editor area.
 - Click the bulb icon in the left sidebar, or use the `Ctrl/Cmd + P` command to open a new note.
 - Notes work just like regular Obsidian notes, but there are 2 additional properties:
     - The `tags` field, where you can input tags, or you can add tags in the note body - they will all appear in the tag line of the card view.
@@ -55,10 +56,13 @@ Create custom random reviews to rediscover forgotten notes.
 
 ### Plugin Settings
 
-- The plugin's note directory defaults to `cards` to avoid conflicts with existing note directories.
-- Whether to automatically open the panel view on startup
-- Whether the panel view displays notes in one or two columns
-- Whether to show titles in card notes
+- Note directory: Defaults to `cards` to avoid conflicts with existing folders.
+- Open panel on startup: Automatically open the card panel when Obsidian starts.
+- Number of columns: On desktop, choose single or double column.
+- Show title or not
+- Card content max height: Short / Normal / Expand.
+- Show backlinks: Display notes that reference the current note at the bottom of the card.
+- Double click to edit (Desktop): Double-click a card to switch to edit view directly.
 
 ## Installation
 

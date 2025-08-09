@@ -70,14 +70,8 @@ export default {
     setting_on_open_name: "Open after start",
     setting_on_open_desc: "Enable this to open the plugin when obsidian starts.",
 
-    setting_title_display_mode_name: "Title display mode",
-    setting_title_display_mode_desc_1: "Choose how to display titles in card view.",
-    setting_title_display_mode_desc_2: "Default \"Property title or no title\", this allows you to decide whether to display the title.",
-    setting_title_display_mode_desc_3: "You can use FrontMatterTitle plugin to take the property title as the display title for the double link, or directly modify the filename.",
-    setting_title_display_mode_property_or_none: "Property title or no title",
-    setting_title_display_mode_property_then_file: "Property title or filename",
-    setting_title_display_mode_file_only: "Filename",
-    setting_title_display_mode_none: "No title",
+    setting_title_display_mode_name: "Show title",
+    setting_title_display_mode_desc: "Timestamp format title will not be displayed.",
 
     setting_col_nums_name: "Number of columns",
     setting_col_nums_desc: "When the panel is wide enough, how many columns to show.",
@@ -93,17 +87,28 @@ export default {
     setting_use_cardnote2_desc: "In editing mode, changes are saved immediately, and the confirm button is only used to return to reading mode.",
     setting_use_zk_prefixer_format_name: "Use the format in \"Unique note creator\" plugin for new notes filename",
     setting_use_zk_prefixer_format_desc: "If enabled, new notes will use the naming format from the plugin if available. Use the default format else.",
-    setting_editor_title_mode_name: "Show title",
-    setting_editor_title_mode_desc: "Whether to show the title input field in add note editor, and whether to use it as a filename or property title.",
-    setting_editor_title_mode_none: "Don't show",
-    setting_editor_title_mode_filename: "As filename",
-    setting_editor_title_mode_property: "As property title",
 
     setting_card_content_max_height_name: "Content max height",
     setting_card_content_max_height_desc: "The maximum display height of card content area (excluding title), fold extra content.",
     setting_card_content_max_height_short: "Short",
     setting_card_content_max_height_normal: "Normal",
     setting_card_content_max_height_expand: "Expand",
+
+    // migrate: frontmatter.title -> filename
+    setting_migrate_title_to_filename_name: "Migrate property title to filename",
+    setting_migrate_title_to_filename_desc: "Scan all notes in the working directory with \"title\" property, rename file to that title and remove the property.",
+    setting_migrate_title_to_filename_btn: "Start migration",
+
+    // new migrate modal
+    migrate_modal_title: "Migrate property title to filename",
+    migrate_modal_desc: "Select the notes to migrate. After start, progress will display in real time. Please backup first.",
+    migrate_select_all: "Select all / none",
+    migrate_selected_count: "Selected {{count}} / {{total}}",
+    migrate_start: "Start",
+    migrate_close: "Close",
+    migrate_progress: "Progress: done {{done}} / {{total}}, success {{success}}.",
+    migrate_empty_list: "No notes need migration.",
+    migrate_rescan: "Rescan",
 
     /* 命令和ribbon */
     add_card_note: "Add card note",
@@ -161,7 +166,7 @@ export default {
 
     create_note: "Create note",
     random_browse: "Random browse",
-    
+
     all_notes: "All notes",
 
     random_review: "Random review",

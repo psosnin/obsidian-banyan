@@ -1,7 +1,7 @@
 import { FilterScheme, getDefaultFilterScheme } from "./models/FilterScheme";
 import { ViewScheme } from "./models/ViewScheme";
 import { DefaultRandomReviewFilter, RandomReviewFilter } from "./models/RandomReviewFilters";
-import { CardContentMaxHeightType, EditorTitleMode, SortType, TitleDisplayMode } from "./models/Enum";
+import { CardContentMaxHeightType, SortType, TitleDisplayMode } from "./models/Enum";
 
 export interface BanyanPluginSettings {
 	// basic
@@ -17,7 +17,6 @@ export interface BanyanPluginSettings {
 	useCardNote2?: boolean;
 
 	// add note 
-	editorTitleMode: EditorTitleMode;
 	useZkPrefixerFormat?: boolean;
 
 	// in app
@@ -29,7 +28,7 @@ export interface BanyanPluginSettings {
 	viewSchemes: ViewScheme[];	
 }
 
-export const CUR_SETTINGS_VERSION = 4;
+export const CUR_SETTINGS_VERSION = 5;
 
 const getToday = () => {
 	const today = new Date();
@@ -44,14 +43,13 @@ export const DEFAULT_SETTINGS: BanyanPluginSettings = {
 	cardsDirectory: 'cards',
 	cardsColumns: 1,
 
-	// card note	
-	titleDisplayMode: 'propertyOrNone',
+    // card note 
+    titleDisplayMode: 'fileOnly',
 	cardContentMaxHeight: 'normal',
 	showBacklinksInCardNote: false,
 	useCardNote2: false,
 
-	// add note
-	editorTitleMode: 'property',
+    // add note
 	useZkPrefixerFormat: false,	
 
 	// in app

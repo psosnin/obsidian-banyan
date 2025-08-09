@@ -71,7 +71,7 @@ export class FileUtils {
     }    
   }
 
-  private getZkPrefixerFormat(): string | undefined {
+  public getZkPrefixerFormat(): string | undefined {
     if (!this.plugin.settings.useZkPrefixerFormat) return undefined;
     const internalPlugins = (this.app as any).internalPlugins;
     if (!internalPlugins) return undefined;
@@ -84,6 +84,36 @@ export class FileUtils {
 
   public legalFileName(fileName: string) {
     return !/[\[\]#^|]/.test(fileName);
+  }
+
+  private sanitizeFileName(rawTitle: string) {
+    // 移除/替换常见非法字符，保留与插件一致的校验
+    let name = rawTitle.trim();
+    // 替换文件路径分隔符及常见非法字符
+    name = name
+      .replace(/[\\/:*?"<>]/g, "-")
+      .replace(/[\n\r\t]/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+    if (!this.legalFileName(name)) {
+      name = name.replace(/[\[\]#^|]/g, "-");
+    }
+    // 避免空文件名
+    if (name.length === 0) name = "untitled";
+    return name;
+  }
+
+  private getSiblingUniquePath(file: TFile, baseName: string) {
+    // 在同目录下确保唯一文件名，添加 (n) 后缀
+    const parentPath = file.parent?.path ?? this.dir;
+    let candidate = normalizePath(`${parentPath}/${baseName}.md`);
+    if (!this.app.vault.getAbstractFileByPath(candidate)) return candidate;
+    let index = 1;
+    while (true) {
+      const tryPath = normalizePath(`${parentPath}/${baseName} (${index}).md`);
+      if (!this.app.vault.getAbstractFileByPath(tryPath)) return tryPath;
+      index += 1;
+    }
   }
 
   private async getNewNoteFilePath(title?: string) {
@@ -106,16 +136,15 @@ export class FileUtils {
         fileName = name;
         console.log("formated file name:", fileName);
       } else {
+        // 不赋值filename，则会使用默认格式
         new Notice(i18n.t('illegal_unique_prefix_format'));
-        console.log("formated illegal:", formatStr);
+        console.log("formated illegal:", formatStr);        
       }
     }
     
     if (fileName === "") {
-      const hour = now.getHours().toString().padStart(2, '0');
-      const minute = now.getMinutes().toString().padStart(2, '0');
-      const second = now.getSeconds().toString().padStart(2, '0');
-      fileName = `${year}-${month}-${day} ${hour}-${minute}-${second}.md`;
+      const defaultFormatStr = "YYYY-MM-DD HH-mm-ss";
+      fileName = `${moment().format(defaultFormatStr)}.md`;
     }
     const filePath = normalizePath(`${folderPath}/${fileName}`);
     return filePath;
@@ -153,33 +182,14 @@ export class FileUtils {
   }
 
   async addFile(title?: string, content?: string, tags: string[] = [], open: boolean = true) {
-    const editorTitleMode = this.plugin.settings.editorTitleMode;
-    
-    // 根据设置决定如何处理标题
-    let finalTitle: string | undefined;
-    let useAsFilename = false;
-    let useAsProperty = false;
-    
-    if (editorTitleMode === 'none') {
-      finalTitle = undefined;
-    } else if (editorTitleMode === 'filename') {
-      finalTitle = title?.trim();
-      useAsFilename = true;
-    } else if (editorTitleMode === 'property') {
-      finalTitle = title?.trim();
-      useAsProperty = true;
-    }
-    
-    const filePath = await this.getNewNoteFilePath(useAsFilename ? finalTitle : undefined);
+    const finalTitle = title?.trim();
+    const filePath = await this.getNewNoteFilePath(finalTitle);
     const file = await this.app.vault.create(filePath, content ?? '');
 
     await this.app.fileManager.processFrontMatter(file, (frontmatter) => {
       const id = generateFileId((new Date()).getTime());
       frontmatter.tags = tags; 
       frontmatter.id = id;
-      if (useAsProperty && finalTitle) {
-        frontmatter.title = finalTitle;
-      }
     });
 
     if (!open) return;
@@ -240,6 +250,54 @@ export class FileUtils {
     return files.filter(({ tags }) => isOKWithTagFilter(tags, filter));
   }
 
+  //#endregion
+
+  //#region 迁移：FrontMatter.title -> 文件名
+  getFilesWithFrontmatterTitle(): { file: TFile; title: string }[] {
+    const res: { file: TFile; title: string }[] = [];
+    const files = this.getAllRawFiles();
+    for (const file of files) {
+      const cache = this.app.metadataCache.getFileCache(file);
+      const title = (cache as any)?.frontmatter?.title;
+      if (typeof title === 'string' && title.trim().length > 0) {
+        res.push({ file, title: title.trim() });
+      }
+    }
+    return res;
+  }
+
+  async migrateFrontmatterTitleToFilename(targets?: { file: TFile; title: string }[], onProgress?: (originalPath: string, file: TFile, ok: boolean) => void) {
+    const list = targets ?? this.getFilesWithFrontmatterTitle();
+    let success = 0;
+    for (const { file, title } of list) {
+      try {
+        const originalMtime = file.stat.mtime;
+        const originalCtime = file.stat.ctime;
+        const originalPath = file.path;
+        const sanitized = this.sanitizeFileName(title);
+        const currentBase = file.basename;
+        // 目标路径（同目录）
+        let targetPath: string | null = null;
+        if (sanitized !== currentBase) {
+          targetPath = this.getSiblingUniquePath(file, sanitized);
+          await this.app.fileManager.renameFile(file, targetPath);
+        }
+        // 获取最新文件引用
+        const newFile = targetPath ? (this.app.vault.getFileByPath(targetPath) as TFile | null) : file;
+        if (!newFile) throw new Error('file not found after rename');
+        // 删除frontmatter中的title，并恢复原始ctime/mtime
+        await this.app.fileManager.processFrontMatter(newFile, (fm) => {
+          if (fm.title !== undefined) delete fm.title;
+        }, { mtime: originalMtime, ctime: originalCtime });
+        success += 1;
+        onProgress && onProgress(originalPath, newFile, true);
+      } catch (e) {
+        console.error('迁移失败', file.path, e);
+        onProgress && onProgress(file.path, file, false);
+      }
+    }
+    return { success, total: list.length };
+  }
   //#endregion
 }
 

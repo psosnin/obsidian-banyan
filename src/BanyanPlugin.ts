@@ -127,6 +127,14 @@ export default class BanyanPlugin extends Plugin {
 				};
 			})];
 		}
+		if (this.settings.settingsVersion < 5) {
+			// 移除“属性标题”相关设置：将旧值迁移为新默认
+			// titleDisplayMode: propertyOrNone/propertyThenFile -> fileOnly
+			const legacyTitleModes: any = this.settings.titleDisplayMode as any;
+			if (legacyTitleModes === 'propertyOrNone' || legacyTitleModes === 'propertyThenFile') {
+				(this.settings as any).titleDisplayMode = 'fileOnly';
+			}
+		}
 		// *** 版本更新时，在以上添加更新逻辑 ***
 		this.settings.settingsVersion = CUR_SETTINGS_VERSION;
 		await this.ensureAllFileID();

@@ -70,14 +70,8 @@ export default {
     setting_on_open_name: "启动时自动打开面板",
     setting_on_open_desc: "启用后，Obsidian 启动时会自动打开「卡片面板」。",
 
-    setting_title_display_mode_name: "标题显示模式",
-    setting_title_display_mode_desc_1: "可以选择不显示标题、显示属性标题，或显示文件名。",
-    setting_title_display_mode_desc_2: "默认「属性标题或不显示」，这使得你可以自行决定是否显示标题。",
-    setting_title_display_mode_desc_3: "可以使用 FrontMatterTitle插件 将属性标题作为双链的显示标题，也可以直接修改文件名。",
-    setting_title_display_mode_property_or_none: "属性标题或不显示",
-    setting_title_display_mode_property_then_file: "属性标题先于文件名",
-    setting_title_display_mode_file_only: "文件名",
-    setting_title_display_mode_none: "不显示",
+    setting_title_display_mode_name: "显示标题",
+    setting_title_display_mode_desc: "默认的时间戳格式标题不会显示。",
 
     setting_col_nums_name: "笔记列数",
     setting_col_nums_desc: "当面板足够宽时，最多显示多少列笔记。",
@@ -92,21 +86,31 @@ export default {
 
     setting_use_cardnote2_name: "双击进入编辑模式（仅限桌面端）",
     setting_use_cardnote2_desc: "编辑模式下改动立即保存，确认按钮仅用于恢复阅读模式。",
-    
+
     setting_use_zk_prefixer_format_name: "默认文件名使用「时间戳笔记生成器」的格式",
-    setting_use_zk_prefixer_format_desc: "开启后，新建笔记的文件名会使用时间戳笔记插件的命名格式。关闭则使用默认格式。",
-    
-    setting_editor_title_mode_name: "显示标题",
-    setting_editor_title_mode_desc: "编辑区是否显示标题输入框，输入结果作为标题属性还是文件名。",
-    setting_editor_title_mode_none: "不显示",
-    setting_editor_title_mode_filename: "作为文件名",
-    setting_editor_title_mode_property: "作为属性标题",
+    setting_use_zk_prefixer_format_desc: "开启后，新建笔记的默认文件名会使用时间戳笔记插件的命名格式。关闭则使用默认格式。",
 
     setting_card_content_max_height_name: "内容最大高度",
     setting_card_content_max_height_desc: "内容区(不包括标题)的最大显示高度，内容过长时折叠。",
     setting_card_content_max_height_short: "较短",
     setting_card_content_max_height_normal: "一般",
     setting_card_content_max_height_expand: "不折叠",
+
+    // 迁移：属性title -> 文件名
+    setting_migrate_title_to_filename_name: "迁移属性标题为文件名",
+    setting_migrate_title_to_filename_desc: "扫描「笔记目录」中含有属性含有“title”的笔记，将其作为文件名，并删除该属性。",
+    setting_migrate_title_to_filename_btn: "开始迁移",
+
+    // 新迁移弹窗
+    migrate_modal_title: "迁移属性标题到文件名",
+    migrate_modal_desc: "以防万一，建议先备份笔记。",
+    migrate_select_all: "全选/全不选",
+    migrate_selected_count: "已选择 {{count}} / {{total}}",
+    migrate_start: "开始",
+    migrate_close: "关闭",
+    migrate_progress: "进度：完成 {{done}} / {{total}} 条，成功 {{success}} 条。",
+    migrate_empty_list: "没有需要迁移的笔记。",
+    migrate_rescan: "重新检测",
 
     /* 命令和ribbon */
     add_card_note: "添加卡片笔记",
@@ -164,7 +168,7 @@ export default {
 
     create_note: "创建笔记",
     random_browse: "乱序浏览",
-    
+
     all_notes: "所有笔记",
 
     random_review: "随机回顾",

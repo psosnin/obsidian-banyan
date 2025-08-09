@@ -1,7 +1,8 @@
 import { BanyanPluginSettings } from "src/BanyanPluginSettings";
 import { StateCreator } from "zustand";
 import { CombineState } from ".";
-import { CardContentMaxHeightType, EditorTitleMode, SortType, TitleDisplayMode } from "src/models/Enum";
+import { CardContentMaxHeightType, SortType, TitleDisplayMode } from "src/models/Enum";
+import moment from "moment";
 
 export interface SettingsState {
     settings: BanyanPluginSettings;
@@ -13,7 +14,6 @@ export interface SettingsState {
     updateCardsDirectory: (directory: string) => void;
     updateOpenWhenStartObsidian: (open: boolean) => void;
     updateTitleDisplayMode: (mode: TitleDisplayMode) => void;
-    updateEditorTitleMode: (mode: EditorTitleMode) => void;
     updateCardsColumns: (columns: number) => void;
     updateSortType: (sortType: SortType) => void;
     updateFirstUseDate: (date: string) => void;
@@ -21,6 +21,9 @@ export interface SettingsState {
     updateUseCardNote2: (use: boolean) => void; // 新增
     updateRandomBrowse: (randomBrowse: boolean) => void; // 新增：乱序浏览开关
     updateCardContentMaxHeight: (height: CardContentMaxHeightType) => void; // 新增：卡片内容最大高度
+
+    // 业务逻辑：是否显示卡片标题（基于当前设置与文件名）
+    shouldShowTitle: (basename: string) => boolean;
 }
 
 export const useSettingsStore: StateCreator<CombineState, [], [], SettingsState> = (set, get) => ({
@@ -44,10 +47,6 @@ export const useSettingsStore: StateCreator<CombineState, [], [], SettingsState>
 
     updateTitleDisplayMode: (mode: TitleDisplayMode) => {
         get().updateSettings({ titleDisplayMode: mode });
-    },
-
-    updateEditorTitleMode: (mode: EditorTitleMode) => {
-        get().updateSettings({ editorTitleMode: mode });
     },
 
     updateCardsColumns: (columns: number) => {
@@ -74,4 +73,11 @@ export const useSettingsStore: StateCreator<CombineState, [], [], SettingsState>
     updateCardContentMaxHeight: (height: CardContentMaxHeightType) => {
         get().updateSettings({ cardContentMaxHeight: height });
     },
-}); 
+
+    shouldShowTitle: (basename: string) => {
+        const mode = get().settings.titleDisplayMode;
+        if (mode === 'none') return false;
+        const formatStr = get().plugin.fileUtils.getZkPrefixerFormat() || "YYYY-MM-DD HH-mm-ss";
+        return !moment(basename, formatStr, true).isValid();
+    },
+});

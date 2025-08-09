@@ -28,6 +28,9 @@ export class ConfirmModal extends Modal {
                 <ConfirmContainer props={this.props} close={() => { this.close() }} />
             </React.StrictMode>
         );
+        // 禁止点击遮罩关闭
+        this.modalEl.onclick = (e) => { e.stopPropagation(); };
+        (this as any).shouldRestoreSelection = false;
     }
 
     onClose() {

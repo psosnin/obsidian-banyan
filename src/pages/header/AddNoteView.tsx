@@ -110,8 +110,7 @@ const AddNoteView: React.FC<AddNoteViewProps> = ({ app, plugin, onAdd }) => {
 
   return (
     <div className={"add-note-container" + (focused ? " add-note-container--focusd" : "")} >
-      {settings.editorTitleMode !== 'none' && (
-        <div className={`add-note-title ${isTitleInvalid ? 'add-note-title-input--invalid' : ''}`}>
+      <div className={`add-note-title ${isTitleInvalid ? 'add-note-title-input--invalid' : ''}`}>
           <textarea
             ref={textareaRef}
             onFocus={() => setTitleFocused(true)}
@@ -132,8 +131,7 @@ const AddNoteView: React.FC<AddNoteViewProps> = ({ app, plugin, onAdd }) => {
               }
             }}
           />
-        </div>
-      )}
+      </div>
       <div className="add-note-content-container" onClick={(e) => {
         editor?.focus();
       }}>

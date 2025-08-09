@@ -1,10 +1,8 @@
 import { App } from "obsidian";
 import { Icon } from "src/components/Icon";
-import { createFileInfo, FileInfo } from "src/models/FileInfo";
+import { FileInfo } from "src/models/FileInfo";
 import { useCombineStore } from "src/store";
-import { getFrontmatterProperty } from "src/utils/frontmatterUtils";
 import * as React from "react";
-import { TitleDisplayMode } from "src/models/Enum";
 
 interface Backlink {
     path: string;
@@ -54,43 +52,19 @@ const getShortestUniquePaths = (paths: string[]): Backlink[] => {
     return backlinks;
 }
 
-const getTitles = (app: App, paths: string[], mode: TitleDisplayMode) => {
-    const useProperty = mode === 'propertyOrNone' || mode === 'propertyThenFile';
-    if (!useProperty) {
-        return getShortestUniquePaths(paths);
-    }
-    const getFileProperty = (path: string) => {
-        const file = app.vault.getFileByPath(path);
-        if (!file) return undefined;
-        const fileInfo = createFileInfo(file, app);
-        if (fileInfo?.propertyTitle && fileInfo.propertyTitle.trim().length > 0){
-            return fileInfo.propertyTitle;
-        }
-        return undefined;
-    }
-    const fileNamePaths = paths.filter(path => !getFileProperty(path));
-    const backlinks = paths
-        .map(path => {
-            const displayTitle = getFileProperty(path);
-            if (displayTitle) return {path, displayTitle};
-            return undefined;
-        })
-        .filter(item => item !== undefined)
-        .map(item => item!)
-        .concat(getShortestUniquePaths(fileNamePaths));
-    return backlinks;
+const getTitles = (app: App, paths: string[]) => {
+    return getShortestUniquePaths(paths);
 };
 
 const CardNoteBacklinksView = ({ app, fileInfo }: { app: App, fileInfo: FileInfo }) => {
     const backlinksMap = useCombineStore((state) => state.backlinksMap);
-    const mode = useCombineStore((state) => state.settings.titleDisplayMode);
     const paths = backlinksMap[fileInfo.file.path] || [];
     const [backlinks, setBacklinks] = React.useState<Backlink[]>([]);
 
     React.useEffect(() => {
-        const res = getTitles(app, paths, mode);
+        const res = getTitles(app, paths);
         setBacklinks(res);
-    }, [paths.join(','), app, mode]);
+    }, [paths.join(','), app]);
 
     if (backlinks.length === 0) return null;
 

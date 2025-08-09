@@ -7,7 +7,6 @@ import { FileInfo } from "src/models/FileInfo";
 import { createEmptySearchFilterScheme } from "src/models/FilterScheme";
 import { Icon } from "src/components/Icon";
 import CardNoteBacklinksView from "./CardNoteBacklinksView";
-import { getDisplayTitle } from "src/utils/frontmatterUtils";
 
 const NoteContentView = ({ app, fileInfo, editMode, endEdit }: { app: App, fileInfo: FileInfo, editMode: boolean, endEdit: () => void }) => {
   const ref = React.useRef<HTMLDivElement>(null);
@@ -130,15 +129,7 @@ const CardNote2 = ({ fileInfo }: { fileInfo: FileInfo }) => {
   const deleteEditingFile = useCombineStore((state) => state.deleteEditingFile);
 
   const [editMode, setEditMode] = React.useState(false);
-  const [displayTitle, setDisplayTitle] = React.useState<string | null>(null);
-
-  React.useEffect(() => {
-    const loadTitle = async () => {      
-      const title = await getDisplayTitle(app, fileInfo.file, settings.titleDisplayMode);
-      setDisplayTitle(title);
-    };
-    loadTitle();
-  }, [app, fileInfo.file, settings.titleDisplayMode, editMode]);
+  const shouldShowTitle = useCombineStore((state) => state.shouldShowTitle);
 
   const handleEditStart = React.useCallback(() => {
     addEditingFile(fileInfo.id);
@@ -166,7 +157,7 @@ const CardNote2 = ({ fileInfo }: { fileInfo: FileInfo }) => {
     >
       {!editMode && <div className="card-note-header">
         <div className="card-note-time">{isPinned ? `${i18n.t('general_pin')} · ` : ""}{isCreated ? i18n.t('created_at') : i18n.t('updated_at')} {new Date(isCreated ? fileInfo.file.stat.ctime : fileInfo.file.stat.mtime).toLocaleString()}</div>
-        {displayTitle && <div className="card-note-title"><h3>{displayTitle}</h3></div>}
+        {shouldShowTitle(fileInfo.file.basename) && <div className="card-note-title"><h3>{fileInfo.file.basename}</h3></div>}
         {tags.length > 0 && <div className="card-note-tags"> {tags.map((tag) =>
           <div className="card-note-tag" key={tag} onClick={() => {
             const fs = createEmptySearchFilterScheme();

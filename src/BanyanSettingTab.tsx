@@ -1,9 +1,10 @@
-import { App, Platform, PluginSettingTab, Setting } from 'obsidian';
+import { App, Platform, PluginSettingTab, Setting, Notice } from 'obsidian';
 import BanyanPlugin from './main';
 import { i18n } from './utils/i18n';
 import FolderSuggest from './components/FolderSuggest';
 import { useCombineStore } from './store';
-import { CardContentMaxHeightType, EditorTitleMode, TitleDisplayMode } from './models/Enum';
+import { CardContentMaxHeightType} from './models/Enum';
+import { openMigrateTitleModal } from './components/MigrateTitleModal';
 
 export class BanyanSettingTab extends PluginSettingTab {
 	plugin: BanyanPlugin;
@@ -31,8 +32,8 @@ export class BanyanSettingTab extends PluginSettingTab {
 
 		// 编辑
 		new Setting(containerEl).setName(i18n.t('setting_header_editor')).setHeading();
-		this.setupEditorTitleModeSetting(containerEl);
 		this.setupUseZkPrefixerFormatSetting(containerEl);
+		this.setupMigrateTitleToFilenameSetting(containerEl);
 	}
 
 	setupCardsDirectorySetting(containerEl: HTMLElement) {
@@ -67,39 +68,13 @@ export class BanyanSettingTab extends PluginSettingTab {
 
 	setupTitleDisplayModeSetting(containerEl: HTMLElement) {
 		const settings = useCombineStore.getState().settings;
-		const desc = document.createDocumentFragment();
-		desc.appendText(i18n.t('setting_title_display_mode_desc_1'));
-		desc.createEl('br');  
-		desc.appendText(i18n.t('setting_title_display_mode_desc_2'));
-		desc.createEl('br');  
-		desc.appendText(i18n.t('setting_title_display_mode_desc_3'));
 		new Setting(containerEl)
 			.setName(i18n.t('setting_title_display_mode_name'))
-			.setDesc(desc)
-			.addDropdown(dropdown => {
-				dropdown.addOption('propertyOrNone', i18n.t('setting_title_display_mode_property_or_none'))
-					.addOption('propertyThenFile', i18n.t('setting_title_display_mode_property_then_file'))
-					.addOption('fileOnly', i18n.t('setting_title_display_mode_file_only'))
-					.addOption('none', i18n.t('setting_title_display_mode_none'))
-					.setValue(settings.titleDisplayMode)
+			.setDesc(i18n.t('setting_title_display_mode_desc'))
+			.addToggle(toggle => {
+				toggle.setValue(settings.titleDisplayMode !== 'none')
 					.onChange(async (value) => {
-						useCombineStore.getState().updateTitleDisplayMode(value as TitleDisplayMode);
-					});
-			});
-	}
-
-	setupEditorTitleModeSetting(containerEl: HTMLElement) {
-		const settings = useCombineStore.getState().settings;
-		new Setting(containerEl)
-			.setName(i18n.t('setting_editor_title_mode_name'))
-			.setDesc(i18n.t('setting_editor_title_mode_desc'))
-			.addDropdown(dropdown => {
-				dropdown.addOption('none', i18n.t('setting_editor_title_mode_none'))
-					.addOption('filename', i18n.t('setting_editor_title_mode_filename'))
-					.addOption('property', i18n.t('setting_editor_title_mode_property'))
-					.setValue(settings.editorTitleMode)
-					.onChange(async (value) => {
-						useCombineStore.getState().updateEditorTitleMode(value as EditorTitleMode);
+						useCombineStore.getState().updateTitleDisplayMode(value ? 'fileOnly' : 'none');
 					});
 			});
 	}
@@ -175,6 +150,18 @@ export class BanyanSettingTab extends PluginSettingTab {
 						useCombineStore.getState().updateCardContentMaxHeight(value as CardContentMaxHeightType);
 					});
 			});
+	}
+
+	setupMigrateTitleToFilenameSetting(containerEl: HTMLElement) {
+        new Setting(containerEl)
+            .setName(i18n.t('setting_migrate_title_to_filename_name'))
+            .setDesc(i18n.t('setting_migrate_title_to_filename_desc'))
+            .addButton(btn => {
+                btn.setButtonText(i18n.t('setting_migrate_title_to_filename_btn'))
+                    .onClick(async () => {
+                        openMigrateTitleModal({ app: this.app, plugin: this.plugin });
+                    });
+            });
 	}
 
 }

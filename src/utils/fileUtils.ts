@@ -4,6 +4,7 @@ import { createFileInfo, FileInfo, generateFileId } from "src/models/FileInfo";
 import { TagFilter, isOKWithTagFilter } from "src/models/TagFilter";
 import { i18n } from "./i18n";
 import moment from "moment";
+import { legalFileName } from "./utils";
 
 const PlaceholderFileName = "banyan_editor_placeholder.md";
 
@@ -82,10 +83,6 @@ export class FileUtils {
     return format;
   }
 
-  public legalFileName(fileName: string) {
-    return !/[\[\]#^|]/.test(fileName);
-  }
-
   private sanitizeFileName(rawTitle: string) {
     // 移除/替换常见非法字符，保留与插件一致的校验
     let name = rawTitle.trim();
@@ -95,7 +92,7 @@ export class FileUtils {
       .replace(/[\n\r\t]/g, " ")
       .replace(/\s+/g, " ")
       .trim();
-    if (!this.legalFileName(name)) {
+    if (!legalFileName(name)) {
       name = name.replace(/[\[\]#^|]/g, "-");
     }
     // 避免空文件名
@@ -128,11 +125,11 @@ export class FileUtils {
     let fileName: string = "";
     
     // 如果有标题且标题合法，使用标题作为文件名
-    if (title && title.trim() && this.legalFileName(title.trim())) {
+    if (title && title.trim() && legalFileName(title.trim())) {
       fileName = `${title.trim()}.md`;
     } else if (formatStr) {
       const name = `${moment().format(formatStr)}.md`;
-      if (this.legalFileName(name)) {
+      if (legalFileName(name)) {
         fileName = name;
         console.log("formated file name:", fileName);
       } else {

@@ -5,6 +5,7 @@ import TagInput from "src/components/TagInput";
 import BanyanPlugin from "src/main";
 import { i18n } from "src/utils/i18n";
 import { useCombineStore } from "src/store";
+import { legalFileName } from "src/utils/utils";
 
 interface AddNoteViewProps {
   app: App;
@@ -121,7 +122,7 @@ const AddNoteView: React.FC<AddNoteViewProps> = ({ app, plugin, onAdd }) => {
             onChange={(e) => {
               const newTitle = e.target.value;
               setTitle(newTitle);
-              setIsTitleInvalid(newTitle.length > 0 && !plugin.fileUtils.legalFileName(newTitle));
+              setIsTitleInvalid(newTitle.length > 0 && !legalFileName(newTitle));
             }}
             onKeyDown={(e) => {
               // 防止用户在标题输入换行符
@@ -151,7 +152,7 @@ const AddNoteView: React.FC<AddNoteViewProps> = ({ app, plugin, onAdd }) => {
             if (body.trim().length === 0 && tags.length === 0 && _title.length === 0) return;
             
             // 检查标题合法性
-            if (_title && !plugin.fileUtils.legalFileName(_title)) {
+            if (_title && !legalFileName(_title)) {
               new Notice(i18n.t('illegal_title_chars'));
               return;
             } 

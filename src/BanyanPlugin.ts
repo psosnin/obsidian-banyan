@@ -149,6 +149,12 @@ export default class BanyanPlugin extends Plugin {
 				(this.settings as any).titleDisplayMode = 'fileOnly';
 			}
 		}
+		if (this.settings.settingsVersion < 6) {
+			this.settings.showAddNoteRibbonIcon = true;
+			this.settings.filterSchemesExpanded = true;
+			this.settings.randomReviewExpanded = true;
+			this.settings.viewSchemesExpanded = true;
+		}
 		// *** 版本更新时，在以上添加更新逻辑 ***
 		this.settings.settingsVersion = CUR_SETTINGS_VERSION;
 		await this.ensureAllFileID();

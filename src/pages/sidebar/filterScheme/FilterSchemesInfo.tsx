@@ -26,6 +26,10 @@ export const FilterSchemesInfo = () => {
     const [dragOverItem, setDragOverItem] = React.useState<{ scheme: FilterScheme, position: 'before' | 'inside' | 'after' } | null>(null);
     // 存储展开状态的方案ID
     const [expandedSchemeIds, setExpandedSchemeIds] = React.useState<number[]>([]);
+    
+    // 从设置中获取展开状态
+    const filterSchemesExpanded = useCombineStore((state) => state.settings.filterSchemesExpanded);
+    const updateFilterSchemesExpanded = useCombineStore((state) => state.updateFilterSchemesExpanded);
 
     const handleCreateFilterScheme = (parentId: number | null = null) => {
         const maxId = getMaxSchemeId(filterSchemes);
@@ -159,6 +163,11 @@ export const FilterSchemesInfo = () => {
             setExpandedSchemeIds([...expandedSchemeIds, schemeId]);
         }
     };
+    
+    // 切换整个FilterSchemes的展开/折叠状态
+    const toggleFilterSchemesExpanded = () => {
+        updateFilterSchemesExpanded(!filterSchemesExpanded);
+    };
 
     const filterSchemeBtn = (scheme: FilterScheme, indentLevel: number) => {
         const hasChildren = getChildSchemes(scheme.id).length > 0;
@@ -217,8 +226,16 @@ export const FilterSchemesInfo = () => {
     return (
         <div className='filter-scheme-container'>
             <div className='filter-scheme-header'>
-                <div className='filter-scheme-header-title'>
-                    <span>{i18n.t('filter_schemes')}</span>
+                <div className='filter-scheme-header-left'>
+                    <div className='filter-scheme-header-toggle'>
+                        <button className='filter-scheme-header-toggle-btn clickable-icon'
+                            onClick={toggleFilterSchemesExpanded}>
+                            <Icon name={filterSchemesExpanded ? 'chevron-down' : 'chevron-right'} size='m' color='var(--interactive-accent)' />
+                        </button>
+                    </div>
+                    <div className='filter-scheme-header-title'>
+                        <span>{i18n.t('filter_schemes')}</span>
+                    </div>
                 </div>
                 <div className='filter-scheme-header-add'>
                     <button className='filter-scheme-header-add-btn clickable-icon'
@@ -227,9 +244,11 @@ export const FilterSchemesInfo = () => {
                     </button>
                 </div>
             </div>
-            <div className='filter-scheme-list'>
-                {renderSchemeList()}
-            </div>
+            {filterSchemesExpanded && (
+                <div className='filter-scheme-list'>
+                    {renderSchemeList()}
+                </div>
+            )}
         </div>
     );
 }

@@ -33,6 +33,31 @@
     align-items: center;
 }
 
+.filter-scheme-header-left {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.filter-scheme-header-toggle {
+    margin-right: 8px;
+}
+
+.filter-scheme-header-toggle-btn {
+    padding: 2px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.filter-scheme-header-toggle-btn:hover {
+    background-color: var(--background-modifier-hover);
+}
+
 .filter-scheme-header-title {
     font-size: var(--font-smaller);
     color: var(--interactive-accent);

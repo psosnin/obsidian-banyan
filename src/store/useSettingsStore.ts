@@ -21,6 +21,11 @@ export interface SettingsState {
     updateUseCardNote2: (use: boolean) => void; // 新增
     updateRandomBrowse: (randomBrowse: boolean) => void; // 新增：乱序浏览开关
     updateCardContentMaxHeight: (height: CardContentMaxHeightType) => void; // 新增：卡片内容最大高度
+    
+    // UI state updates
+    updateFilterSchemesExpanded: (expanded: boolean) => void;
+    updateRandomReviewExpanded: (expanded: boolean) => void;
+    updateViewSchemesExpanded: (expanded: boolean) => void;
 
     // 业务逻辑：是否显示卡片标题（基于当前设置与文件名）
     shouldShowTitle: (basename: string) => boolean;
@@ -72,6 +77,17 @@ export const useSettingsStore: StateCreator<CombineState, [], [], SettingsState>
     },
     updateCardContentMaxHeight: (height: CardContentMaxHeightType) => {
         get().updateSettings({ cardContentMaxHeight: height });
+    },
+    
+    // UI state updates
+    updateFilterSchemesExpanded: (expanded: boolean) => {
+        get().updateSettings({ filterSchemesExpanded: expanded });
+    },
+    updateRandomReviewExpanded: (expanded: boolean) => {
+        get().updateSettings({ randomReviewExpanded: expanded });
+    },
+    updateViewSchemesExpanded: (expanded: boolean) => {
+        get().updateSettings({ viewSchemesExpanded: expanded });
     },
 
     shouldShowTitle: (basename: string) => {

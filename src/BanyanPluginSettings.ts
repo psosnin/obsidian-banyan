@@ -26,10 +26,15 @@ export interface BanyanPluginSettings {
 	randomBrowse: boolean;
 	randomReviewFilters: RandomReviewFilter[];
 	filterSchemes: FilterScheme[];
-	viewSchemes: ViewScheme[];	
+	viewSchemes: ViewScheme[];
+	
+	// UI state
+	filterSchemesExpanded: boolean;
+	randomReviewExpanded: boolean;
+	viewSchemesExpanded: boolean;	
 }
 
-export const CUR_SETTINGS_VERSION = 5;
+export const CUR_SETTINGS_VERSION = 6;
 
 const getToday = () => {
 	const today = new Date();
@@ -61,4 +66,9 @@ export const DEFAULT_SETTINGS: BanyanPluginSettings = {
 	randomReviewFilters: [DefaultRandomReviewFilter],
 	filterSchemes: [getDefaultFilterScheme([])],
 	viewSchemes: [],
+	
+	// UI state
+	filterSchemesExpanded: true,
+	randomReviewExpanded: true,
+	viewSchemesExpanded: true,
 }

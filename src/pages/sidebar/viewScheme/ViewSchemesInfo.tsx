@@ -20,6 +20,10 @@ export const ViewSchemesInfo = () => {
     const deleteViewScheme = useCombineStore((state) => state.deleteViewScheme);
     const [draggedIndex, setDraggedIndex] = React.useState<number | null>(null);
     const [dragOverIndex, setDragOverIndex] = React.useState<number | null>(null);
+    
+    // 从设置中获取展开状态
+    const viewSchemesExpanded = useCombineStore((state) => state.settings.viewSchemesExpanded);
+    const updateViewSchemesExpanded = useCombineStore((state) => state.updateViewSchemesExpanded);
 
     const handleCreateViewScheme = () => {
         const maxId = viewSchemes.length > 0 ? Math.max(...viewSchemes.map(s => s.id)) : 0;
@@ -98,12 +102,25 @@ export const ViewSchemesInfo = () => {
         setDraggedIndex(null);
         setDragOverIndex(null);
     };
+    
+    // 切换ViewSchemes的展开/折叠状态
+    const toggleViewSchemesExpanded = () => {
+        updateViewSchemesExpanded(!viewSchemesExpanded);
+    };
 
     return (
         <div className='view-scheme-container'>
             <div className='view-scheme-header'>
-                <div className='view-scheme-header-title'>
-                    <span>{i18n.t('view_schemes')}</span>
+                <div className='view-scheme-header-left'>
+                    <div className='view-scheme-header-toggle'>
+                        <button className='view-scheme-header-toggle-btn clickable-icon'
+                            onClick={toggleViewSchemesExpanded}>
+                            <Icon name={viewSchemesExpanded ? 'chevron-down' : 'chevron-right'} size='m' color='var(--interactive-accent)' />
+                        </button>
+                    </div>
+                    <div className='view-scheme-header-title'>
+                        <span>{i18n.t('view_schemes')}</span>
+                    </div>
                 </div>
                 <div className='view-scheme-header-add'>
                     <button className='view-scheme-header-add-btn clickable-icon'
@@ -112,31 +129,33 @@ export const ViewSchemesInfo = () => {
                     </button>
                 </div>
             </div>
-            <div className='view-scheme-list'>
-                {viewSchemes.map((scheme, index) => (
-                    <div
-                        key={scheme.id}
-                        draggable
-                        onDragStart={() => handleDragStart(index)}
-                        onDragOver={(e) => handleDragOver(index, e)}
-                        onDrop={() => handleDrop(index)}
-                        onDragEnd={() => handleDragEnd()}
-                        className={`view-scheme-item ${
-                            draggedIndex === index ? 'view-scheme-item-dragged' : ''
-                            } ${
-                            dragOverIndex === index && draggedIndex !== null ? 'view-scheme-item-dragover' : ''
-                            }`}>
-                        <SidebarButton
-                            label={scheme.name}
-                            selected={curViewSchemeID === scheme.id}
-                            onClick={() => setCurScheme(scheme)}
-                            rightIconName='ellipsis'
-                            rightLabel={`${scheme.files.length}`}
-                            onClickRightIcon={(e) => handleViewSchemeClickMore(e, index)}
-                        />
-                    </div>
-                ))}
-            </div>
+            {viewSchemesExpanded && (
+                <div className='view-scheme-list'>
+                    {viewSchemes.map((scheme, index) => (
+                        <div
+                            key={scheme.id}
+                            draggable
+                            onDragStart={() => handleDragStart(index)}
+                            onDragOver={(e) => handleDragOver(index, e)}
+                            onDrop={() => handleDrop(index)}
+                            onDragEnd={() => handleDragEnd()}
+                            className={`view-scheme-item ${
+                                draggedIndex === index ? 'view-scheme-item-dragged' : ''
+                                } ${
+                                dragOverIndex === index && draggedIndex !== null ? 'view-scheme-item-dragover' : ''
+                                }`}>
+                            <SidebarButton
+                                label={scheme.name}
+                                selected={curViewSchemeID === scheme.id}
+                                onClick={() => setCurScheme(scheme)}
+                                rightIconName='ellipsis'
+                                rightLabel={`${scheme.files.length}`}
+                                onClickRightIcon={(e) => handleViewSchemeClickMore(e, index)}
+                            />
+                        </div>
+                    ))}
+                </div>
+            )}
         </div>
     );
 }

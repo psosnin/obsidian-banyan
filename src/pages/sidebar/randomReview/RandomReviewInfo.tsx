@@ -18,6 +18,10 @@ export const RandomReviewInfo = () => {
     const reorderRandomReviewFilters = useCombineStore((state) => state.reorderRandomReviewFilters);
     const [draggedIndex, setDraggedIndex] = React.useState<number | null>(null);
     const [dragOverIndex, setDragOverIndex] = React.useState<number | null>(null);
+    
+    // 从设置中获取展开状态
+    const randomReviewExpanded = useCombineStore((state) => state.settings.randomReviewExpanded);
+    const updateRandomReviewExpanded = useCombineStore((state) => state.updateRandomReviewExpanded);
 
     const handleCreateFilter = () => {
         const maxId = randomReviewFilters.length === 0 ? DefaultRandomReviewFilterID : Math.max(...randomReviewFilters.map(f => f.id));
@@ -100,6 +104,11 @@ export const RandomReviewInfo = () => {
     const handleSelectFilter = (filter: RandomReviewFilter) => {
         plugin.fileUtils.openRandomFile(filter.tagFilter);
     };
+    
+    // 切换RandomReview的展开/折叠状态
+    const toggleRandomReviewExpanded = () => {
+        updateRandomReviewExpanded(!randomReviewExpanded);
+    };
 
     const icons = React.useMemo(() => ['dice', 'shuffle', 'dices', 'dice-6',
         'dice-5', 'dice-4', 'dice-3', 'dice-2', 'dice-1'], []);
@@ -107,8 +116,16 @@ export const RandomReviewInfo = () => {
     return (
         <div className='random-review-container'>
             <div className='random-review-header'>
-                <div className='random-review-header-title'>
-                    <span>{i18n.t('random_review')}</span>
+                <div className='random-review-header-left'>
+                    <div className='random-review-header-toggle'>
+                        <button className='random-review-header-toggle-btn clickable-icon'
+                            onClick={toggleRandomReviewExpanded}>
+                            <Icon name={randomReviewExpanded ? 'chevron-down' : 'chevron-right'} size='m' color='var(--interactive-accent)' />
+                        </button>
+                    </div>
+                    <div className='random-review-header-title'>
+                        <span>{i18n.t('random_review')}</span>
+                    </div>
                 </div>
                 <div className='random-review-header-add'>
                     <button className='random-review-header-add-btn clickable-icon'
@@ -117,26 +134,28 @@ export const RandomReviewInfo = () => {
                     </button>
                 </div>
             </div>
-            <div className='random-review-list'>
-                {randomReviewFilters.map((filter, index) => (
-                    <div
-                        key={filter.id}
-                        draggable
-                        onDragStart={() => handleDragStart(index)}
-                        onDragOver={(e) => handleDragOver(index, e)}
-                        onDrop={() => handleDrop(index)}
-                        onDragEnd={() => handleDragEnd()}
-                        className={`random-review-item ${draggedIndex === index ? 'random-review-item-dragged' : ''} ${dragOverIndex === index && draggedIndex !== null ? 'random-review-item-dragover' : ''}`}>
-                        <SidebarButton
-                            leftIconName={icons[filter.id % icons.length]}
-                            label={filter.name}
-                            onClick={() => handleSelectFilter(filter)}
-                            rightIconName='ellipsis'
-                            onClickRightIcon={(e) => handleClickMore(e, index)}
-                        />
-                    </div>
-                ))}
-            </div>
+            {randomReviewExpanded && (
+                <div className='random-review-list'>
+                    {randomReviewFilters.map((filter, index) => (
+                        <div
+                            key={filter.id}
+                            draggable
+                            onDragStart={() => handleDragStart(index)}
+                            onDragOver={(e) => handleDragOver(index, e)}
+                            onDrop={() => handleDrop(index)}
+                            onDragEnd={() => handleDragEnd()}
+                            className={`random-review-item ${draggedIndex === index ? 'random-review-item-dragged' : ''} ${dragOverIndex === index && draggedIndex !== null ? 'random-review-item-dragover' : ''}`}>
+                            <SidebarButton
+                                leftIconName={icons[filter.id % icons.length]}
+                                label={filter.name}
+                                onClick={() => handleSelectFilter(filter)}
+                                rightIconName='ellipsis'
+                                onClickRightIcon={(e) => handleClickMore(e, index)}
+                            />
+                        </div>
+                    ))}
+                </div>
+            )}
         </div>
     );
 };

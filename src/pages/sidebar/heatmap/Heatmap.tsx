@@ -38,7 +38,7 @@ export const Heatmap = ({ onCickDate }: {
                 tooltipDataAttrs={(value: HeatmapData): { [key: string]: string } => {
                     return {
                         'data-tooltip-id': 'my-tooltip',
-                        'data-tooltip-content': value.count != undefined && value.date != undefined ? `${value.count} ${i18n.t(sortType == 'created' ? 'notes_created_at' : 'notes_modified_at')} ${value.date}` : '',
+                        'data-tooltip-content': value.count != undefined && value.date != undefined ? `${value.count} ${i18n.t((sortType === 'created' || sortType === 'earliestCreated') ? 'notes_created_at' : 'notes_modified_at')} ${value.date}` : '',
                     };
                 }}
                 showWeekdayLabels={false}
@@ -65,7 +65,7 @@ export const getHeatmapValues = (fileInfos: FileInfo[], sortType: SortType) => {
     const valueMap = fileInfos
         .map(f => f.file.stat)
         .map(stat => {
-            const date = new Date(sortType == 'created' ? stat.ctime : stat.mtime);
+            const date = new Date((sortType === 'created' || sortType === 'earliestCreated') ? stat.ctime : stat.mtime);
             const offset = date.getTimezoneOffset();
             date.setTime(date.getTime() - offset * 60 * 1000); // offset是毫秒，要变成小时
             return date.toISOString().slice(0, 10);

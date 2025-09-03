@@ -148,6 +148,8 @@ export default {
     batch_add_to_view: "批量添加到视图",
     recently_updated: "最近更新",
     recently_created: "最近创建",
+    earliest_created: "最早创建",
+    earliest_updated: "最早更新",
 
     // 侧边栏
     note: "笔记",

@@ -1,4 +1,4 @@
-export type SortType = 'created' | 'modified';
+export type SortType = 'created' | 'modified' | 'earliestCreated' | 'earliestModified';
 
 export type CardContentMaxHeightType = 'short' | 'normal' | 'expand';
 

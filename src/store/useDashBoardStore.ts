@@ -49,7 +49,10 @@ export const useDashBoardStore: StateCreator<CombineState, [], [], DashBoardStat
         let filtered = allFiles;
         if (curScheme.type == 'FilterScheme') {
             // date range
-            filtered = filtered.filter(({file}) => withinDateRange(sortType == 'created' ? file.stat.ctime : file.stat.mtime, curScheme.dateRange));
+            filtered = filtered.filter(({file}) => {
+                const timeToCheck = (sortType === 'created' || sortType === 'earliestCreated') ? file.stat.ctime : file.stat.mtime;
+                return withinDateRange(timeToCheck, curScheme.dateRange);
+            });
             // key word
             if (curScheme.keyword.trim().length > 0) {
                 const keyword = curScheme.keyword.trim().toLowerCase();
@@ -75,8 +78,21 @@ export const useDashBoardStore: StateCreator<CombineState, [], [], DashBoardStat
             // 打乱数组顺序
             filtered.sort(() => Math.random() - 0.5);
         } else {
-            // 按原来的方式排序
-            filtered.sort((a, b) => sortType === 'created' ? b.file.stat.ctime - a.file.stat.ctime : b.file.stat.mtime - a.file.stat.mtime);
+            // 按排序类型排序
+            filtered.sort((a, b) => {
+                switch (sortType) {
+                    case 'created':
+                        return b.file.stat.ctime - a.file.stat.ctime; // 最近创建
+                    case 'modified':
+                        return b.file.stat.mtime - a.file.stat.mtime; // 最近更新
+                    case 'earliestCreated':
+                        return a.file.stat.ctime - b.file.stat.ctime; // 最早创建
+                    case 'earliestModified':
+                        return a.file.stat.mtime - b.file.stat.mtime; // 最早更新
+                    default:
+                        return b.file.stat.ctime - a.file.stat.ctime;
+                }
+            });
         }
         set({ allFiles, allTags, curSchemeFiles: filtered });
     },

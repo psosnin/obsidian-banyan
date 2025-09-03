@@ -298,6 +298,22 @@ const SortFilesButton = ({ plugin, sortType, setSortType }: { plugin: BanyanPlug
         updateSortType('modified');
       });
     });
+    sortMenu.addItem((item) => {
+      item.setTitle(i18n.t('earliest_created'));
+      item.setChecked(sortType === 'earliestCreated');
+      item.onClick(() => {
+        setSortType('earliestCreated');
+        updateSortType('earliestCreated');
+      });
+    });
+    sortMenu.addItem((item) => {
+      item.setTitle(i18n.t('earliest_updated'));
+      item.setChecked(sortType === 'earliestModified');
+      item.onClick(() => {
+        setSortType('earliestModified');
+        updateSortType('earliestModified');
+      });
+    });
     sortMenu.showAtMouseEvent(event);
   };
 

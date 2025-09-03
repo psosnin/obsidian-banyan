@@ -146,6 +146,8 @@ export default {
     batch_add_to_view: "Add those notes to view",
     recently_updated: "Recently updated",
     recently_created: "Recently created",
+    earliest_created: "Earliest created",
+    earliest_updated: "Earliest updated",
 
     // 侧边栏
     note: "Note",

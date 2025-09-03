@@ -102,7 +102,7 @@ const CardNote = ({ fileInfo }: { fileInfo: FileInfo }) => {
   const isPinned = useCombineStore((state) => state.curScheme.pinned.includes(fileInfo.id));
   const setCurScheme = useCombineStore((state) => state.setCurScheme);
   const app = plugin.app;
-  const isCreated = settings.sortType === 'created';
+  const isCreated = settings.sortType === 'created' || settings.sortType === 'earliestCreated';
   const tags = fileInfo.tags;
   const shouldShowTitle = useCombineStore((state) => state.shouldShowTitle);
 

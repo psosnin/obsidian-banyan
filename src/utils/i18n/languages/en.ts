@@ -88,6 +88,9 @@ export default {
     setting_use_zk_prefixer_format_name: "Use the format in \"Unique note creator\" plugin for new notes filename",
     setting_use_zk_prefixer_format_desc: "If enabled, new notes will use the naming format from the plugin if available. Use the default format else.",
 
+    setting_show_add_note_ribbon_name: "Show add note button in ribbon",
+    setting_show_add_note_ribbon_desc: "Enable to show the add note button in Obsidian's ribbon.",
+
     setting_card_content_max_height_name: "Content max height",
     setting_card_content_max_height_desc: "The maximum display height of card content area (excluding title), fold extra content.",
     setting_card_content_max_height_short: "Short",

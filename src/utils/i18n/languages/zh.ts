@@ -90,6 +90,9 @@ export default {
     setting_use_zk_prefixer_format_name: "默认文件名使用「时间戳笔记生成器」的格式",
     setting_use_zk_prefixer_format_desc: "开启后，新建笔记的默认文件名会使用时间戳笔记插件的命名格式。关闭则使用默认格式。",
 
+    setting_show_add_note_ribbon_name: "在功能区显示创建笔记按钮",
+    setting_show_add_note_ribbon_desc: "启用后，会在Obsidian的功能区显示创建笔记的按钮。",
+
     setting_card_content_max_height_name: "内容最大高度",
     setting_card_content_max_height_desc: "内容区(不包括标题)的最大显示高度，内容过长时折叠。",
     setting_card_content_max_height_short: "较短",

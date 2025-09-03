@@ -34,9 +34,6 @@ export default class BanyanPlugin extends Plugin {
 				await this.fileUtils.addFile();
 			}
 		});
-		this.addRibbonIcon('lightbulb', i18n.t('add_card_note'), async (evt: MouseEvent) => {
-			await this.fileUtils.addFile();
-		});
 
 		// 打开笔记面板 命令和按钮
 		this.addCommand({
@@ -48,6 +45,10 @@ export default class BanyanPlugin extends Plugin {
 			this.activateView(CARD_DASHBOARD_VIEW_TYPE);
 		});
 
+		// 创建笔记
+		this.setupCreateNoteRibbonBtn();
+
+		// 随机回顾
 		this.setupRandomReview();
 
 		// This adds a settings tab so the user can configure various aspects of the plugin
@@ -67,6 +68,19 @@ export default class BanyanPlugin extends Plugin {
 	}
 
 	randomRibbonIcons: HTMLElement[] = [];
+	addNoteRibbonIcon: HTMLElement | null = null;
+
+	setupCreateNoteRibbonBtn = () => {
+		if (this.addNoteRibbonIcon) {
+			this.addNoteRibbonIcon.remove();
+			this.addNoteRibbonIcon = null;
+		}
+		if (this.settings.showAddNoteRibbonIcon) {
+			this.addNoteRibbonIcon = this.addRibbonIcon('lightbulb', i18n.t('add_card_note'), async (evt: MouseEvent) => {
+				await this.fileUtils.addFile();
+			});
+		}
+	}
 
 	resetRandomReview = () => {
 		// 移除所有现有的随机回顾命令和功能区图标

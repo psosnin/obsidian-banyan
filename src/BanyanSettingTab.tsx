@@ -33,6 +33,7 @@ export class BanyanSettingTab extends PluginSettingTab {
 		// 编辑
 		new Setting(containerEl).setName(i18n.t('setting_header_editor')).setHeading();
 		this.setupUseZkPrefixerFormatSetting(containerEl);
+		this.setupShowAddNoteRibbonSetting(containerEl);
 		this.setupMigrateTitleToFilenameSetting(containerEl);
 	}
 
@@ -132,6 +133,22 @@ export class BanyanSettingTab extends PluginSettingTab {
 					.onChange(async (value) => {
 						this.plugin.settings.useZkPrefixerFormat = value;
 						await this.plugin.saveSettings();
+					});
+			});
+	}
+
+	setupShowAddNoteRibbonSetting(containerEl: HTMLElement) {
+		const settings = this.plugin.settings;
+		new Setting(containerEl)
+			.setName(i18n.t('setting_show_add_note_ribbon_name'))
+			.setDesc(i18n.t('setting_show_add_note_ribbon_desc'))
+			.addToggle(toggle => {
+				toggle.setValue(settings.showAddNoteRibbonIcon ?? true)
+					.onChange(async (value) => {
+						this.plugin.settings.showAddNoteRibbonIcon = value;
+						await this.plugin.saveSettings();
+						// 重新设置功能区图标
+						this.plugin.setupCreateNoteRibbonBtn();
 					});
 			});
 	}

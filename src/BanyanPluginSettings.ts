@@ -18,6 +18,7 @@ export interface BanyanPluginSettings {
 
 	// add note 
 	useZkPrefixerFormat?: boolean;
+	showAddNoteRibbonIcon?: boolean;
 
 	// in app
 	sortType: SortType;
@@ -50,7 +51,8 @@ export const DEFAULT_SETTINGS: BanyanPluginSettings = {
 	useCardNote2: false,
 
     // add note
-	useZkPrefixerFormat: false,	
+	useZkPrefixerFormat: false,
+	showAddNoteRibbonIcon: true,	
 
 	// in app
 	sortType: 'created',

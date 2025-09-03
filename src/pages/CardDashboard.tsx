@@ -9,7 +9,7 @@ import { Icon } from "src/components/Icon";
 import Sidebar from "./sidebar/Sidebar";
 import { DefaultFilterSchemeID, getDefaultFilterScheme } from "src/models/FilterScheme";
 import { SidebarContent } from "./sidebar/SideBarContent";
-import { Searchbar } from "./header/searchbar/Searchbar";
+import { HeaderView } from "./header/HeaderView";
 import EmptyStateCard from "./cards/EmptyStateCard";
 import { ViewSelectModal } from "./sidebar/viewScheme/ViewSelectModal";
 import { createFileWatcher } from 'src/utils/fileWatcher';
@@ -59,6 +59,8 @@ export class CardDashboard extends ItemView {
 const CardDashboardView = ({ plugin }: { plugin: BanyanPlugin }) => {
   const app = plugin.app;
 
+  const dashboardRef = React.useRef<HTMLDivElement>(null);
+  
   const requestData = useCombineStore((state) => state.requestData);
   const updateDisplayFiles = useCombineStore((state) => state.updateDisplayFiles);
   const curSchemeFiles = useCombineStore((state) => state.curSchemeFiles);
@@ -66,7 +68,16 @@ const CardDashboardView = ({ plugin }: { plugin: BanyanPlugin }) => {
   const curScheme = useCombineStore((state) => state.curScheme);
   const filterSchemes = useCombineStore((state) => state.filterSchemes);
   const viewSchemes = useCombineStore((state) => state.viewSchemes);
-  const setCurScheme = useCombineStore((state) => state.setCurScheme);
+  const setCurSchemeOriginal = useCombineStore((state) => state.setCurScheme);
+  
+  // 包装 setCurScheme 函数，在切换 scheme 时滚动到顶部
+  const setCurScheme = useCallback((scheme: any) => {
+    setCurSchemeOriginal(scheme);
+    // 滚动到页面顶部
+    if (dashboardRef.current) {
+      dashboardRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, [setCurSchemeOriginal]);
   const updateViewScheme = useCombineStore((state) => state.updateViewScheme);
   const curSchemeNotesLength = useCombineStore((state) => state.curSchemeFiles.length);
   const needRefresh = useCombineStore((state) => state.needRefresh);
@@ -80,7 +91,7 @@ const CardDashboardView = ({ plugin }: { plugin: BanyanPlugin }) => {
   const [isLoading, setIsLoading] = useState(false);
   const notesPerPage = 10; // 每页显示的笔记数量
   const [colCount, setColCount] = useState(1);
-  const dashboardRef = React.useRef<HTMLDivElement>(null);
+  
   const [refreshFlag, setRefreshFlag] = useState(0);
 
   // 文件监听逻辑
@@ -214,24 +225,13 @@ const CardDashboardView = ({ plugin }: { plugin: BanyanPlugin }) => {
       {showSidebar != 'normal' && <Sidebar visible={showSidebar == 'show'} onClose={() => setShowSidebar('hide')}><SidebarContent /></Sidebar>}
       {showSidebar == 'normal' && <SidebarContent />}
       <div className="main-container">
-        <div className="main-header-container">
-          <div className="main-header-title">
-            <button className={"clickable-icon " + (showSidebar == 'normal' ? "sidebar-toggle-button-hidden" : "sidebar-toggle-button-visible")}
-              onClick={() => setShowSidebar('show')}
-              title={i18n.t('expand_sidebar')}
-            ><Icon name="menu" /></button>
-            {curScheme.id === DefaultFilterSchemeID && <div className="main-header-title-content">{curScheme.name}</div>}
-            {curScheme.id !== DefaultFilterSchemeID &&
-              <div className="main-header-title-container">
-                <div className="main-header-title-content main-header-title-content-clickable" onClick={() => {
-                  setCurScheme(getDefaultFilterScheme(filterSchemes));
-                }}>{getDefaultFilterScheme(filterSchemes).name}</div>
-                <div className="main-header-title-separator">{'/'}</div>
-                <div className="main-header-title-content">{curScheme.name}</div>
-              </div>}
-          </div>
-          <Searchbar />
-        </div>
+        <HeaderView 
+          showSidebar={showSidebar}
+          setShowSidebar={setShowSidebar}
+          curScheme={curScheme}
+          filterSchemes={filterSchemes}
+          setCurScheme={setCurScheme}
+        />
         {!Platform.isMobile && <div className="main-header-add-note-container"><AddNoteView app={app} plugin={plugin} onAdd={() => setRefreshFlag(f => f + 1)} /></div>}
         <div className="main-subheader-container">
           <div className="main-subheader-info">

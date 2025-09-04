@@ -97,6 +97,12 @@ export default {
     setting_card_content_max_height_normal: "Normal",
     setting_card_content_max_height_expand: "Expand",
 
+    // font
+    setting_font_theme_name: "Font size",
+    setting_font_theme_desc: "Base font size of content area in card view.",
+    setting_font_theme_small: "Small",
+    setting_font_theme_normal: "Normal",
+
     // migrate: frontmatter.title -> filename
     setting_migrate_title_to_filename_name: "Migrate property title to filename",
     setting_migrate_title_to_filename_desc: "Scan all notes in the working directory with \"title\" property, rename file to that title and remove the property.",

@@ -154,6 +154,7 @@ export default class BanyanPlugin extends Plugin {
 			this.settings.filterSchemesExpanded = true;
 			this.settings.randomReviewExpanded = true;
 			this.settings.viewSchemesExpanded = true;
+			this.settings.fontTheme = 'normal';
 		}
 		// *** 版本更新时，在以上添加更新逻辑 ***
 		this.settings.settingsVersion = CUR_SETTINGS_VERSION;

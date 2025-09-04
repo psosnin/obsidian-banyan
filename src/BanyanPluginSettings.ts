@@ -1,7 +1,7 @@
 import { FilterScheme, getDefaultFilterScheme } from "./models/FilterScheme";
 import { ViewScheme } from "./models/ViewScheme";
 import { DefaultRandomReviewFilter, RandomReviewFilter } from "./models/RandomReviewFilters";
-import { CardContentMaxHeightType, SortType, TitleDisplayMode } from "./models/Enum";
+import { CardContentMaxHeightType, SortType, TitleDisplayMode, FontTheme } from "./models/Enum";
 
 export interface BanyanPluginSettings {
 	// basic
@@ -9,6 +9,7 @@ export interface BanyanPluginSettings {
 	openWhenStartObsidian: boolean;
 	cardsDirectory: string;
 	cardsColumns: number;
+	fontTheme: FontTheme;
 
 	// card note
 	titleDisplayMode: TitleDisplayMode;
@@ -51,6 +52,7 @@ export const DEFAULT_SETTINGS: BanyanPluginSettings = {
 
     // card note 
     titleDisplayMode: 'fileOnly',
+	fontTheme: 'normal',
 	cardContentMaxHeight: 'normal',
 	showBacklinksInCardNote: false,
 	useCardNote2: false,

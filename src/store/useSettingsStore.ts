@@ -1,7 +1,7 @@
 import { BanyanPluginSettings } from "src/BanyanPluginSettings";
 import { StateCreator } from "zustand";
 import { CombineState } from ".";
-import { CardContentMaxHeightType, SortType, TitleDisplayMode } from "src/models/Enum";
+import { CardContentMaxHeightType, SortType, TitleDisplayMode, FontTheme } from "src/models/Enum";
 import moment from "moment";
 
 export interface SettingsState {
@@ -21,6 +21,7 @@ export interface SettingsState {
     updateUseCardNote2: (use: boolean) => void; // 新增
     updateRandomBrowse: (randomBrowse: boolean) => void; // 新增：乱序浏览开关
     updateCardContentMaxHeight: (height: CardContentMaxHeightType) => void; // 新增：卡片内容最大高度
+    updateFontTheme: (theme: FontTheme) => void; // 新增：字体大小主题
     
     // UI state updates
     updateFilterSchemesExpanded: (expanded: boolean) => void;
@@ -77,6 +78,9 @@ export const useSettingsStore: StateCreator<CombineState, [], [], SettingsState>
     },
     updateCardContentMaxHeight: (height: CardContentMaxHeightType) => {
         get().updateSettings({ cardContentMaxHeight: height });
+    },
+    updateFontTheme: (theme: FontTheme) => {
+        get().updateSettings({ fontTheme: theme });
     },
     
     // UI state updates

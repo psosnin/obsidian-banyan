@@ -3,7 +3,7 @@ import BanyanPlugin from './main';
 import { i18n } from './utils/i18n';
 import FolderSuggest from './components/FolderSuggest';
 import { useCombineStore } from './store';
-import { CardContentMaxHeightType} from './models/Enum';
+import { CardContentMaxHeightType, FontTheme } from './models/Enum';
 import { openMigrateTitleModal } from './components/MigrateTitleModal';
 
 export class BanyanSettingTab extends PluginSettingTab {
@@ -25,7 +25,8 @@ export class BanyanSettingTab extends PluginSettingTab {
 
 		// 卡片视图
 		new Setting(containerEl).setName(i18n.t('setting_header_cards')).setHeading();
-		this.setupTitleDisplayModeSetting(containerEl);		
+		this.setupTitleDisplayModeSetting(containerEl);
+		this.setupFontThemeSetting(containerEl);		
 		this.setupCardContentMaxHeightSetting(containerEl);
 		this.setupShowBacklinksSetting(containerEl);
 		this.setupUseCardNote2Setting(containerEl);
@@ -165,6 +166,23 @@ export class BanyanSettingTab extends PluginSettingTab {
 					.setValue(settings.cardContentMaxHeight ?? 'normal')
 					.onChange(async (value) => {
 						useCombineStore.getState().updateCardContentMaxHeight(value as CardContentMaxHeightType);
+					});
+			});
+	}
+
+	setupFontThemeSetting(containerEl: HTMLElement) {
+		if (Platform.isMobile) return; // 移动端不显示此设置
+		const settings = useCombineStore.getState().settings;
+		new Setting(containerEl)
+			.setName(i18n.t('setting_font_theme_name'))
+			.setDesc(i18n.t('setting_font_theme_desc'))
+			.addDropdown(dropdown => {
+				dropdown
+					.addOption('normal', i18n.t('setting_font_theme_normal'))
+					.addOption('small', i18n.t('setting_font_theme_small'))
+					.setValue(settings.fontTheme ?? 'normal')
+					.onChange(async (value) => {
+						useCombineStore.getState().updateFontTheme(value as FontTheme);
 					});
 			});
 	}

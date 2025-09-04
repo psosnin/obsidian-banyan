@@ -74,7 +74,7 @@ const NoteContentView = ({ app, fileInfo }: { app: App, fileInfo: FileInfo }) =>
 
   return (
     <div style={{ position: 'relative' }}>
-      <div ref={ref} className={getContentClassName()} />
+      <div ref={ref} className={getContentClassName()} data-font-theme={settings.fontTheme} />
       {overflow && !isExpanded && settings.cardContentMaxHeight !== 'expand' && (
         <div 
           className="card-note-expand-button"

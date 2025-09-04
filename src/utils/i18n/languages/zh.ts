@@ -99,6 +99,12 @@ export default {
     setting_card_content_max_height_normal: "一般",
     setting_card_content_max_height_expand: "不折叠",
 
+    // 字体
+    setting_font_theme_name: "内容区域字体大小",
+    setting_font_theme_desc: "内容区域的基础字体大小。",
+    setting_font_theme_small: "较小",
+    setting_font_theme_normal: "一般",
+
     // 迁移：属性title -> 文件名
     setting_migrate_title_to_filename_name: "迁移属性标题为文件名",
     setting_migrate_title_to_filename_desc: "扫描「笔记目录」中含有属性含有“title”的笔记，将其作为文件名，并删除该属性。",

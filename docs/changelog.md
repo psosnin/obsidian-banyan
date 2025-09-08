@@ -1,5 +1,20 @@
 ### Changelog
 
+#### 1.3.3 Changelog
+​​
+Improvements​​
+
+- Cardboard - Title Area now remains pinned at the top
+- Cardboard - Note Sorting Options - Added "Earliest Created" and "Earliest Updated"
+- Create Note - Users can choose whether to display the "Create Note" button in the functional area
+- Sidebar - The "Random review," "Filter scehmes," and "View scehmes" sections can now be collapsed/expanded
+- Card View - Font size can now be set to normal or a smaller size
+
+​​Fixes​​
+
+- Create Note - Editor Area - Title validation now includes checks for slashes, backslashes, and colons
+- Mobile - The floating button at the bottom right no longer rises when the keyboard pops up during typing
+
 ### 1.3.2
 
 ​​Changes​​

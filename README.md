@@ -2,6 +2,8 @@
 
 English | [简体中文](./docs/README_zh.md)
 
+[change log](./docs/changelog.md)
+
 ## What does this plugin do?
 
 Banyan helps you better organize, browse, and review your notes. For example, when you want to find notes on a specific topic, see what you've written recently, or randomly browse through old notes.

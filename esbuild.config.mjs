@@ -51,16 +51,16 @@ const jsContext = await esbuild.context({
 	logLevel: "info",
 	sourcemap: prod ? false : "inline",
 	treeShaking: true,
-	outfile: "dist/main.js",
+	outfile: "main.js",
 	minify: prod,
 	plugins: [copyPlugin],
 });
 
 // CSS构建上下文
 const cssContext = await esbuild.context({
-	entryPoints: ["styles.css"],
+	entryPoints: ["_styles.css"],
 	bundle: true,
-	outfile: "dist/styles.css",
+	outfile: "styles.css",
 	logLevel: "info",
 	minify: prod,
 });

@@ -1,34 +1,25 @@
-import { BanyanPluginSettings } from "src/BanyanPluginSettings";
+import { BanyanPluginSettings, TopicButton } from "src/BanyanPluginSettings";
 import { StateCreator } from "zustand";
 import { CombineState } from ".";
-import { CardContentMaxHeightType, SortType, TitleDisplayMode, FontTheme } from "src/models/Enum";
+import { CardContentMaxHeightType, TitleDisplayMode, FontTheme } from "src/models/Enum";
 import moment from "moment";
 
 export interface SettingsState {
     settings: BanyanPluginSettings;
 
-    // 设置更新方法
+    // Settings update methods
     updateSettings: (settings: Partial<BanyanPluginSettings>) => void;
     
-    // 单个设置项的更新方法
-    updateCardsDirectory: (directory: string) => void;
+    // Individual setting updates
     updateOpenWhenStartObsidian: (open: boolean) => void;
     updateTitleDisplayMode: (mode: TitleDisplayMode) => void;
-    updateCardsColumns: (columns: number) => void;
-    updateSortType: (sortType: SortType) => void;
     updateFirstUseDate: (date: string) => void;
-    updateShowBacklinksInCardNote: (show: boolean) => void;
-    updateUseCardNote2: (use: boolean) => void; // 新增
-    updateRandomBrowse: (randomBrowse: boolean) => void; // 新增：乱序浏览开关
-    updateCardContentMaxHeight: (height: CardContentMaxHeightType) => void; // 新增：卡片内容最大高度
-    updateFontTheme: (theme: FontTheme) => void; // 新增：字体大小主题
-    
-    // UI state updates
-    updateFilterSchemesExpanded: (expanded: boolean) => void;
-    updateRandomReviewExpanded: (expanded: boolean) => void;
-    updateViewSchemesExpanded: (expanded: boolean) => void;
+    updateCardContentMaxHeight: (height: CardContentMaxHeightType) => void;
+    updateFontTheme: (theme: FontTheme) => void;
+    updateTopicButtons: (buttons: TopicButton[]) => void;
+    updateFeaturedNotePath: (path: string) => void;
 
-    // 业务逻辑：是否显示卡片标题（基于当前设置与文件名）
+    // Business logic: whether to show card title
     shouldShowTitle: (basename: string) => boolean;
 }
 
@@ -43,10 +34,6 @@ export const useSettingsStore: StateCreator<CombineState, [], [], SettingsState>
         set({ settings: updatedSettings });
     },
 
-    updateCardsDirectory: (directory: string) => {
-        get().updateSettings({ cardsDirectory: directory });
-    },
-
     updateOpenWhenStartObsidian: (open: boolean) => {
         get().updateSettings({ openWhenStartObsidian: open });
     },
@@ -55,43 +42,24 @@ export const useSettingsStore: StateCreator<CombineState, [], [], SettingsState>
         get().updateSettings({ titleDisplayMode: mode });
     },
 
-    updateCardsColumns: (columns: number) => {
-        get().updateSettings({ cardsColumns: columns });
-    },
-
-    updateSortType: (sortType: SortType) => {
-        get().updateSettings({ sortType });
-    },
-
     updateFirstUseDate: (date: string) => {
         get().updateSettings({ firstUseDate: date });
     },
 
-    updateShowBacklinksInCardNote: (show: boolean) => {
-        get().updateSettings({ showBacklinksInCardNote: show });
-    },
-    updateUseCardNote2: (use: boolean) => {
-        get().updateSettings({ useCardNote2: use });
-    },
-    updateRandomBrowse: (randomBrowse: boolean) => {
-        get().updateSettings({ randomBrowse });
-    },
     updateCardContentMaxHeight: (height: CardContentMaxHeightType) => {
         get().updateSettings({ cardContentMaxHeight: height });
     },
+    
     updateFontTheme: (theme: FontTheme) => {
         get().updateSettings({ fontTheme: theme });
     },
-    
-    // UI state updates
-    updateFilterSchemesExpanded: (expanded: boolean) => {
-        get().updateSettings({ filterSchemesExpanded: expanded });
+
+    updateTopicButtons: (buttons: TopicButton[]) => {
+        get().updateSettings({ topicButtons: buttons });
     },
-    updateRandomReviewExpanded: (expanded: boolean) => {
-        get().updateSettings({ randomReviewExpanded: expanded });
-    },
-    updateViewSchemesExpanded: (expanded: boolean) => {
-        get().updateSettings({ viewSchemesExpanded: expanded });
+
+    updateFeaturedNotePath: (path: string) => {
+        get().updateSettings({ featuredNotePath: path });
     },
 
     shouldShowTitle: (basename: string) => {

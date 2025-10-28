@@ -31,6 +31,11 @@
   max-height: none;
 }
 
+.card-note-content.card-note-content--full {
+  max-height: none !important;
+  overflow: visible !important;
+}
+
 .card-note-content.card-note-content--expanded {
   max-height: none !important;
   overflow: visible;

@@ -18,18 +18,15 @@ export class FileUtils {
   }
 
   get dir() {
-    return this.plugin.settings.cardsDirectory;
+    return "/"; // Simplified version - use all notes
   }
 
   //#region 文件获取
 
   isLegalFile(file: TFile) {
     const path = this.getPlaceholderFilePath();
-    // 根目录的情况
-    if (this.dir === "/") {
-      return file.path !== path;
-    }
-    return file.path.startsWith(this.dir + '/') && file.path !== path;
+    // Simplified - just exclude the placeholder file
+    return file.path !== path;
   }
 
   isLegalMarkdownFile(file: TFile) {
@@ -73,7 +70,8 @@ export class FileUtils {
   }
 
   public getZkPrefixerFormat(): string | undefined {
-    if (!this.plugin.settings.useZkPrefixerFormat) return undefined;
+    // Simplified version - no zk-prefixer support
+    return undefined;
     const internalPlugins = (this.app as any).internalPlugins;
     if (!internalPlugins) return undefined;
     const zk = internalPlugins.getPluginById("zk-prefixer");

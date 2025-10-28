@@ -15,9 +15,9 @@ export const Heatmap = ({ onCickDate }: {
     onCickDate: (date: string) => void
 }) => {
     const today = new Date();
-    const settings = useCombineStore((state) => state.settings);
-    const sortType = settings.sortType;    
     const allFiles = useCombineStore((state) => state.allFiles);
+    // Default to showing modified dates for simplified version
+    const sortType: SortType = 'modified';
     const values = useMemo(() => getHeatmapValues(allFiles, sortType), [allFiles, sortType]);
     return (
         <div>
@@ -38,7 +38,7 @@ export const Heatmap = ({ onCickDate }: {
                 tooltipDataAttrs={(value: HeatmapData): { [key: string]: string } => {
                     return {
                         'data-tooltip-id': 'my-tooltip',
-                        'data-tooltip-content': value.count != undefined && value.date != undefined ? `${value.count} ${i18n.t((sortType === 'created' || sortType === 'earliestCreated') ? 'notes_created_at' : 'notes_modified_at')} ${value.date}` : '',
+                        'data-tooltip-content': value.count != undefined && value.date != undefined ? `${value.count} ${i18n.t('notes_modified_at')} ${value.date}` : '',
                     };
                 }}
                 showWeekdayLabels={false}

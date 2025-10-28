@@ -1,10 +1,9 @@
-import { App, Platform, PluginSettingTab, Setting, Notice } from 'obsidian';
+import { App, PluginSettingTab, Setting } from 'obsidian';
 import BanyanPlugin from './main';
 import { i18n } from './utils/i18n';
-import FolderSuggest from './components/FolderSuggest';
 import { useCombineStore } from './store';
 import { CardContentMaxHeightType, FontTheme } from './models/Enum';
-import { openMigrateTitleModal } from './components/MigrateTitleModal';
+import { TopicButton } from './BanyanPluginSettings';
 
 export class BanyanSettingTab extends PluginSettingTab {
 	plugin: BanyanPlugin;
@@ -13,46 +12,141 @@ export class BanyanSettingTab extends PluginSettingTab {
 		super(app, plugin);
 		this.plugin = plugin;
 	}
+	
 	display(): void {
 		const { containerEl } = this;
 		containerEl.empty();
 
-		// 基础设置
+		// Basic settings
 		new Setting(containerEl).setName(i18n.t('setting_header_basic')).setHeading();
 		this.setupOpenWhenStartObsidianSetting(containerEl);
-		this.setupCardsDirectorySetting(containerEl);
-		this.setupCardsColumnsSetting(containerEl);
+		this.setupFontThemeSetting(containerEl);
 
-		// 卡片视图
+		// Card view settings
 		new Setting(containerEl).setName(i18n.t('setting_header_cards')).setHeading();
 		this.setupTitleDisplayModeSetting(containerEl);
-		this.setupFontThemeSetting(containerEl);		
 		this.setupCardContentMaxHeightSetting(containerEl);
-		this.setupShowBacklinksSetting(containerEl);
-		this.setupUseCardNote2Setting(containerEl);
 
-		// 编辑
-		new Setting(containerEl).setName(i18n.t('setting_header_editor')).setHeading();
-		this.setupUseZkPrefixerFormatSetting(containerEl);
-		this.setupShowAddNoteRibbonSetting(containerEl);
-		this.setupMigrateTitleToFilenameSetting(containerEl);
+		// Statistics settings
+		new Setting(containerEl).setName('Statistics').setHeading();
+		this.setupStatisticsFolderSettings(containerEl);
+
+		// Topics settings
+		new Setting(containerEl).setName('Topics').setHeading();
+		this.setupFeaturedNoteSetting(containerEl);
+		this.setupSidebarNoteSetting(containerEl);
+		this.setupTopicButtonsSetting(containerEl);
 	}
 
-	setupCardsDirectorySetting(containerEl: HTMLElement) {
+	setupFeaturedNoteSetting(containerEl: HTMLElement) {
 		const settings = useCombineStore.getState().settings;
 		new Setting(containerEl)
-			.setName(i18n.t('setting_note_directory_name'))
-			.setDesc(i18n.t('setting_note_directory_desc'))
-			.addText(async text => {
-				new FolderSuggest(this.app, text.inputEl, async (value) => {
-					text.setValue(value);
-					useCombineStore.getState().updateCardsDirectory(value);
-				});
-				text.setValue(settings.cardsDirectory || "")
+			.setName('Featured Note')
+			.setDesc('Path to the note to display in the upper right panel (e.g., "folder/note" without .md)')
+			.addText(text => {
+				text.setValue(settings.featuredNotePath || "")
+					.setPlaceholder('path/to/note')
 					.onChange(async (value) => {
-						useCombineStore.getState().updateCardsDirectory(value);
+						useCombineStore.getState().updateFeaturedNotePath(value);
 					});
 			});
+	}
+
+	setupSidebarNoteSetting(containerEl: HTMLElement) {
+		const settings = useCombineStore.getState().settings;
+		new Setting(containerEl)
+			.setName('Sidebar Persistent Note')
+			.setDesc('Path to the note to display in the left sidebar below topic buttons (e.g., "folder/note" without .md)')
+			.addText(text => {
+				text.setValue(settings.sidebarNotePath || "")
+					.setPlaceholder('path/to/note')
+					.onChange(async (value) => {
+						useCombineStore.getState().updateSettings({ sidebarNotePath: value });
+					});
+			});
+	}
+
+	setupTopicButtonsSetting(containerEl: HTMLElement) {
+		const settings = useCombineStore.getState().settings;
+		
+		new Setting(containerEl)
+			.setName('Topic Buttons')
+			.setDesc('Configure buttons for different topic homepages')
+			.addButton(button => {
+				button.setButtonText('Add Topic')
+					.onClick(() => {
+						const newTopic: TopicButton = {
+							id: Date.now().toString(),
+							name: 'New Topic',
+							notePath: ''
+						};
+						const updated = [...settings.topicButtons, newTopic];
+						useCombineStore.getState().updateTopicButtons(updated);
+						this.display();
+					});
+			});
+
+		settings.topicButtons.forEach((topic, index) => {
+			const setting = new Setting(containerEl)
+				.setClass('topic-button-setting')
+				.addButton(button => {
+					button.setIcon('up-chevron-glyph')
+						.setTooltip('Move up')
+						.onClick(() => {
+							if (index > 0) {
+								const updated = [...settings.topicButtons];
+								[updated[index - 1], updated[index]] = [updated[index], updated[index - 1]];
+								useCombineStore.getState().updateTopicButtons(updated);
+								this.display();
+							}
+						});
+					if (index === 0) {
+						button.setDisabled(true);
+					}
+				})
+				.addButton(button => {
+					button.setIcon('down-chevron-glyph')
+						.setTooltip('Move down')
+						.onClick(() => {
+							if (index < settings.topicButtons.length - 1) {
+								const updated = [...settings.topicButtons];
+								[updated[index], updated[index + 1]] = [updated[index + 1], updated[index]];
+								useCombineStore.getState().updateTopicButtons(updated);
+								this.display();
+							}
+						});
+					if (index === settings.topicButtons.length - 1) {
+						button.setDisabled(true);
+					}
+				})
+				.addText(text => {
+					text.setValue(topic.name)
+						.setPlaceholder('Topic name')
+						.onChange(async (value) => {
+							const updated = [...settings.topicButtons];
+							updated[index].name = value;
+							useCombineStore.getState().updateTopicButtons(updated);
+						});
+				})
+				.addText(text => {
+					text.setValue(topic.notePath)
+						.setPlaceholder('path/to/note')
+						.onChange(async (value) => {
+							const updated = [...settings.topicButtons];
+							updated[index].notePath = value;
+							useCombineStore.getState().updateTopicButtons(updated);
+						});
+				})
+				.addButton(button => {
+					button.setButtonText('Delete')
+						.setWarning()
+						.onClick(() => {
+							const updated = settings.topicButtons.filter((_, i) => i !== index);
+							useCombineStore.getState().updateTopicButtons(updated);
+							this.display();
+						});
+				});
+		});
 	}
 
 	setupOpenWhenStartObsidianSetting(containerEl: HTMLElement) {
@@ -81,89 +175,17 @@ export class BanyanSettingTab extends PluginSettingTab {
 			});
 	}
 
-	setupCardsColumnsSetting(containerEl: HTMLElement) {
-		if (Platform.isMobile) return;
-		const settings = useCombineStore.getState().settings;
-		new Setting(containerEl)
-			.setName(i18n.t('setting_col_nums_name'))
-			.setDesc(i18n.t('setting_col_nums_desc'))
-			.addDropdown(dropdown => {
-				dropdown.addOption('1', i18n.t('setting_col_nums_1_col'))
-					.addOption('2', i18n.t('setting_col_nums_2_col'))
-					.setValue(settings.cardsColumns.toString())
-					.onChange(async (value) => {
-						useCombineStore.getState().updateCardsColumns(parseInt(value));
-					});
-			});
-	}
-
-	setupShowBacklinksSetting(containerEl: HTMLElement) {
-		const settings = useCombineStore.getState().settings;
-		new Setting(containerEl)
-			.setName(i18n.t('setting_show_backlinks_name'))
-			.setDesc(i18n.t('setting_show_backlinks_desc'))
-			.addToggle(toggle => {
-				toggle.setValue(settings.showBacklinksInCardNote ?? false)
-					.onChange(async (value) => {
-						useCombineStore.getState().updateShowBacklinksInCardNote(value);
-					});
-			});
-	}
-
-	setupUseCardNote2Setting(containerEl: HTMLElement) {
-		if (Platform.isMobile) return; // 移动端不显示此设置
-		const settings = useCombineStore.getState().settings;
-		new Setting(containerEl)
-			.setName(i18n.t('setting_use_cardnote2_name'))
-			.setDesc(i18n.t('setting_use_cardnote2_desc'))
-			.addToggle(toggle => {
-				toggle.setValue(settings.useCardNote2 ?? false)
-					.onChange(async (value) => {
-						useCombineStore.getState().updateUseCardNote2(value);
-					});
-			});
-	}
-
-	setupUseZkPrefixerFormatSetting(containerEl: HTMLElement) {
-		const settings = this.plugin.settings;
-		new Setting(containerEl)
-			.setName(i18n.t('setting_use_zk_prefixer_format_name'))
-			.setDesc(i18n.t('setting_use_zk_prefixer_format_desc'))
-			.addToggle(toggle => {
-				toggle.setValue(settings.useZkPrefixerFormat ?? true)
-					.onChange(async (value) => {
-						this.plugin.settings.useZkPrefixerFormat = value;
-						await this.plugin.saveSettings();
-					});
-			});
-	}
-
-	setupShowAddNoteRibbonSetting(containerEl: HTMLElement) {
-		const settings = this.plugin.settings;
-		new Setting(containerEl)
-			.setName(i18n.t('setting_show_add_note_ribbon_name'))
-			.setDesc(i18n.t('setting_show_add_note_ribbon_desc'))
-			.addToggle(toggle => {
-				toggle.setValue(settings.showAddNoteRibbonIcon ?? true)
-					.onChange(async (value) => {
-						this.plugin.settings.showAddNoteRibbonIcon = value;
-						await this.plugin.saveSettings();
-						// 重新设置功能区图标
-						this.plugin.setupCreateNoteRibbonBtn();
-					});
-			});
-	}
-
 	setupCardContentMaxHeightSetting(containerEl: HTMLElement) {
 		const settings = useCombineStore.getState().settings;
 		new Setting(containerEl)
-			.setName(i18n.t('setting_card_content_max_height_name'))
-			.setDesc(i18n.t('setting_card_content_max_height_desc'))
+			.setName('Card Height')
+			.setDesc('Maximum height for card content')
 			.addDropdown(dropdown => {
-				dropdown.addOption('short', i18n.t('setting_card_content_max_height_short'))
-					.addOption('normal', i18n.t('setting_card_content_max_height_normal'))
-					.addOption('expand', i18n.t('setting_card_content_max_height_expand'))
-					.setValue(settings.cardContentMaxHeight ?? 'normal')
+				dropdown.addOption('none', 'No limit')
+					.addOption('normal', 'Normal')
+					.addOption('medium', 'Medium')
+					.addOption('large', 'Large')
+					.setValue(settings.cardContentMaxHeight || 'normal')
 					.onChange(async (value) => {
 						useCombineStore.getState().updateCardContentMaxHeight(value as CardContentMaxHeightType);
 					});
@@ -171,32 +193,58 @@ export class BanyanSettingTab extends PluginSettingTab {
 	}
 
 	setupFontThemeSetting(containerEl: HTMLElement) {
-		if (Platform.isMobile) return; // 移动端不显示此设置
 		const settings = useCombineStore.getState().settings;
 		new Setting(containerEl)
 			.setName(i18n.t('setting_font_theme_name'))
 			.setDesc(i18n.t('setting_font_theme_desc'))
 			.addDropdown(dropdown => {
-				dropdown
-					.addOption('normal', i18n.t('setting_font_theme_normal'))
-					.addOption('small', i18n.t('setting_font_theme_small'))
-					.setValue(settings.fontTheme ?? 'normal')
+				dropdown.addOption('normal', i18n.t('setting_font_theme_normal'))
+					.addOption('handwriting', 'Handwriting')
+					.setValue(settings.fontTheme || 'normal')
 					.onChange(async (value) => {
 						useCombineStore.getState().updateFontTheme(value as FontTheme);
 					});
 			});
 	}
 
-	setupMigrateTitleToFilenameSetting(containerEl: HTMLElement) {
-        new Setting(containerEl)
-            .setName(i18n.t('setting_migrate_title_to_filename_name'))
-            .setDesc(i18n.t('setting_migrate_title_to_filename_desc'))
-            .addButton(btn => {
-                btn.setButtonText(i18n.t('setting_migrate_title_to_filename_btn'))
-                    .onClick(async () => {
-                        openMigrateTitleModal({ app: this.app, plugin: this.plugin });
-                    });
-            });
-	}
+	setupStatisticsFolderSettings(containerEl: HTMLElement) {
+		const settings = useCombineStore.getState().settings;
+		
+		containerEl.createEl('h3', { text: 'Statistics Folders' });
+		containerEl.createEl('p', { 
+			text: 'Configure folders to track in the statistics panel',
+			cls: 'setting-item-description'
+		});
 
+		new Setting(containerEl)
+			.setName('Papers Folder')
+			.setDesc('Folder path to track for Papers statistics')
+			.addText(text => text
+				.setPlaceholder('papers')
+				.setValue(settings.papersFolder || 'papers')
+				.onChange(async (value) => {
+					useCombineStore.getState().updateSettings({ papersFolder: value });
+				}));
+
+		new Setting(containerEl)
+			.setName('Chess Folder')
+			.setDesc('Folder path to track for Chess statistics')
+			.addText(text => text
+				.setPlaceholder('chess')
+				.setValue(settings.chessFolder || 'chess')
+				.onChange(async (value) => {
+					useCombineStore.getState().updateSettings({ chessFolder: value });
+				}));
+
+		new Setting(containerEl)
+			.setName('Russian Folder')
+			.setDesc('Folder path to track for Russian statistics')
+			.addText(text => text
+				.setPlaceholder('russian')
+				.setValue(settings.russianFolder || 'russian')
+				.onChange(async (value) => {
+					useCombineStore.getState().updateSettings({ russianFolder: value });
+				}));
+	}
 }
+

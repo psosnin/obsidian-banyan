@@ -1,6 +1,6 @@
 import { TFile, Vault, MetadataCache } from 'obsidian';
 import BanyanPlugin from 'src/main';
-import { createFileInfo, ensureFileID, FileInfo } from 'src/models/FileInfo';
+import { createFileInfo, FileInfo } from 'src/models/FileInfo';
 import { useCombineStore } from 'src/store';
 
 export type FileChangeType = 'create' | 'delete' | 'modify' | 'rename' | 'meta-change';
@@ -43,7 +43,6 @@ export class FileWatcher {
 
   private async handleCreate(file: TFile) {
     if (!this || !this.plugin.fileUtils.isLegalMarkdownFile(file)) return;
-    await ensureFileID(file, this.plugin.app);
     const fileInfo = createFileInfo(file, this.plugin.app);
     if (!fileInfo) return;
     this.emit({ type: 'create', fileInfo });

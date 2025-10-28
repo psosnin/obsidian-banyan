@@ -4,7 +4,6 @@ import { CARD_DASHBOARD_VIEW_TYPE, CardDashboard } from './pages/SimplifiedCardD
 import { BanyanSettingTab } from './BanyanSettingTab';
 import { FileUtils } from './utils/fileUtils';
 import { i18n } from './utils/i18n';
-import { ensureFileID } from './models/FileInfo';
 
 export default class BanyanPlugin extends Plugin {
 	settings: BanyanPluginSettings;
@@ -64,17 +63,7 @@ callback: () => this.activateView(CARD_DASHBOARD_VIEW_TYPE),
 		}
 		
 		this.settings.settingsVersion = CUR_SETTINGS_VERSION;
-		await this.ensureAllFileID();
 		this.saveSettings();
-	}
-
-	ensureAllFileID = async () => {
-		let cnt = Math.floor(Math.random() * 1000);
-		const allFiles = this.fileUtils.getAllRawFiles();
-		for (const file of allFiles) {
-			await ensureFileID(file, this.app, cnt);
-			cnt = cnt >= 999 ? 1 : cnt + 1;
-		}
 	}
 
 	async loadSettings() {

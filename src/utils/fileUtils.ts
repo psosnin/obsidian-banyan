@@ -1,6 +1,6 @@
 import { App, TFile, normalizePath, Notice } from "obsidian";
 import BanyanPlugin from "src/main";
-import { createFileInfo, FileInfo, generateFileId } from "src/models/FileInfo";
+import { createFileInfo, FileInfo } from "src/models/FileInfo";
 import { TagFilter, isOKWithTagFilter } from "src/models/TagFilter";
 import { i18n } from "./i18n";
 import moment from "moment";
@@ -182,9 +182,8 @@ export class FileUtils {
     const file = await this.app.vault.create(filePath, content ?? '');
 
     await this.app.fileManager.processFrontMatter(file, (frontmatter) => {
-      const id = generateFileId((new Date()).getTime());
-      frontmatter.tags = tags; 
-      frontmatter.id = id;
+      // keep tags in frontmatter but do not generate or write an `id` field
+      frontmatter.tags = tags;
     });
 
     if (!open) return;

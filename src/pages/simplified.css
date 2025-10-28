@@ -97,7 +97,8 @@
     width: 100%;
     padding: 14px 16px;
     background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    /* Remove colored border so buttons appear flat */
+    border: none !important;
     border-radius: 8px;
     color: var(--text-normal);
     font-size: 15px;
@@ -105,17 +106,22 @@
     text-align: center;
     transition: all 0.15s ease;
     font-weight: 500;
+    /* Remove any drop shadow applied elsewhere */
+    box-shadow: none !important;
 }
 
 .topic-button:hover {
     background: rgba(255, 255, 255, 0.08);
-    border-color: rgba(255, 255, 255, 0.15);
+    /* Keep hover visual but no border */
+    border: none !important;
     color: var(--text-normal);
+    box-shadow: none !important;
 }
 
 .topic-button.active {
     background: rgba(88, 101, 242, 0.8);
     color: #ffffff;
+    box-shadow: none !important;
 }
 
 /* Sidebar Persistent Note */

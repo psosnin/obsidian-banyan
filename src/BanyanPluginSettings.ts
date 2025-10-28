@@ -26,6 +26,8 @@ export interface BanyanPluginSettings {
 	papersFolder: string;
 	chessFolder: string;
 	russianFolder: string;
+	russianVocabPath?: string;
+	chessVocabPath?: string;
 }
 
 export const CUR_SETTINGS_VERSION = 7;
@@ -56,4 +58,6 @@ export const DEFAULT_SETTINGS: BanyanPluginSettings = {
 	papersFolder: 'papers',
 	chessFolder: 'chess',
 	russianFolder: 'russian',
+	russianVocabPath: '',
+	chessVocabPath: '',
 }

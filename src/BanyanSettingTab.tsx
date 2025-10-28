@@ -245,6 +245,26 @@ export class BanyanSettingTab extends PluginSettingTab {
 				.onChange(async (value) => {
 					useCombineStore.getState().updateSettings({ russianFolder: value });
 				}));
+
+		new Setting(containerEl)
+			.setName('Russian Vocab File')
+			.setDesc('Optional: explicit path to the russian vocab file to count lines from (any extension allowed; e.g., "russian/vocab.txt")')
+			.addText(text => text
+				.setPlaceholder('russian/vocab')
+				.setValue(settings.russianVocabPath || '')
+				.onChange(async (value) => {
+					useCombineStore.getState().updateSettings({ russianVocabPath: value });
+				}));
+
+		new Setting(containerEl)
+			.setName('Chess Vocab File')
+			.setDesc('Optional: explicit path to the chess vocab file to count lines from (any extension allowed; e.g., "chess/vocab.txt")')
+			.addText(text => text
+				.setPlaceholder('chess/vocab')
+				.setValue(settings.chessVocabPath || '')
+				.onChange(async (value) => {
+					useCombineStore.getState().updateSettings({ chessVocabPath: value });
+				}));
 	}
 }
 

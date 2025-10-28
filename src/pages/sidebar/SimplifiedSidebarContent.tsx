@@ -98,6 +98,7 @@ const SidebarPersistentNote = () => {
             const content = await plugin.app.vault.cachedRead(file);
             if (contentRef.current) {
                 contentRef.current.innerHTML = '';
+                // Render markdown into the container
                 await MarkdownRenderer.render(
                     plugin.app,
                     content,
@@ -105,10 +106,69 @@ const SidebarPersistentNote = () => {
                     file.path,
                     plugin
                 );
+
+                // Add delegated click handler to support opening links from rendered markdown.
+                // This handles internal vault links via `app.workspace.openLinkText` and
+                // opens external links in a new browser tab.
+                const container = contentRef.current;
+                const handleClick = (e: MouseEvent) => {
+                    const target = e.target as HTMLElement;
+                    if (!target) return;
+                    const anchor = target.closest('a') as HTMLAnchorElement | null;
+                    if (!anchor) return;
+
+                    // Prevent the default navigation performed by the renderer
+                    e.preventDefault();
+
+                    const href = anchor.getAttribute('href') || anchor.getAttribute('data-href') || '';
+                    if (!href) return;
+
+                    // External links -> open in browser
+                    if (/^https?:\/\//.test(href) || /^mailto:/.test(href)) {
+                        window.open(href, '_blank');
+                        return;
+                    }
+
+                    // Internal / vault links. If it's a hash-only link (#heading), open the
+                    // persistent note file and let Obsidian navigate to the heading. Otherwise
+                    // pass the path (may include a fragment) to openLinkText.
+                    try {
+                        if (href.startsWith('#')) {
+                            plugin.app.workspace.openLinkText(file.path + href, file.path, false);
+                        } else {
+                            const path = href.startsWith('/') ? href.slice(1) : href;
+                            plugin.app.workspace.openLinkText(path, file.path, false);
+                        }
+                    } catch (err) {
+                        // Fallback: log and do nothing
+                        // (opening may fail for unusual link formats)
+                        // keep console trace for debugging during development
+                        // console.warn('Failed to open link from sidebar persistent note', href, err);
+                    }
+                };
+
+                container.addEventListener('click', handleClick);
+
+                // Cleanup handler when note changed / effect re-runs
+                const cleanup = () => {
+                    try { container.removeEventListener('click', handleClick); } catch (e) { }
+                };
+
+                // Attach cleanup to node dataset so subsequent renders can remove if needed.
+                // Also ensure React effect cleanup removes it.
+                (container as any).__banyan_cleanup = cleanup;
             }
         };
 
         loadNote();
+
+        return () => {
+            // If a handler was attached to the previous container, remove it
+            if (contentRef.current && (contentRef.current as any).__banyan_cleanup) {
+                try { (contentRef.current as any).__banyan_cleanup(); } catch (e) { }
+                delete (contentRef.current as any).__banyan_cleanup;
+            }
+        };
     }, [settings.sidebarNotePath, plugin]);
 
     if (!settings.sidebarNotePath) {
